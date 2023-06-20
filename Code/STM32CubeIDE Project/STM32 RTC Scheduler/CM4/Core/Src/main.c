@@ -34,6 +34,7 @@
 /* USER CODE BEGIN PD */
 #define COUNTOF(__BUFFER__)   (sizeof(__BUFFER__) / sizeof(*(__BUFFER__)))
 #define HELLOMESSAGESIZE (COUNTOF(HelloWorldMessage) - 1)
+#define RXBUFFERSIZE 32
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -53,7 +54,8 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN PFP */
-uint8_t HelloWorldMessage[] = "Hello World!\n\r";
+uint8_t HelloWorldMessage[] = "Hello!  Please enter your message and I will echo it!\n";
+uint8_t rxBuffer[RXBUFFERSIZE];
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -91,7 +93,11 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-
+  if(HAL_UART_Transmit(&huart2, (uint8_t*)HelloWorldMessage, HELLOMESSAGESIZE, 1000)!= HAL_OK)
+	{
+	  /* Transfer error in transmission process */
+	  Error_Handler();
+	}
   /* USER CODE END 2 */
 
   /* Boot CPU2 */
@@ -102,11 +108,20 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-	  if(HAL_UART_Transmit(&huart2, (uint8_t*)HelloWorldMessage, HELLOMESSAGESIZE, 100)!= HAL_OK)
+	  HAL_StatusTypeDef receiveStatus = HAL_UART_Receive(&huart2, (uint8_t *)rxBuffer, RXBUFFERSIZE, 10000);
+	  if (receiveStatus == HAL_ERROR)
 	    {
-	      /* Transfer error in transmission process */
+	      /* Transfer error in reception process */
 	      Error_Handler();
 	    }
+	  else if (receiveStatus != HAL_TIMEOUT && receiveStatus != HAL_BUSY)
+	  {
+		  if(HAL_UART_Transmit(&huart2, (uint8_t*)rxBuffer, RXBUFFERSIZE, 100)!= HAL_OK)
+			{
+			  /* Transfer error in transmission process */
+			  Error_Handler();
+			}
+	  }
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */

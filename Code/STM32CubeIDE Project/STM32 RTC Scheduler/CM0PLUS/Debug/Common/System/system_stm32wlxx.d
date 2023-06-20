@@ -30,8 +30,6 @@ Common/System/system_stm32wlxx.o: \
  ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_ll_bus.h \
  ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_rcc_ex.h \
  ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_ll_exti.h \
- ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_uart.h \
- ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_uart_ex.h \
  ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_ll_system.h
 ../../Drivers/CMSIS/Device/ST/STM32WLxx/Include/stm32wlxx.h:
 ../../Drivers/CMSIS/Device/ST/STM32WLxx/Include/stm32wl55xx.h:
@@ -63,6 +61,4 @@ Common/System/system_stm32wlxx.o: \
 ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_ll_bus.h:
 ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_rcc_ex.h:
 ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_ll_exti.h:
-../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_uart.h:
-../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_uart_ex.h:
 ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_ll_system.h:
