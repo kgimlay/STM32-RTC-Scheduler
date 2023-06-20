@@ -18,11 +18,10 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include <stdint.h>
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "stdint.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -61,6 +60,25 @@ uint8_t rxBuffer[RXBUFFERSIZE];
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *UartHandle)
+{
+}
+
+
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
+{
+	if(HAL_UART_Transmit(UartHandle, (uint8_t*)rxBuffer, RXBUFFERSIZE, 100)!= HAL_OK)
+	  {
+		/* Transfer error in transmission process */
+		Error_Handler();
+	  }
+
+	if(HAL_UART_Receive_IT(&huart2, (uint8_t*)rxBuffer, RXBUFFERSIZE)== HAL_ERROR)
+	{
+	  /* Transfer error in transmission process */
+	  Error_Handler();
+	}
+}
 /* USER CODE END 0 */
 
 /**
@@ -98,6 +116,12 @@ int main(void)
 	  /* Transfer error in transmission process */
 	  Error_Handler();
 	}
+
+  if(HAL_UART_Receive_IT(&huart2, (uint8_t*)rxBuffer, RXBUFFERSIZE)== HAL_ERROR)
+	{
+	  /* Transfer error in transmission process */
+	  Error_Handler();
+	}
   /* USER CODE END 2 */
 
   /* Boot CPU2 */
@@ -108,21 +132,9 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-	  HAL_StatusTypeDef receiveStatus = HAL_UART_Receive(&huart2, (uint8_t *)rxBuffer, RXBUFFERSIZE, 10000);
-	  if (receiveStatus == HAL_ERROR)
-	    {
-	      /* Transfer error in reception process */
-	      Error_Handler();
-	    }
-	  else if (receiveStatus != HAL_TIMEOUT && receiveStatus != HAL_BUSY)
-	  {
-		  if(HAL_UART_Transmit(&huart2, (uint8_t*)rxBuffer, RXBUFFERSIZE, 100)!= HAL_OK)
-			{
-			  /* Transfer error in transmission process */
-			  Error_Handler();
-			}
-	  }
+
     /* USER CODE BEGIN 3 */
+
   }
   /* USER CODE END 3 */
 }
