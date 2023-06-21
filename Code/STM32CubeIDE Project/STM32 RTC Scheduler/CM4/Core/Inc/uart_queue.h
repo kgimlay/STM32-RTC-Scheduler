@@ -16,7 +16,7 @@
 /*
  * The number of entries in the queue
  */
-#define QUEUE_SIZE 32
+#define QUEUE_SIZE 4
 
 /*
  * Queue struct to hold messages and necessary information to operate

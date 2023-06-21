@@ -34,8 +34,7 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 #define COUNTOF(__BUFFER__)   (sizeof(__BUFFER__) / sizeof(*(__BUFFER__)))
-#define HELLOMESSAGESIZE (COUNTOF(HelloWorldMessage) - 1)
-#define RXBUFFERSIZE 32
+#define RXBUFFERSIZE SERIAL_MESSAGE_SIZE
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -47,7 +46,7 @@
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-
+UART_Queue rxQueue;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -55,8 +54,12 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN PFP */
-uint8_t HelloWorldMessage[] = "Hello!  Please enter your message and I will echo it!\n";
+uint8_t HelloWorldMessage[] = "Hello!  Please enter your message and I will queue it!\n";
+uint8_t QueuedMessage[] = "Message enqueued\n";
+uint8_t FullQueueMessage[] = "Message queue full\n";
+uint8_t EmptyQueueMessage[] = "Message queue empty\n";
 uint8_t rxBuffer[RXBUFFERSIZE];
+uint8_t txBuffer[RXBUFFERSIZE];
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -69,12 +72,49 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *UartHandle)
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 {
-	if(HAL_UART_Transmit(UartHandle, (uint8_t*)rxBuffer, RXBUFFERSIZE, 100)!= HAL_OK)
-	  {
-		/* Transfer error in transmission process */
-		Error_Handler();
-	  }
+	UART_QUEUE_STATUS qStatus;
 
+	// add message to queue
+	qStatus = uartQueue_enqueue(&rxQueue, rxBuffer);
+
+	if (qStatus == UART_QUEUE_SUCCESS) {
+		// respond if the queue is not full
+		if(HAL_UART_Transmit(UartHandle, (uint8_t*)QueuedMessage, (COUNTOF(QueuedMessage) - 1), 100)!= HAL_OK)
+		  {
+			/* Transfer error in transmission process */
+			Error_Handler();
+		  }
+	}
+	else {
+		// respond if the queue is full
+		if(HAL_UART_Transmit(UartHandle, (uint8_t*)FullQueueMessage, (COUNTOF(FullQueueMessage) - 1), 100)!= HAL_OK)
+		  {
+			/* Transfer error in transmission process */
+			Error_Handler();
+		  }
+
+		for (int i = 0; i < QUEUE_SIZE+1; i++)
+		{
+			qStatus = uartQueue_dequeue(&rxQueue, &txBuffer);
+			if (qStatus == UART_QUEUE_SUCCESS) {
+				if(HAL_UART_Transmit(UartHandle, (uint8_t*)txBuffer, RXBUFFERSIZE, 100)!= HAL_OK)
+				  {
+					/* Transfer error in transmission process */
+					Error_Handler();
+				  }
+			}
+			else
+			{
+				if(HAL_UART_Transmit(UartHandle, (uint8_t*)EmptyQueueMessage, (COUNTOF(EmptyQueueMessage) - 1), 100)!= HAL_OK)
+				  {
+					/* Transfer error in transmission process */
+					Error_Handler();
+				  }
+			}
+		}
+	}
+
+	// begin receiving again
 	if(HAL_UART_Receive_IT(&huart2, (uint8_t*)rxBuffer, RXBUFFERSIZE)== HAL_ERROR)
 	{
 	  /* Transfer error in transmission process */
@@ -90,7 +130,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+	uartQueue_init(&rxQueue);
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -113,7 +153,7 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-  if(HAL_UART_Transmit(&huart2, (uint8_t*)HelloWorldMessage, HELLOMESSAGESIZE, 1000)!= HAL_OK)
+  if(HAL_UART_Transmit(&huart2, (uint8_t*)HelloWorldMessage, (COUNTOF(HelloWorldMessage) - 1), 1000)!= HAL_OK)
 	{
 	  /* Transfer error in transmission process */
 	  Error_Handler();
@@ -206,7 +246,7 @@ static void MX_USART2_UART_Init(void)
 
   /* USER CODE END USART2_Init 1 */
   huart2.Instance = USART2;
-  huart2.Init.BaudRate = 9600;
+  huart2.Init.BaudRate = 115200;
   huart2.Init.WordLength = UART_WORDLENGTH_8B;
   huart2.Init.StopBits = UART_STOPBITS_1;
   huart2.Init.Parity = UART_PARITY_ODD;
