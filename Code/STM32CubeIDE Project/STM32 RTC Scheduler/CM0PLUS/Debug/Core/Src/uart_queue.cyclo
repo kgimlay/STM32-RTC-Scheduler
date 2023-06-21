@@ -1,0 +1,6 @@
+uart_queue.c:16:9:nextIdx	2
+uart_queue.c:23:6:_enqueue	1
+uart_queue.c:32:6:_dequeue	2
+uart_queue.c:46:6:uartQueue_init	3
+uart_queue.c:65:19:uartQueue_enqueue	3
+uart_queue.c:95:19:uartQueue_dequeue	2

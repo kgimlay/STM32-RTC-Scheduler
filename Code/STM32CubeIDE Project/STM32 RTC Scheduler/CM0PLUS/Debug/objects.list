@@ -4,6 +4,7 @@
 "./Core/Src/stm32wlxx_it.o"
 "./Core/Src/syscalls.o"
 "./Core/Src/sysmem.o"
+"./Core/Src/uart_queue.o"
 "./Core/Startup/startup_stm32wl55jcix.o"
 "./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal.o"
 "./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_cortex.o"

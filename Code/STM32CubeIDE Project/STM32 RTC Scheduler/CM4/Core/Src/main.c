@@ -22,6 +22,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "stdint.h"
+#include "uart_queue.h"
+#include "serial_message.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/

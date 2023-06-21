@@ -10,6 +10,8 @@ Archive member included to satisfy reference by file (symbol)
                               /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.macos64_1.0.200.202301161003/tools/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/crt0.o (__libc_init_array)
 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.macos64_1.0.200.202301161003/tools/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc_nano.a(lib_a-memset.o)
                               /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.macos64_1.0.200.202301161003/tools/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/crt0.o (memset)
+/Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.macos64_1.0.200.202301161003/tools/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc_nano.a(lib_a-strncpy.o)
+                              ./Core/Src/uart_queue.o (strncpy)
 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.macos64_1.0.200.202301161003/tools/bin/../lib/gcc/arm-none-eabi/10.3.1/thumb/v6-m/nofp/libgcc.a(_udivsi3.o)
                               ./Common/System/system_stm32wlxx.o (__aeabi_uidiv)
 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.macos64_1.0.200.202301161003/tools/bin/../lib/gcc/arm-none-eabi/10.3.1/thumb/v6-m/nofp/libgcc.a(_dvmd_tls.o)
@@ -541,6 +543,84 @@ Discarded input sections
  .debug_frame   0x0000000000000000       0x30 ./Core/Src/sysmem.o
  .ARM.attributes
                 0x0000000000000000       0x2c ./Core/Src/sysmem.o
+ .group         0x0000000000000000        0xc ./Core/Src/uart_queue.o
+ .group         0x0000000000000000        0xc ./Core/Src/uart_queue.o
+ .group         0x0000000000000000        0xc ./Core/Src/uart_queue.o
+ .group         0x0000000000000000        0xc ./Core/Src/uart_queue.o
+ .group         0x0000000000000000        0xc ./Core/Src/uart_queue.o
+ .group         0x0000000000000000        0xc ./Core/Src/uart_queue.o
+ .group         0x0000000000000000        0xc ./Core/Src/uart_queue.o
+ .group         0x0000000000000000        0xc ./Core/Src/uart_queue.o
+ .group         0x0000000000000000        0xc ./Core/Src/uart_queue.o
+ .group         0x0000000000000000        0xc ./Core/Src/uart_queue.o
+ .group         0x0000000000000000        0xc ./Core/Src/uart_queue.o
+ .group         0x0000000000000000        0xc ./Core/Src/uart_queue.o
+ .group         0x0000000000000000        0xc ./Core/Src/uart_queue.o
+ .group         0x0000000000000000        0xc ./Core/Src/uart_queue.o
+ .group         0x0000000000000000        0xc ./Core/Src/uart_queue.o
+ .group         0x0000000000000000        0xc ./Core/Src/uart_queue.o
+ .group         0x0000000000000000        0xc ./Core/Src/uart_queue.o
+ .group         0x0000000000000000        0xc ./Core/Src/uart_queue.o
+ .group         0x0000000000000000        0xc ./Core/Src/uart_queue.o
+ .group         0x0000000000000000        0xc ./Core/Src/uart_queue.o
+ .group         0x0000000000000000        0xc ./Core/Src/uart_queue.o
+ .group         0x0000000000000000        0xc ./Core/Src/uart_queue.o
+ .group         0x0000000000000000        0xc ./Core/Src/uart_queue.o
+ .group         0x0000000000000000        0xc ./Core/Src/uart_queue.o
+ .group         0x0000000000000000        0xc ./Core/Src/uart_queue.o
+ .group         0x0000000000000000        0xc ./Core/Src/uart_queue.o
+ .text          0x0000000000000000        0x0 ./Core/Src/uart_queue.o
+ .data          0x0000000000000000        0x0 ./Core/Src/uart_queue.o
+ .bss           0x0000000000000000        0x0 ./Core/Src/uart_queue.o
+ .text.nextIdx  0x0000000000000000       0x30 ./Core/Src/uart_queue.o
+ .text._enqueue
+                0x0000000000000000       0x3e ./Core/Src/uart_queue.o
+ .text._dequeue
+                0x0000000000000000       0x50 ./Core/Src/uart_queue.o
+ .text.uartQueue_init
+                0x0000000000000000       0x5a ./Core/Src/uart_queue.o
+ .text.uartQueue_enqueue
+                0x0000000000000000       0x4e ./Core/Src/uart_queue.o
+ .text.uartQueue_dequeue
+                0x0000000000000000       0x2c ./Core/Src/uart_queue.o
+ .debug_info    0x0000000000000000      0x2b4 ./Core/Src/uart_queue.o
+ .debug_abbrev  0x0000000000000000      0x14c ./Core/Src/uart_queue.o
+ .debug_aranges
+                0x0000000000000000       0x48 ./Core/Src/uart_queue.o
+ .debug_ranges  0x0000000000000000       0x38 ./Core/Src/uart_queue.o
+ .debug_macro   0x0000000000000000      0x15e ./Core/Src/uart_queue.o
+ .debug_macro   0x0000000000000000      0xa54 ./Core/Src/uart_queue.o
+ .debug_macro   0x0000000000000000       0x22 ./Core/Src/uart_queue.o
+ .debug_macro   0x0000000000000000       0x8e ./Core/Src/uart_queue.o
+ .debug_macro   0x0000000000000000       0x51 ./Core/Src/uart_queue.o
+ .debug_macro   0x0000000000000000      0x103 ./Core/Src/uart_queue.o
+ .debug_macro   0x0000000000000000       0x6a ./Core/Src/uart_queue.o
+ .debug_macro   0x0000000000000000      0x1df ./Core/Src/uart_queue.o
+ .debug_macro   0x0000000000000000       0x16 ./Core/Src/uart_queue.o
+ .debug_macro   0x0000000000000000       0x22 ./Core/Src/uart_queue.o
+ .debug_macro   0x0000000000000000       0x52 ./Core/Src/uart_queue.o
+ .debug_macro   0x0000000000000000       0x18 ./Core/Src/uart_queue.o
+ .debug_macro   0x0000000000000000       0x3c ./Core/Src/uart_queue.o
+ .debug_macro   0x0000000000000000       0x34 ./Core/Src/uart_queue.o
+ .debug_macro   0x0000000000000000      0x174 ./Core/Src/uart_queue.o
+ .debug_macro   0x0000000000000000       0x16 ./Core/Src/uart_queue.o
+ .debug_macro   0x0000000000000000       0x43 ./Core/Src/uart_queue.o
+ .debug_macro   0x0000000000000000       0x34 ./Core/Src/uart_queue.o
+ .debug_macro   0x0000000000000000       0x10 ./Core/Src/uart_queue.o
+ .debug_macro   0x0000000000000000       0x58 ./Core/Src/uart_queue.o
+ .debug_macro   0x0000000000000000       0x71 ./Core/Src/uart_queue.o
+ .debug_macro   0x0000000000000000       0x1c ./Core/Src/uart_queue.o
+ .debug_macro   0x0000000000000000      0x12a ./Core/Src/uart_queue.o
+ .debug_macro   0x0000000000000000      0x341 ./Core/Src/uart_queue.o
+ .debug_macro   0x0000000000000000       0x10 ./Core/Src/uart_queue.o
+ .debug_macro   0x0000000000000000       0x35 ./Core/Src/uart_queue.o
+ .debug_macro   0x0000000000000000       0x20 ./Core/Src/uart_queue.o
+ .debug_line    0x0000000000000000      0x66c ./Core/Src/uart_queue.o
+ .debug_str     0x0000000000000000     0x6ea5 ./Core/Src/uart_queue.o
+ .comment       0x0000000000000000       0x51 ./Core/Src/uart_queue.o
+ .debug_frame   0x0000000000000000       0xd0 ./Core/Src/uart_queue.o
+ .ARM.attributes
+                0x0000000000000000       0x2c ./Core/Src/uart_queue.o
  .text          0x0000000000000000       0x14 ./Core/Startup/startup_stm32wl55jcix.o
  .data          0x0000000000000000        0x0 ./Core/Startup/startup_stm32wl55jcix.o
  .bss           0x0000000000000000        0x0 ./Core/Startup/startup_stm32wl55jcix.o
@@ -2680,6 +2760,13 @@ Discarded input sections
  .debug_frame   0x0000000000000000       0x20 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.macos64_1.0.200.202301161003/tools/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc_nano.a(lib_a-memset.o)
  .ARM.attributes
                 0x0000000000000000       0x2c /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.macos64_1.0.200.202301161003/tools/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc_nano.a(lib_a-memset.o)
+ .text          0x0000000000000000        0x0 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.macos64_1.0.200.202301161003/tools/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc_nano.a(lib_a-strncpy.o)
+ .data          0x0000000000000000        0x0 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.macos64_1.0.200.202301161003/tools/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc_nano.a(lib_a-strncpy.o)
+ .bss           0x0000000000000000        0x0 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.macos64_1.0.200.202301161003/tools/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc_nano.a(lib_a-strncpy.o)
+ .text.strncpy  0x0000000000000000       0x28 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.macos64_1.0.200.202301161003/tools/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc_nano.a(lib_a-strncpy.o)
+ .debug_frame   0x0000000000000000       0x2c /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.macos64_1.0.200.202301161003/tools/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc_nano.a(lib_a-strncpy.o)
+ .ARM.attributes
+                0x0000000000000000       0x2c /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.macos64_1.0.200.202301161003/tools/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc_nano.a(lib_a-strncpy.o)
  .data          0x0000000000000000        0x0 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.macos64_1.0.200.202301161003/tools/bin/../lib/gcc/arm-none-eabi/10.3.1/thumb/v6-m/nofp/libgcc.a(_udivsi3.o)
  .bss           0x0000000000000000        0x0 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.macos64_1.0.200.202301161003/tools/bin/../lib/gcc/arm-none-eabi/10.3.1/thumb/v6-m/nofp/libgcc.a(_udivsi3.o)
  .data          0x0000000000000000        0x0 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.macos64_1.0.200.202301161003/tools/bin/../lib/gcc/arm-none-eabi/10.3.1/thumb/v6-m/nofp/libgcc.a(_dvmd_tls.o)
@@ -2713,6 +2800,7 @@ LOAD ./Core/Src/stm32wlxx_hal_msp.o
 LOAD ./Core/Src/stm32wlxx_it.o
 LOAD ./Core/Src/syscalls.o
 LOAD ./Core/Src/sysmem.o
+LOAD ./Core/Src/uart_queue.o
 LOAD ./Core/Startup/startup_stm32wl55jcix.o
 LOAD ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal.o
 LOAD ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_cortex.o
