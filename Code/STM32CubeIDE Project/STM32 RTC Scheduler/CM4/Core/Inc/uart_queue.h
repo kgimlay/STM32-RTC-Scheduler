@@ -28,9 +28,9 @@
  * the queue.
  */
 typedef struct {
-	bool _isEmpty;
-	int _front;
-	int _rear;
+	volatile bool _isEmpty;
+	volatile int _front;
+	volatile int _rear;
 	char _queue[QUEUE_SIZE][QUEUE_BUFFER_SIZE];
 } UART_Queue;
 
@@ -38,7 +38,7 @@ typedef struct {
  * Operation codes for this utility.
  */
 typedef enum {
-	UART_QUEUE_SUCCESS,
+	UART_QUEUE_OKAY,
 	UART_QUEUE_FULL,
 	UART_QUEUE_EMPTY
 } UART_QUEUE_STATUS;

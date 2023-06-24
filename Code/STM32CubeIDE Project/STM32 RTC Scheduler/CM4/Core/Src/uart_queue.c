@@ -72,7 +72,7 @@ UART_QUEUE_STATUS uartQueue_enqueue(UART_Queue* queue, char message[QUEUE_BUFFER
 
 		// and enqueue
 		_enqueue(queue, message);
-		return UART_QUEUE_SUCCESS;
+		return UART_QUEUE_OKAY;
 	}
 
 	// case that queue is not empty
@@ -83,7 +83,7 @@ UART_QUEUE_STATUS uartQueue_enqueue(UART_Queue* queue, char message[QUEUE_BUFFER
 
 		// queue is not full, enqueue
 		_enqueue(queue, message);
-		return UART_QUEUE_SUCCESS;
+		return UART_QUEUE_OKAY;
 	}
 }
 
@@ -103,6 +103,6 @@ UART_QUEUE_STATUS uartQueue_dequeue(UART_Queue* queue, char messageBuffer[QUEUE_
 	// case that queue is not empty
 	else {
 		_dequeue(queue, messageBuffer);
-		return UART_QUEUE_SUCCESS;
+		return UART_QUEUE_OKAY;
 	}
 }
