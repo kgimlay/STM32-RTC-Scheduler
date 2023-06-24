@@ -80,12 +80,6 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 	// add message to queue
 	qStatus = uartQueue_enqueue(&rxQueue, rxBuffer);
 
-	if(HAL_UART_Transmit(UartHandle, (uint8_t*)QueuedMessage, (COUNTOF(QueuedMessage) - 1), 100)!= HAL_OK)
-	  {
-		/* Transfer error in transmission process */
-		Error_Handler();
-	  }
-
 	// begin receiving again
 	if(HAL_UART_Receive_IT(&huart2, (uint8_t*)rxBuffer, RXBUFFERSIZE)== HAL_ERROR)
 	{

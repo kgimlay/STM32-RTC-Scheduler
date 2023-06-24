@@ -22,8 +22,8 @@ uint8_t nextIdx(uint8_t index) {
  */
 void _enqueue(UART_Queue* queue, char message[QUEUE_BUFFER_SIZE]) {
 	// copy the message to the queue and increment the rear pointer
-	memcpy(queue->queue[queue->rear], message, QUEUE_BUFFER_SIZE*sizeof(char));
-	queue->rear = nextIdx(queue->rear);
+	memcpy(queue->_queue[queue->_rear], message, QUEUE_BUFFER_SIZE*sizeof(char));
+	queue->_rear = nextIdx(queue->_rear);
 }
 
 /*
@@ -31,12 +31,12 @@ void _enqueue(UART_Queue* queue, char message[QUEUE_BUFFER_SIZE]) {
  */
 void _dequeue(UART_Queue* queue, char messageBuffer[QUEUE_BUFFER_SIZE]) {
 	// copy message from  the queue and increment the front pointer
-	strncpy(messageBuffer, queue->queue[queue->front], QUEUE_BUFFER_SIZE);
-	queue->front = nextIdx(queue->front);
+	strncpy(messageBuffer, queue->_queue[queue->_front], QUEUE_BUFFER_SIZE);
+	queue->_front = nextIdx(queue->_front);
 
 	// set isEmpty flag if necessary
-	if (queue->front == queue->rear)
-		queue->isEmpty = true;
+	if (queue->_front == queue->_rear)
+		queue->_isEmpty = true;
 }
 
 /*
@@ -48,14 +48,14 @@ void uartQueue_init(UART_Queue* queue) {
 	int row, col;
 
 	// reset all operation variables
-	queue->isEmpty = true;
-	queue->front = 0;
-	queue->rear = 0;
+	queue->_isEmpty = true;
+	queue->_front = 0;
+	queue->_rear = 0;
 
 	// ensure that the queue messages are empty
 	for (row = 0; row < SERIAL_MESSAGE_SIZE; row++)
 		for (col = 0; col < SERIAL_MESSAGE_SIZE; col++)
-			queue->queue[row][col] = '\0';
+			queue->_queue[row][col] = '\0';
 }
 
 /*
@@ -66,9 +66,9 @@ UART_QUEUE_STATUS uartQueue_enqueue(UART_Queue* queue, char message[QUEUE_BUFFER
 	// operation variables
 
 	// case that queue is empty
-	if (queue->isEmpty) {
+	if (queue->_isEmpty) {
 		// set not empty
-		queue->isEmpty = false;
+		queue->_isEmpty = false;
 
 		// and enqueue
 		_enqueue(queue, message);
@@ -78,7 +78,7 @@ UART_QUEUE_STATUS uartQueue_enqueue(UART_Queue* queue, char message[QUEUE_BUFFER
 	// case that queue is not empty
 	else {
 		// case that queue is full
-		if (queue->front == queue->rear)
+		if (queue->_front == queue->_rear)
 			return UART_QUEUE_FULL;
 
 		// queue is not full, enqueue
@@ -96,7 +96,7 @@ UART_QUEUE_STATUS uartQueue_dequeue(UART_Queue* queue, char messageBuffer[QUEUE_
 	// operation variables
 
 	// case that queue is empty
-	if (queue->isEmpty) {
+	if (queue->_isEmpty) {
 		return UART_QUEUE_EMPTY;
 	}
 

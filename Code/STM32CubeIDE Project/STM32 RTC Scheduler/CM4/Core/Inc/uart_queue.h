@@ -28,10 +28,10 @@
  * the queue.
  */
 typedef struct {
-	bool isEmpty;
-	int front;
-	int rear;
-	char queue[QUEUE_SIZE][QUEUE_BUFFER_SIZE];
+	bool _isEmpty;
+	int _front;
+	int _rear;
+	char _queue[QUEUE_SIZE][QUEUE_BUFFER_SIZE];
 } UART_Queue;
 
 /*
