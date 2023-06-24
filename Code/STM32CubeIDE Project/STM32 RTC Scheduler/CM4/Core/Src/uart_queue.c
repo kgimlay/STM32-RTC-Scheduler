@@ -20,18 +20,18 @@ uint8_t nextIdx(uint8_t index) {
 /*
  * Private helper to enqueue a message to the queue.
  */
-void _enqueue(UART_Queue* queue, char message[SERIAL_MESSAGE_SIZE]) {
+void _enqueue(UART_Queue* queue, char message[QUEUE_BUFFER_SIZE]) {
 	// copy the message to the queue and increment the rear pointer
-	strncpy(queue->queue[queue->rear], message, SERIAL_MESSAGE_SIZE);
+	memcpy(queue->queue[queue->rear], message, QUEUE_BUFFER_SIZE*sizeof(char));
 	queue->rear = nextIdx(queue->rear);
 }
 
 /*
  * Private helper to dequeue a message from the queue.
  */
-void _dequeue(UART_Queue* queue, char messageBuffer[SERIAL_MESSAGE_SIZE]) {
+void _dequeue(UART_Queue* queue, char messageBuffer[QUEUE_BUFFER_SIZE]) {
 	// copy message from  the queue and increment the front pointer
-	strncpy(messageBuffer, queue->queue[queue->front], SERIAL_MESSAGE_SIZE);
+	strncpy(messageBuffer, queue->queue[queue->front], QUEUE_BUFFER_SIZE);
 	queue->front = nextIdx(queue->front);
 
 	// set isEmpty flag if necessary
@@ -62,7 +62,7 @@ void uartQueue_init(UART_Queue* queue) {
  * Enqueue a message.
  * Return success if enqueueing successful, or full if the queue is full.
  */
-UART_QUEUE_STATUS uartQueue_enqueue(UART_Queue* queue, char message[SERIAL_MESSAGE_SIZE]) {
+UART_QUEUE_STATUS uartQueue_enqueue(UART_Queue* queue, char message[QUEUE_BUFFER_SIZE]) {
 	// operation variables
 
 	// case that queue is empty
@@ -92,7 +92,7 @@ UART_QUEUE_STATUS uartQueue_enqueue(UART_Queue* queue, char message[SERIAL_MESSA
  * Return success and message if message present, or empty and null if queue
  * is empty.
  */
-UART_QUEUE_STATUS uartQueue_dequeue(UART_Queue* queue, char messageBuffer[SERIAL_MESSAGE_SIZE]) {
+UART_QUEUE_STATUS uartQueue_dequeue(UART_Queue* queue, char messageBuffer[QUEUE_BUFFER_SIZE]) {
 	// operation variables
 
 	// case that queue is empty

@@ -19,6 +19,11 @@
 #define QUEUE_SIZE 4
 
 /*
+ * The number of characters in each buffer
+ */
+#define QUEUE_BUFFER_SIZE SERIAL_MESSAGE_SIZE
+
+/*
  * Queue struct to hold messages and necessary information to operate
  * the queue.
  */
@@ -26,7 +31,7 @@ typedef struct {
 	bool isEmpty;
 	int front;
 	int rear;
-	char queue[QUEUE_SIZE][SERIAL_MESSAGE_SIZE];
+	char queue[QUEUE_SIZE][QUEUE_BUFFER_SIZE];
 } UART_Queue;
 
 /*
@@ -48,13 +53,13 @@ void uartQueue_init(UART_Queue* queue);
  * Enqueue a message.
  * Return success if enqueueing successful, or full if the queue is full.
  */
-UART_QUEUE_STATUS uartQueue_enqueue(UART_Queue* queue, char message[SERIAL_MESSAGE_SIZE]);
+UART_QUEUE_STATUS uartQueue_enqueue(UART_Queue* queue, char message[QUEUE_BUFFER_SIZE]);
 
 /*
  * Dequeue a message.
  * Return success and message if message present, or empty and null if queue
  * is empty.
  */
-UART_QUEUE_STATUS uartQueue_dequeue(UART_Queue* queue, char messageBuffer[SERIAL_MESSAGE_SIZE]);
+UART_QUEUE_STATUS uartQueue_dequeue(UART_Queue* queue, char messageBuffer[QUEUE_BUFFER_SIZE]);
 
 #endif /* INC_UART_QUEUE_H_ */

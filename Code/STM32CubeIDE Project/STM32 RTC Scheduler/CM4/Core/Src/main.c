@@ -54,19 +54,22 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN PFP */
-uint8_t HelloWorldMessage[] = "Hello!  Please enter your message and I will queue it!\n";
-uint8_t QueuedMessage[] = "Message enqueued\n";
-uint8_t FullQueueMessage[] = "Message queue full\n";
-uint8_t EmptyQueueMessage[] = "Message queue empty\n";
-uint8_t rxBuffer[RXBUFFERSIZE];
-uint8_t txBuffer[RXBUFFERSIZE];
+char HelloWorldMessage[] = "\n\nHello!  Please enter your message and I will queue it!\n\n";
+char rxBuffer[RXBUFFERSIZE];
+char txBuffer[RXBUFFERSIZE];
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
+void HAL_UART_ErrorCallback(UART_HandleTypeDef *UartHandle)
+{
+	(void)0;  // no operation
+}
+
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *UartHandle)
 {
+	(void)0;  // no operation
 }
 
 
@@ -77,42 +80,11 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 	// add message to queue
 	qStatus = uartQueue_enqueue(&rxQueue, rxBuffer);
 
-	if (qStatus == UART_QUEUE_SUCCESS) {
-		// respond if the queue is not full
-		if(HAL_UART_Transmit(UartHandle, (uint8_t*)QueuedMessage, (COUNTOF(QueuedMessage) - 1), 100)!= HAL_OK)
-		  {
-			/* Transfer error in transmission process */
-			Error_Handler();
-		  }
-	}
-	else {
-		// respond if the queue is full
-		if(HAL_UART_Transmit(UartHandle, (uint8_t*)FullQueueMessage, (COUNTOF(FullQueueMessage) - 1), 100)!= HAL_OK)
-		  {
-			/* Transfer error in transmission process */
-			Error_Handler();
-		  }
-
-		for (int i = 0; i < QUEUE_SIZE+1; i++)
-		{
-			qStatus = uartQueue_dequeue(&rxQueue, &txBuffer);
-			if (qStatus == UART_QUEUE_SUCCESS) {
-				if(HAL_UART_Transmit(UartHandle, (uint8_t*)txBuffer, RXBUFFERSIZE, 100)!= HAL_OK)
-				  {
-					/* Transfer error in transmission process */
-					Error_Handler();
-				  }
-			}
-			else
-			{
-				if(HAL_UART_Transmit(UartHandle, (uint8_t*)EmptyQueueMessage, (COUNTOF(EmptyQueueMessage) - 1), 100)!= HAL_OK)
-				  {
-					/* Transfer error in transmission process */
-					Error_Handler();
-				  }
-			}
-		}
-	}
+	if(HAL_UART_Transmit(UartHandle, (uint8_t*)QueuedMessage, (COUNTOF(QueuedMessage) - 1), 100)!= HAL_OK)
+	  {
+		/* Transfer error in transmission process */
+		Error_Handler();
+	  }
 
 	// begin receiving again
 	if(HAL_UART_Receive_IT(&huart2, (uint8_t*)rxBuffer, RXBUFFERSIZE)== HAL_ERROR)
@@ -130,7 +102,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	uartQueue_init(&rxQueue);
+  uartQueue_init(&rxQueue);
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -246,7 +218,7 @@ static void MX_USART2_UART_Init(void)
 
   /* USER CODE END USART2_Init 1 */
   huart2.Instance = USART2;
-  huart2.Init.BaudRate = 115200;
+  huart2.Init.BaudRate = 600;
   huart2.Init.WordLength = UART_WORDLENGTH_8B;
   huart2.Init.StopBits = UART_STOPBITS_1;
   huart2.Init.Parity = UART_PARITY_ODD;
@@ -255,7 +227,8 @@ static void MX_USART2_UART_Init(void)
   huart2.Init.OverSampling = UART_OVERSAMPLING_16;
   huart2.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
   huart2.Init.ClockPrescaler = UART_PRESCALER_DIV1;
-  huart2.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+  huart2.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_RXOVERRUNDISABLE_INIT;
+  huart2.AdvancedInit.OverrunDisable = UART_ADVFEATURE_OVERRUN_DISABLE;
   if (HAL_UART_Init(&huart2) != HAL_OK)
   {
     Error_Handler();
