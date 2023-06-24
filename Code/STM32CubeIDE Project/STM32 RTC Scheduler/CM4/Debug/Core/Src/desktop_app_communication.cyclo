@@ -1,0 +1,5 @@
+desktop_app_communication.c:14:6:initDesktopCommunication	1
+desktop_app_communication.c:25:21:reportToDesktopApp	2
+desktop_app_communication.c:51:22:retrieveFromDesktopApp	2
+desktop_app_communication.c:79:6:deskAppRxCompleteISR	1
+desktop_app_communication.c:87:6:deskAppTxCompleteISR	1

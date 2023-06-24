@@ -1,0 +1,5 @@
+../Core/Src/desktop_app_communication.c:14:6:initDesktopCommunication	16	static
+../Core/Src/desktop_app_communication.c:25:21:reportToDesktopApp	64	static
+../Core/Src/desktop_app_communication.c:51:22:retrieveFromDesktopApp	64	static
+../Core/Src/desktop_app_communication.c:79:6:deskAppRxCompleteISR	4	static
+../Core/Src/desktop_app_communication.c:87:6:deskAppTxCompleteISR	4	static

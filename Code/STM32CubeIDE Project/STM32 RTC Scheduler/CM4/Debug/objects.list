@@ -1,4 +1,5 @@
 "./Common/System/system_stm32wlxx.o"
+"./Core/Src/desktop_app_communication.o"
 "./Core/Src/main.o"
 "./Core/Src/stm32wlxx_hal_msp.o"
 "./Core/Src/stm32wlxx_it.o"

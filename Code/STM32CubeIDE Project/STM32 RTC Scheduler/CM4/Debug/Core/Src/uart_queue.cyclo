@@ -3,4 +3,6 @@ uart_queue.c:23:6:_enqueue	1
 uart_queue.c:32:6:_dequeue	2
 uart_queue.c:46:6:uartQueue_init	3
 uart_queue.c:65:19:uartQueue_enqueue	3
-uart_queue.c:95:19:uartQueue_dequeue	2
+uart_queue.c:101:19:uartQueue_dequeue	2
+uart_queue.c:119:6:uartQueue_isEmpty	1
+uart_queue.c:126:6:uartQueue_isFull	3

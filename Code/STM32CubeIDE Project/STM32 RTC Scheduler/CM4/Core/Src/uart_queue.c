@@ -53,8 +53,8 @@ void uartQueue_init(UART_Queue* queue) {
 	queue->_rear = 0;
 
 	// ensure that the queue messages are empty
-	for (row = 0; row < SERIAL_MESSAGE_SIZE; row++)
-		for (col = 0; col < SERIAL_MESSAGE_SIZE; col++)
+	for (row = 0; row < UART_MESSAGE_SIZE; row++)
+		for (col = 0; col < UART_MESSAGE_SIZE; col++)
 			queue->_queue[row][col] = '\0';
 }
 
@@ -66,23 +66,29 @@ UART_QUEUE_STATUS uartQueue_enqueue(UART_Queue* queue, char message[QUEUE_BUFFER
 	// operation variables
 
 	// case that queue is empty
-	if (queue->_isEmpty) {
+	if (uartQueue_isEmpty(queue)) {
 		// set not empty
 		queue->_isEmpty = false;
 
-		// and enqueue
+		// enqueue
 		_enqueue(queue, message);
+
+		// and report
 		return UART_QUEUE_OKAY;
 	}
 
-	// case that queue is not empty
-	else {
-		// case that queue is full
-		if (queue->_front == queue->_rear)
-			return UART_QUEUE_FULL;
+	// case that queue is full
+	else if (uartQueue_isFull(queue)) {
+		// report
+		return UART_QUEUE_FULL;
+	}
 
-		// queue is not full, enqueue
+	// queue is not full, enqueue
+	else {
+		// enqueue
 		_enqueue(queue, message);
+
+		// and report
 		return UART_QUEUE_OKAY;
 	}
 }
@@ -105,4 +111,18 @@ UART_QUEUE_STATUS uartQueue_dequeue(UART_Queue* queue, char messageBuffer[QUEUE_
 		_dequeue(queue, messageBuffer);
 		return UART_QUEUE_OKAY;
 	}
+}
+
+/*
+ *
+ */
+bool uartQueue_isEmpty(UART_Queue* queue) {
+	return (queue->_isEmpty);
+}
+
+/*
+ * Helper to check if a queue is empty.
+ */
+bool uartQueue_isFull(UART_Queue* queue) {
+	return (!uartQueue_isEmpty(queue) && queue->_front == queue->_rear);
 }

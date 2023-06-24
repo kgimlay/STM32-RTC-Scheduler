@@ -3,4 +3,6 @@
 ../Core/Src/uart_queue.c:32:6:_dequeue	16	static
 ../Core/Src/uart_queue.c:46:6:uartQueue_init	24	static
 ../Core/Src/uart_queue.c:65:19:uartQueue_enqueue	16	static
-../Core/Src/uart_queue.c:95:19:uartQueue_dequeue	16	static
+../Core/Src/uart_queue.c:101:19:uartQueue_dequeue	16	static
+../Core/Src/uart_queue.c:119:6:uartQueue_isEmpty	16	static
+../Core/Src/uart_queue.c:126:6:uartQueue_isFull	16	static
