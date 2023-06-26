@@ -1,5 +1,12 @@
-desktop_app_communication.c:14:6:initDesktopCommunication	1
-desktop_app_communication.c:25:21:reportToDesktopApp	2
-desktop_app_communication.c:51:22:retrieveFromDesktopApp	2
-desktop_app_communication.c:79:6:deskAppRxCompleteISR	1
-desktop_app_communication.c:87:6:deskAppTxCompleteISR	1
+desktop_app_communication.c:41:6:initDesktopCommunication	1
+desktop_app_communication.c:55:21:reportToDesktopApp	2
+desktop_app_communication.c:81:22:retrieveFromDesktopApp	2
+desktop_app_communication.c:109:6:checkRxTxError	3
+desktop_app_communication.c:117:6:flushReportQueue	2
+desktop_app_communication.c:133:6:startDesktopAppCommunication	1
+desktop_app_communication.c:144:6:deskAppRxCompleteISR	2
+desktop_app_communication.c:166:6:deskAppTxCompleteISR	1
+desktop_app_communication.c:177:6:_txMessage_IT	2
+desktop_app_communication.c:186:6:_rxMessage_IT	2
+desktop_app_communication.c:195:6:_txMessage_Poll	2
+desktop_app_communication.c:204:6:_rxMessage_Poll	2

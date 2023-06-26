@@ -17,13 +17,12 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
-#include <uart_message.h>
 #include "main.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "stdint.h"
-#include "uart_queue.h"
+#include "desktop_app_communication.h"
+#include "string.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -46,7 +45,7 @@
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-UART_Queue rxQueue;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -54,9 +53,9 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN PFP */
-char HelloWorldMessage[] = "\n\nHello!  Please enter your message and I will queue it!\n\n";
-char rxBuffer[RXBUFFERSIZE];
-char txBuffer[RXBUFFERSIZE];
+char rxBuffer[UART_MESSAGE_SIZE];
+char txBuffer[UART_MESSAGE_SIZE];
+char helloComputer[] = "Hello Computer!\n";
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -75,17 +74,9 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *UartHandle)
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 {
-	UART_QUEUE_STATUS qStatus;
-
-	// add message to queue
-	qStatus = uartQueue_enqueue(&rxQueue, rxBuffer);
-
-	// begin receiving again
-	if(HAL_UART_Receive_IT(&huart2, (uint8_t*)rxBuffer, RXBUFFERSIZE)== HAL_ERROR)
-	{
-	  /* Transfer error in transmission process */
-	  Error_Handler();
-	}
+	// if UART rx on UART2 (for desktop app communication)
+//	deskAppRxCompleteISR();
+	(void)0;  // no operation
 }
 /* USER CODE END 0 */
 
@@ -96,7 +87,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-  uartQueue_init(&rxQueue);
+
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -119,17 +110,7 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-  if(HAL_UART_Transmit(&huart2, (uint8_t*)HelloWorldMessage, (COUNTOF(HelloWorldMessage) - 1), 1000)!= HAL_OK)
-	{
-	  /* Transfer error in transmission process */
-	  Error_Handler();
-	}
 
-  if(HAL_UART_Receive_IT(&huart2, (uint8_t*)rxBuffer, RXBUFFERSIZE)== HAL_ERROR)
-	{
-	  /* Transfer error in transmission process */
-	  Error_Handler();
-	}
   /* USER CODE END 2 */
 
   /* Boot CPU2 */
@@ -137,8 +118,33 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
+  strncpy(txBuffer, "Hello Computer!\0", UART_MESSAGE_SIZE);
+
+  if (HAL_UART_Transmit_IT(&huart2, (uint8_t*)helloComputer, COUNTOF(helloComputer)) != HAL_OK)
+  	  Error_Handler();
+
+  if (HAL_UART_Receive_IT(&huart2, (uint8_t*)rxBuffer, UART_MESSAGE_SIZE) != HAL_OK)
+	  Error_Handler();
+
+  // initialize the desktop communication module (doesn't establish connection!)
+  initDesktopCommunication(&huart2);
+
+  // begin listening for messages from desktop
+//  startDesktopAppCommunication();
+
   while (1)
   {
+	  // check if there was an error in rx or tx
+//	  if (checkRxTxError())
+//		  while (1) {}
+
+	  // flush the report queue
+//	  flushReportQueue();
+
+	  // check for messages in the process queue
+
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -212,7 +218,7 @@ static void MX_USART2_UART_Init(void)
 
   /* USER CODE END USART2_Init 1 */
   huart2.Instance = USART2;
-  huart2.Init.BaudRate = 600;
+  huart2.Init.BaudRate = 9600;
   huart2.Init.WordLength = UART_WORDLENGTH_8B;
   huart2.Init.StopBits = UART_STOPBITS_1;
   huart2.Init.Parity = UART_PARITY_ODD;
@@ -221,8 +227,9 @@ static void MX_USART2_UART_Init(void)
   huart2.Init.OverSampling = UART_OVERSAMPLING_16;
   huart2.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
   huart2.Init.ClockPrescaler = UART_PRESCALER_DIV1;
-  huart2.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_RXOVERRUNDISABLE_INIT;
+  huart2.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_RXOVERRUNDISABLE_INIT|UART_ADVFEATURE_DMADISABLEONERROR_INIT;
   huart2.AdvancedInit.OverrunDisable = UART_ADVFEATURE_OVERRUN_DISABLE;
+  huart2.AdvancedInit.DMADisableonRxError = UART_ADVFEATURE_DMA_DISABLEONRXERROR;
   if (HAL_UART_Init(&huart2) != HAL_OK)
   {
     Error_Handler();

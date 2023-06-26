@@ -9,21 +9,51 @@
 
 
 /*
+ * Static operation variables
+ *
+ * There should be only one 'instance' of this communicator (if approaching this like
+ * OOP) so it is sufficient to make these variables static to the file rather than a
+ * structure that is passed in as a parameter.
+ */
+static bool _isInit = false;
+static volatile bool _txError = false;
+static volatile bool _rxError = false;
+static UART_HandleTypeDef* _uartHandle = NULL;
+static UART_Queue _process_queue;
+static UART_Queue _report_queue;
+static char _txBuffer[UART_MESSAGE_SIZE] = {0};
+static char _rxBuffer[UART_MESSAGE_SIZE] = {0};
+
+
+/*  Private Function Prototypes */
+void _txMessage_IT(void);
+void _rxMessage_IT(void);
+void _txMessage_Poll(void);
+void _rxMessage_Poll(void);
+
+
+/* Usage Functions for application interface (API) */
+
+
+/*
  *
  */
-void initDesktopCommunication(DESKTOP_COM* desktopComStruct, UART_HandleTypeDef* uartHandle) {
+void initDesktopCommunication(UART_HandleTypeDef* uartHandle) {
 	// initialize structure fields
-	desktopComStruct->_uartHandle = uartHandle;
-	uartQueue_init(&(desktopComStruct->_process_queue));
-	uartQueue_init(&(desktopComStruct->_report_queue));
+	_uartHandle = uartHandle;
+	uartQueue_init(&(_process_queue));
+	uartQueue_init(&(_report_queue));
+
+	// set isInit flag
+	_isInit = true;
 }
 
 
 /*
  *
  */
-REPORT_QUEUE_STATUS reportToDesktopApp(DESKTOP_COM* desktopComStruct,
-		char header[UART_MESSAGE_HEADER_SIZE], char body[UART_MESSAGE_BODY_SIZE])
+REPORT_QUEUE_STATUS reportToDesktopApp(char header[UART_MESSAGE_HEADER_SIZE],
+		char body[UART_MESSAGE_BODY_SIZE])
 {
 	UART_QUEUE_STATUS queueStatus;
 	char message[UART_MESSAGE_SIZE];
@@ -32,7 +62,7 @@ REPORT_QUEUE_STATUS reportToDesktopApp(DESKTOP_COM* desktopComStruct,
 	composeMessage(header, body, message);
 
 	// queue into report queue
-	queueStatus = uartQueue_enqueue(&(desktopComStruct->_report_queue), message);
+	queueStatus = uartQueue_enqueue(&(_report_queue), message);
 
 	// report status of queue operation
 	if (queueStatus == UART_QUEUE_FULL)
@@ -48,14 +78,14 @@ REPORT_QUEUE_STATUS reportToDesktopApp(DESKTOP_COM* desktopComStruct,
 /*
  *
  */
-PROCESS_QUEUE_STATUS retrieveFromDesktopApp(DESKTOP_COM* desktopComStruct,
-		char header[UART_MESSAGE_HEADER_SIZE], char body[UART_MESSAGE_BODY_SIZE])
+PROCESS_QUEUE_STATUS retrieveFromDesktopApp(char header[UART_MESSAGE_HEADER_SIZE],
+		char body[UART_MESSAGE_BODY_SIZE])
 {
 	UART_QUEUE_STATUS queueStatus;
 	char message[UART_MESSAGE_SIZE];
 
 	// retrieve message from process queue
-	queueStatus = uartQueue_dequeue(&(desktopComStruct->_process_queue), message);
+	queueStatus = uartQueue_dequeue(&(_process_queue), message);
 
 	// check that queue wasn't empty
 	if (queueStatus == UART_QUEUE_EMPTY)
@@ -76,17 +106,23 @@ PROCESS_QUEUE_STATUS retrieveFromDesktopApp(DESKTOP_COM* desktopComStruct,
 /*
  *
  */
-void deskAppRxCompleteISR() {
-	UART_QUEUE_STATUS queueStatus;
+bool checkRxTxError(void) {
+	return (_rxError || _txError);
+}
 
-	// add message to process queue
-	queueStatus = uartQueue_enqueue(&rxQueue, rxBuffer);
 
-	// begin receiving again
-	if(HAL_UART_Receive_IT(&huart2, (uint8_t*)rxBuffer, RXBUFFERSIZE)== HAL_ERROR)
+/*
+ *
+ */
+void flushReportQueue(void) {
+	// while the report queue is not empty
+	while (!uartQueue_isEmpty(&_report_queue))
 	{
-	  /* Transfer error in transmission process */
-	  Error_Handler();
+		// pop message from report queue and place in tx buffer
+		uartQueue_dequeue(&_report_queue, _txBuffer);
+
+		// send message to computer
+		_txMessage_Poll();
 	}
 }
 
@@ -94,6 +130,78 @@ void deskAppRxCompleteISR() {
 /*
  *
  */
-void deskAppTxCompleteISR() {
+void startDesktopAppCommunication(void) {
+	_rxMessage_IT();
+}
 
+
+/* ISR Functions for handling UART interrupts */
+
+
+/*
+ *
+ */
+void deskAppRxCompleteISR(void) {
+	// check if queue is not full
+	if (!uartQueue_isFull(&_process_queue))
+	{
+		// add message to process queue
+		uartQueue_enqueue(&_process_queue, _rxBuffer);
+	}
+
+	// queue is full, report to desktop application to pause transmissions
+	else
+	{
+
+	}
+
+	// begin receiving again
+	_rxMessage_IT();
+}
+
+
+/*
+ *
+ */
+void deskAppTxCompleteISR(void) {
+
+}
+
+
+/* Private Function Definitions */
+
+
+/*
+ *
+ */
+void _txMessage_IT(void) {
+	if (HAL_UART_Transmit_IT(_uartHandle, (uint8_t*)_txBuffer, UART_MESSAGE_SIZE) == HAL_ERROR)
+		_txError = true;
+}
+
+
+/*
+ *
+ */
+void _rxMessage_IT(void) {
+	if (HAL_UART_Receive_IT(_uartHandle, (uint8_t*)_rxBuffer, UART_MESSAGE_SIZE) == HAL_ERROR)
+		_rxError = true;
+}
+
+
+/*
+ *
+ */
+void _txMessage_Poll(void) {
+	if (HAL_UART_Transmit(_uartHandle, (uint8_t*)_txBuffer, UART_MESSAGE_SIZE, TX_POLL_TIMEOUT) == HAL_ERROR)
+		_txError = true;
+}
+
+
+/*
+ *
+ */
+void _rxMessage_Poll(void) {
+	if (HAL_UART_Receive(_uartHandle, (uint8_t*)_rxBuffer, UART_MESSAGE_SIZE, RX_POLL_TIMEOUT) == HAL_ERROR)
+		_rxError = true;
 }

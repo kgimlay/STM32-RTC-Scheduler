@@ -45,17 +45,10 @@
 #define REPORT_QUEUE_SIZE QUEUE_SIZE
 
 /*
- * Structure to hold process and report queues (rx and tx respectively)
- * as well as operaiton variables
+ * Definitions for polling timeouts
  */
-typedef struct
-{
-	UART_HandleTypeDef* _uartHandle;
-	UART_Queue _process_queue;
-	UART_Queue _report_queue;
-	char _txBuffer[UART_MESSAGE_SIZE];
-	char _rxBuffer[UART_MESSAGE_SIZE];
-} DESKTOP_COM;
+#define TX_POLL_TIMEOUT 250
+#define RX_POLL_TIMEOUT 250
 
 /*
  * Status codes for report queue.
@@ -73,10 +66,12 @@ typedef enum {
 	PROCESS_EMPTY
 } PROCESS_QUEUE_STATUS;
 
+/* Usage Functions for application interface (API) */
+
 /*
  * Initializes the DESKTOP_COM structure.
  */
-void initDesktopCommunication(DESKTOP_COM* desktopComStruct, UART_HandleTypeDef* uartHandle);
+void initDesktopCommunication(UART_HandleTypeDef* uartHandle);
 
 /*
  * Report to the desktop application.
@@ -88,8 +83,8 @@ void initDesktopCommunication(DESKTOP_COM* desktopComStruct, UART_HandleTypeDef*
  * 		REPORT_FULL if the queue is full and the application needs to wait for
  * 			it to empty.
  */
-REPORT_QUEUE_STATUS reportToDesktopApp(DESKTOP_COM* desktopComStruct,
-		char header[UART_MESSAGE_HEADER_SIZE], char body[UART_MESSAGE_BODY_SIZE]);
+REPORT_QUEUE_STATUS reportToDesktopApp(char header[UART_MESSAGE_HEADER_SIZE],
+		char body[UART_MESSAGE_BODY_SIZE]);
 
 /*
  * Check for a message from the desktop application to process.
@@ -99,17 +94,38 @@ REPORT_QUEUE_STATUS reportToDesktopApp(DESKTOP_COM* desktopComStruct,
  * 		PROCESS_DEQUEUED if a message was present from the desktop application, or
  * 		PROCESS_EMPTY if there were no messages present.
  */
-PROCESS_QUEUE_STATUS retrieveFromDesktopApp(DESKTOP_COM* desktopComStruct,
-		char header[UART_MESSAGE_HEADER_SIZE], char body[UART_MESSAGE_BODY_SIZE]);
+PROCESS_QUEUE_STATUS retrieveFromDesktopApp(char header[UART_MESSAGE_HEADER_SIZE],
+		char body[UART_MESSAGE_BODY_SIZE]);
+
+/*
+ * Check if there had been any errors in receiving or transmitting a message between
+ * the MCU and the desktop application.
+ *
+ * THIS FUNCTION IS JUST A PROTOTYPE AND DOES NOT DO ANYTHING TO FIX ERRORS, ONLY
+ * REPORTS IF THERE WAS AN ERROR.
+ */
+bool checkRxTxError(void);
+
+/*
+ * Flushes the report queue (sends all messages to desktop app from report queue).
+ */
+void flushReportQueue(void);
+
+/*
+ * Begins listening for messages from desktop application.
+ */
+void startDesktopAppCommunication(void);
+
+/* ISR Functions for handling UART interrupts */
 
 /*
  * ISR function for handling UART receive complete (RX).
  */
-void deskAppRxCompleteISR();
+void deskAppRxCompleteISR(void);
 
 /*
  * ISR function for handling UART transmit complete (TX).
  */
-void deskAppTxCompleteISR();
+void deskAppTxCompleteISR(void);
 
 #endif /* INC_DESKTOP_APP_COMMUNICATION_H_ */
