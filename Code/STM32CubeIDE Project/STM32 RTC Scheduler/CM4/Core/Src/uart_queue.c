@@ -53,8 +53,8 @@ void uartQueue_init(UART_Queue* queue) {
 	queue->_rear = 0;
 
 	// ensure that the queue messages are empty
-	for (row = 0; row < UART_MESSAGE_SIZE; row++)
-		for (col = 0; col < UART_MESSAGE_SIZE; col++)
+	for (row = 0; row < QUEUE_SIZE; row++)
+		for (col = 0; col < QUEUE_BUFFER_SIZE; col++)
 			queue->_queue[row][col] = '\0';
 }
 

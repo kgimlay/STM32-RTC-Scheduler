@@ -31,7 +31,7 @@ typedef struct {
 	volatile bool _isEmpty;
 	volatile int _front;
 	volatile int _rear;
-	char _queue[QUEUE_SIZE][QUEUE_BUFFER_SIZE];
+	volatile char _queue[QUEUE_SIZE][QUEUE_BUFFER_SIZE];
 } UART_Queue;
 
 /*

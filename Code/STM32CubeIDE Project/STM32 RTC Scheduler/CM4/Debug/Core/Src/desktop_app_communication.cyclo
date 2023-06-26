@@ -5,8 +5,8 @@ desktop_app_communication.c:109:6:checkRxTxError	3
 desktop_app_communication.c:117:6:flushReportQueue	2
 desktop_app_communication.c:133:6:startDesktopAppCommunication	1
 desktop_app_communication.c:144:6:deskAppRxCompleteISR	2
-desktop_app_communication.c:166:6:deskAppTxCompleteISR	1
-desktop_app_communication.c:177:6:_txMessage_IT	2
-desktop_app_communication.c:186:6:_rxMessage_IT	2
-desktop_app_communication.c:195:6:_txMessage_Poll	2
-desktop_app_communication.c:204:6:_rxMessage_Poll	2
+desktop_app_communication.c:167:6:deskAppTxCompleteISR	1
+desktop_app_communication.c:178:6:_txMessage_IT	2
+desktop_app_communication.c:187:6:_rxMessage_IT	2
+desktop_app_communication.c:196:6:_txMessage_Poll	2
+desktop_app_communication.c:205:6:_rxMessage_Poll	2

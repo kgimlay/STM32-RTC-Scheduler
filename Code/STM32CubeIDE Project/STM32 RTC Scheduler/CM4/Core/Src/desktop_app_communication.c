@@ -61,8 +61,14 @@ REPORT_QUEUE_STATUS reportToDesktopApp(char header[UART_MESSAGE_HEADER_SIZE],
 	// Compose header and body into one message
 	composeMessage(header, body, message);
 
+	// disable IRQs from UART to prevent race condition
+
+
 	// queue into report queue
 	queueStatus = uartQueue_enqueue(&(_report_queue), message);
+
+	// enable UART IRQs
+
 
 	// report status of queue operation
 	if (queueStatus == UART_QUEUE_FULL)
@@ -84,8 +90,14 @@ PROCESS_QUEUE_STATUS retrieveFromDesktopApp(char header[UART_MESSAGE_HEADER_SIZE
 	UART_QUEUE_STATUS queueStatus;
 	char message[UART_MESSAGE_SIZE];
 
+	// disable IRQs from UART to prevent race condition
+
+
 	// retrieve message from process queue
 	queueStatus = uartQueue_dequeue(&(_process_queue), message);
+
+	// enable UART IRQs
+
 
 	// check that queue wasn't empty
 	if (queueStatus == UART_QUEUE_EMPTY)
@@ -152,7 +164,8 @@ void deskAppRxCompleteISR(void) {
 	// queue is full, report to desktop application to pause transmissions
 	else
 	{
-
+		strncpy(_txBuffer, "\nBUFFER FULL!\n\n", UART_MESSAGE_SIZE);
+		_txMessage_IT();
 	}
 
 	// begin receiving again

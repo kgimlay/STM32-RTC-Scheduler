@@ -75,8 +75,8 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *UartHandle)
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 {
 	// if UART rx on UART2 (for desktop app communication)
-//	deskAppRxCompleteISR();
-	(void)0;  // no operation
+	deskAppRxCompleteISR();
+//	(void)0;  // no operation
 }
 /* USER CODE END 0 */
 
@@ -119,30 +119,25 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
-  strncpy(txBuffer, "Hello Computer!\0", UART_MESSAGE_SIZE);
-
-  if (HAL_UART_Transmit_IT(&huart2, (uint8_t*)helloComputer, COUNTOF(helloComputer)) != HAL_OK)
-  	  Error_Handler();
-
-  if (HAL_UART_Receive_IT(&huart2, (uint8_t*)rxBuffer, UART_MESSAGE_SIZE) != HAL_OK)
-	  Error_Handler();
-
   // initialize the desktop communication module (doesn't establish connection!)
   initDesktopCommunication(&huart2);
 
   // begin listening for messages from desktop
-//  startDesktopAppCommunication();
+  startDesktopAppCommunication();
 
   while (1)
   {
 	  // check if there was an error in rx or tx
-//	  if (checkRxTxError())
-//		  while (1) {}
+	  if (checkRxTxError())
+		  while (1) {}
 
 	  // flush the report queue
-//	  flushReportQueue();
+	  flushReportQueue();
 
-	  // check for messages in the process queue
+	  // check for message in the process queue
+
+
+	  // if message present, handle message
 
 
     /* USER CODE END WHILE */
