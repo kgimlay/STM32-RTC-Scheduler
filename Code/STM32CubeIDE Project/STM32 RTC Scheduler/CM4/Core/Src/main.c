@@ -61,20 +61,28 @@ static void MX_USART2_UART_Init(void);
 
 void HAL_UART_ErrorCallback(UART_HandleTypeDef *UartHandle)
 {
-	(void)0;  // no operation
+	if (UartHandle->Instance == USART1)
+		(void)0;  // no operation
+
+	else if (UartHandle->Instance == USART2)
+		deskAppErrorISR();
 }
 
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *UartHandle)
 {
-	(void)0;  // no operation
+	if (UartHandle->Instance == USART1)
+		(void)0;  // no operation
+
+	else if (UartHandle->Instance == USART2)
+		deskAppTxCompleteISR();
 }
 
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 {
-	// if UART rx on UART2 (for desktop app communication)
 	if (UartHandle->Instance == USART1)
 		(void)0;  // no operation
+
 	else if (UartHandle->Instance == USART2)
 		deskAppRxCompleteISR();
 }

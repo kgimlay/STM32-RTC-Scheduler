@@ -194,6 +194,14 @@ void deskAppTxCompleteISR(void) {
 }
 
 
+/*
+ *
+ */
+void deskAppErrorISR(void) {
+
+}
+
+
 /* Private Function Definitions */
 
 

@@ -128,4 +128,9 @@ void deskAppRxCompleteISR(void);
  */
 void deskAppTxCompleteISR(void);
 
+/*
+ * ISR Function for handling UART errors
+ */
+void deskAppErrorISR(void);
+
 #endif /* INC_DESKTOP_APP_COMMUNICATION_H_ */
