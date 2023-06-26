@@ -53,9 +53,7 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN PFP */
-char rxBuffer[UART_MESSAGE_SIZE];
-char txBuffer[UART_MESSAGE_SIZE];
-char helloComputer[] = "Hello Computer!\n";
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -75,8 +73,10 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *UartHandle)
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 {
 	// if UART rx on UART2 (for desktop app communication)
-	deskAppRxCompleteISR();
-//	(void)0;  // no operation
+	if (UartHandle->Instance == USART1)
+		(void)0;  // no operation
+	else if (UartHandle->Instance == USART2)
+		deskAppRxCompleteISR();
 }
 /* USER CODE END 0 */
 

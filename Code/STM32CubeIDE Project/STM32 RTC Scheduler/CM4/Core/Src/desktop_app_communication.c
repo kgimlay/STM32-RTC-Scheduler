@@ -62,13 +62,19 @@ REPORT_QUEUE_STATUS reportToDesktopApp(char header[UART_MESSAGE_HEADER_SIZE],
 	composeMessage(header, body, message);
 
 	// disable IRQs from UART to prevent race condition
-
+	if (_uartHandle->Instance == USART1)
+		HAL_NVIC_DisableIRQ(USART1_IRQn);
+	else if (_uartHandle->Instance == USART2)
+		HAL_NVIC_DisableIRQ(USART2_IRQn);
 
 	// queue into report queue
 	queueStatus = uartQueue_enqueue(&(_report_queue), message);
 
 	// enable UART IRQs
-
+	if (_uartHandle->Instance == USART1)
+		HAL_NVIC_EnableIRQ(USART1_IRQn);
+	else if (_uartHandle->Instance == USART2)
+		HAL_NVIC_EnableIRQ(USART2_IRQn);
 
 	// report status of queue operation
 	if (queueStatus == UART_QUEUE_FULL)
@@ -91,13 +97,19 @@ PROCESS_QUEUE_STATUS retrieveFromDesktopApp(char header[UART_MESSAGE_HEADER_SIZE
 	char message[UART_MESSAGE_SIZE];
 
 	// disable IRQs from UART to prevent race condition
-
+	if (_uartHandle->Instance == USART1)
+		HAL_NVIC_DisableIRQ(USART1_IRQn);
+	else if (_uartHandle->Instance == USART2)
+		HAL_NVIC_DisableIRQ(USART2_IRQn);
 
 	// retrieve message from process queue
 	queueStatus = uartQueue_dequeue(&(_process_queue), message);
 
 	// enable UART IRQs
-
+	if (_uartHandle->Instance == USART1)
+		HAL_NVIC_EnableIRQ(USART1_IRQn);
+	else if (_uartHandle->Instance == USART2)
+		HAL_NVIC_EnableIRQ(USART2_IRQn);
 
 	// check that queue wasn't empty
 	if (queueStatus == UART_QUEUE_EMPTY)
@@ -164,6 +176,7 @@ void deskAppRxCompleteISR(void) {
 	// queue is full, report to desktop application to pause transmissions
 	else
 	{
+		// todo: replace with something better
 		strncpy(_txBuffer, "\nBUFFER FULL!\n\n", UART_MESSAGE_SIZE);
 		_txMessage_IT();
 	}
