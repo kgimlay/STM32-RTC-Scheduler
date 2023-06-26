@@ -133,6 +133,9 @@ int main(void)
   // begin listening for messages from desktop
   startDesktopAppCommunication();
 
+  char messageHeader[UART_MESSAGE_HEADER_SIZE];
+  char messageBody[UART_MESSAGE_BODY_SIZE];
+  PROCESS_QUEUE_STATUS messageStatus;
   while (1)
   {
 	  // check if there was an error in rx or tx
@@ -143,10 +146,13 @@ int main(void)
 	  flushReportQueue();
 
 	  // check for message in the process queue
-
+	  messageStatus = retrieveFromDesktopApp(messageHeader, messageBody);
 
 	  // if message present, handle message
-
+	  if (messageStatus == PROCESS_DEQUEUED) {
+		  // echo back to computer
+		  reportToDesktopApp(messageHeader, messageBody);
+	  }
 
     /* USER CODE END WHILE */
 
