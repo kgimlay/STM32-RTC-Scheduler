@@ -3847,7 +3847,7 @@ LOAD /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.id
  .igot.plt      0x000000002000000c        0x0 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.macos64_1.0.200.202301161003/tools/bin/../lib/gcc/arm-none-eabi/10.3.1/thumb/v7e-m/nofp/crtbegin.o
                 0x000000002000000c                . = ALIGN (0x4)
 
-.bss            0x000000002000000c      0x214 load address 0x00000000080053d8
+.bss            0x000000002000000c      0x514 load address 0x00000000080053d8
                 0x000000002000000c                _sbss = .
                 0x000000002000000c                __bss_start__ = _sbss
  *(.bss)
@@ -3860,32 +3860,32 @@ LOAD /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.id
  .bss._uartHandle
                 0x000000002000002c        0x4 ./Core/Src/desktop_app_communication.o
  .bss._process_queue
-                0x0000000020000030       0x8c ./Core/Src/desktop_app_communication.o
+                0x0000000020000030      0x20c ./Core/Src/desktop_app_communication.o
  .bss._report_queue
-                0x00000000200000bc       0x8c ./Core/Src/desktop_app_communication.o
+                0x000000002000023c      0x20c ./Core/Src/desktop_app_communication.o
  .bss._txBuffer
-                0x0000000020000148       0x20 ./Core/Src/desktop_app_communication.o
+                0x0000000020000448       0x20 ./Core/Src/desktop_app_communication.o
  .bss._rxBuffer
-                0x0000000020000168       0x20 ./Core/Src/desktop_app_communication.o
- .bss.huart2    0x0000000020000188       0x94 ./Core/Src/main.o
-                0x0000000020000188                huart2
- .bss.uwTick    0x000000002000021c        0x4 ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal.o
-                0x000000002000021c                uwTick
+                0x0000000020000468       0x20 ./Core/Src/desktop_app_communication.o
+ .bss.huart2    0x0000000020000488       0x94 ./Core/Src/main.o
+                0x0000000020000488                huart2
+ .bss.uwTick    0x000000002000051c        0x4 ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal.o
+                0x000000002000051c                uwTick
  *(COMMON)
-                0x0000000020000220                . = ALIGN (0x4)
-                0x0000000020000220                _ebss = .
-                0x0000000020000220                __bss_end__ = _ebss
+                0x0000000020000520                . = ALIGN (0x4)
+                0x0000000020000520                _ebss = .
+                0x0000000020000520                __bss_end__ = _ebss
 
 ._user_heap_stack
-                0x0000000020000220      0x600 load address 0x00000000080053d8
-                0x0000000020000220                . = ALIGN (0x8)
+                0x0000000020000520      0x600 load address 0x00000000080053d8
+                0x0000000020000520                . = ALIGN (0x8)
                 [!provide]                        PROVIDE (end = .)
-                0x0000000020000220                PROVIDE (_end = .)
-                0x0000000020000420                . = (. + _Min_Heap_Size)
- *fill*         0x0000000020000220      0x200 
-                0x0000000020000820                . = (. + _Min_Stack_Size)
- *fill*         0x0000000020000420      0x400 
-                0x0000000020000820                . = ALIGN (0x8)
+                0x0000000020000520                PROVIDE (_end = .)
+                0x0000000020000720                . = (. + _Min_Heap_Size)
+ *fill*         0x0000000020000520      0x200 
+                0x0000000020000b20                . = (. + _Min_Stack_Size)
+ *fill*         0x0000000020000720      0x400 
+                0x0000000020000b20                . = ALIGN (0x8)
 
 /DISCARD/
  libc.a(*)
@@ -3957,45 +3957,45 @@ LOAD /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.id
 LOAD /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.macos64_1.0.200.202301161003/tools/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/nofp/libm.a
 LOAD /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.macos64_1.0.200.202301161003/tools/bin/../lib/gcc/arm-none-eabi/10.3.1/thumb/v7e-m/nofp/libgcc.a
 
-.debug_info     0x0000000000000000    0x10f0c
+.debug_info     0x0000000000000000    0x10f0e
  .debug_info    0x0000000000000000      0x566 ./Common/System/system_stm32wlxx.o
- .debug_info    0x0000000000000566      0xe4d ./Core/Src/desktop_app_communication.o
- .debug_info    0x00000000000013b3     0x124f ./Core/Src/main.o
- .debug_info    0x0000000000002602     0x10d9 ./Core/Src/stm32wlxx_hal_msp.o
- .debug_info    0x00000000000036db      0x8be ./Core/Src/stm32wlxx_it.o
- .debug_info    0x0000000000003f99      0x13d ./Core/Src/uart_messge.o
- .debug_info    0x00000000000040d6      0x344 ./Core/Src/uart_queue.o
- .debug_info    0x000000000000441a       0x22 ./Core/Startup/startup_stm32wl55jcix.o
- .debug_info    0x000000000000443c     0x1209 ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal.o
- .debug_info    0x0000000000005645      0xdc3 ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_cortex.o
- .debug_info    0x0000000000006408      0x9af ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_dma.o
- .debug_info    0x0000000000006db7      0x79c ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_gpio.o
- .debug_info    0x0000000000007553      0x912 ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_pwr.o
- .debug_info    0x0000000000007e65      0xe53 ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_pwr_ex.o
- .debug_info    0x0000000000008cb8     0x14a8 ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_rcc.o
- .debug_info    0x000000000000a160     0x102c ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_rcc_ex.o
- .debug_info    0x000000000000b18c     0x4cd9 ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_uart.o
- .debug_info    0x000000000000fe65     0x10a7 ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_uart_ex.o
+ .debug_info    0x0000000000000566      0xe4e ./Core/Src/desktop_app_communication.o
+ .debug_info    0x00000000000013b4     0x124f ./Core/Src/main.o
+ .debug_info    0x0000000000002603     0x10d9 ./Core/Src/stm32wlxx_hal_msp.o
+ .debug_info    0x00000000000036dc      0x8be ./Core/Src/stm32wlxx_it.o
+ .debug_info    0x0000000000003f9a      0x13d ./Core/Src/uart_messge.o
+ .debug_info    0x00000000000040d7      0x345 ./Core/Src/uart_queue.o
+ .debug_info    0x000000000000441c       0x22 ./Core/Startup/startup_stm32wl55jcix.o
+ .debug_info    0x000000000000443e     0x1209 ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal.o
+ .debug_info    0x0000000000005647      0xdc3 ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_cortex.o
+ .debug_info    0x000000000000640a      0x9af ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_dma.o
+ .debug_info    0x0000000000006db9      0x79c ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_gpio.o
+ .debug_info    0x0000000000007555      0x912 ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_pwr.o
+ .debug_info    0x0000000000007e67      0xe53 ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_pwr_ex.o
+ .debug_info    0x0000000000008cba     0x14a8 ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_rcc.o
+ .debug_info    0x000000000000a162     0x102c ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_rcc_ex.o
+ .debug_info    0x000000000000b18e     0x4cd9 ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_uart.o
+ .debug_info    0x000000000000fe67     0x10a7 ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_uart_ex.o
 
-.debug_abbrev   0x0000000000000000     0x2714
+.debug_abbrev   0x0000000000000000     0x2723
  .debug_abbrev  0x0000000000000000      0x138 ./Common/System/system_stm32wlxx.o
- .debug_abbrev  0x0000000000000138      0x214 ./Core/Src/desktop_app_communication.o
- .debug_abbrev  0x000000000000034c      0x2f3 ./Core/Src/main.o
- .debug_abbrev  0x000000000000063f      0x22e ./Core/Src/stm32wlxx_hal_msp.o
- .debug_abbrev  0x000000000000086d      0x189 ./Core/Src/stm32wlxx_it.o
- .debug_abbrev  0x00000000000009f6       0xb6 ./Core/Src/uart_messge.o
- .debug_abbrev  0x0000000000000aac      0x17d ./Core/Src/uart_queue.o
- .debug_abbrev  0x0000000000000c29       0x12 ./Core/Startup/startup_stm32wl55jcix.o
- .debug_abbrev  0x0000000000000c3b      0x334 ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal.o
- .debug_abbrev  0x0000000000000f6f      0x2d5 ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_cortex.o
- .debug_abbrev  0x0000000000001244      0x21f ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_dma.o
- .debug_abbrev  0x0000000000001463      0x1d9 ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_gpio.o
- .debug_abbrev  0x000000000000163c      0x203 ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_pwr.o
- .debug_abbrev  0x000000000000183f      0x2fa ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_pwr_ex.o
- .debug_abbrev  0x0000000000001b39      0x324 ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_rcc.o
- .debug_abbrev  0x0000000000001e5d      0x2bd ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_rcc_ex.o
- .debug_abbrev  0x000000000000211a      0x33d ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_uart.o
- .debug_abbrev  0x0000000000002457      0x2bd ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_uart_ex.o
+ .debug_abbrev  0x0000000000000138      0x223 ./Core/Src/desktop_app_communication.o
+ .debug_abbrev  0x000000000000035b      0x2f3 ./Core/Src/main.o
+ .debug_abbrev  0x000000000000064e      0x22e ./Core/Src/stm32wlxx_hal_msp.o
+ .debug_abbrev  0x000000000000087c      0x189 ./Core/Src/stm32wlxx_it.o
+ .debug_abbrev  0x0000000000000a05       0xb6 ./Core/Src/uart_messge.o
+ .debug_abbrev  0x0000000000000abb      0x17d ./Core/Src/uart_queue.o
+ .debug_abbrev  0x0000000000000c38       0x12 ./Core/Startup/startup_stm32wl55jcix.o
+ .debug_abbrev  0x0000000000000c4a      0x334 ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal.o
+ .debug_abbrev  0x0000000000000f7e      0x2d5 ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_cortex.o
+ .debug_abbrev  0x0000000000001253      0x21f ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_dma.o
+ .debug_abbrev  0x0000000000001472      0x1d9 ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_gpio.o
+ .debug_abbrev  0x000000000000164b      0x203 ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_pwr.o
+ .debug_abbrev  0x000000000000184e      0x2fa ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_pwr_ex.o
+ .debug_abbrev  0x0000000000001b48      0x324 ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_rcc.o
+ .debug_abbrev  0x0000000000001e6c      0x2bd ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_rcc_ex.o
+ .debug_abbrev  0x0000000000002129      0x33d ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_uart.o
+ .debug_abbrev  0x0000000000002466      0x2bd ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_uart_ex.o
 
 .debug_aranges  0x0000000000000000     0x10a0
  .debug_aranges
@@ -4160,42 +4160,42 @@ LOAD /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.id
  .debug_line    0x000000000000b782     0x3cc0 ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_uart.o
  .debug_line    0x000000000000f442      0xe24 ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_uart_ex.o
 
-.debug_str      0x0000000000000000    0xaffef
+.debug_str      0x0000000000000000    0xafff0
  .debug_str     0x0000000000000000    0xa7ead ./Common/System/system_stm32wlxx.o
                                       0xa847f (size before relaxing)
- .debug_str     0x00000000000a7ead      0xddf ./Core/Src/desktop_app_communication.o
-                                      0xa8fdd (size before relaxing)
- .debug_str     0x00000000000a8c8c     0x32ad ./Core/Src/main.o
-                                      0xabe75 (size before relaxing)
- .debug_str     0x00000000000abf39      0x281 ./Core/Src/stm32wlxx_hal_msp.o
+ .debug_str     0x00000000000a7ead      0xde0 ./Core/Src/desktop_app_communication.o
+                                      0xa8fde (size before relaxing)
+ .debug_str     0x00000000000a8c8d     0x32ad ./Core/Src/main.o
+                                      0xabe76 (size before relaxing)
+ .debug_str     0x00000000000abf3a      0x281 ./Core/Src/stm32wlxx_hal_msp.o
                                       0xa9052 (size before relaxing)
- .debug_str     0x00000000000ac1ba       0xef ./Core/Src/stm32wlxx_it.o
+ .debug_str     0x00000000000ac1bb       0xef ./Core/Src/stm32wlxx_it.o
                                       0xa881d (size before relaxing)
- .debug_str     0x00000000000ac2a9       0x21 ./Core/Src/uart_messge.o
+ .debug_str     0x00000000000ac2aa       0x21 ./Core/Src/uart_messge.o
                                        0x6e3d (size before relaxing)
- .debug_str     0x00000000000ac2ca       0x37 ./Core/Src/uart_queue.o
-                                       0x6faf (size before relaxing)
- .debug_str     0x00000000000ac301       0x36 ./Core/Startup/startup_stm32wl55jcix.o
+ .debug_str     0x00000000000ac2cb       0x37 ./Core/Src/uart_queue.o
+                                       0x6fb0 (size before relaxing)
+ .debug_str     0x00000000000ac302       0x36 ./Core/Startup/startup_stm32wl55jcix.o
                                          0xb0 (size before relaxing)
- .debug_str     0x00000000000ac337      0x95b ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal.o
+ .debug_str     0x00000000000ac338      0x95b ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal.o
                                       0xa9262 (size before relaxing)
- .debug_str     0x00000000000acc92      0x3de ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_cortex.o
+ .debug_str     0x00000000000acc93      0x3de ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_cortex.o
                                       0xa8b60 (size before relaxing)
- .debug_str     0x00000000000ad070      0x36e ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_dma.o
+ .debug_str     0x00000000000ad071      0x36e ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_dma.o
                                       0xa882f (size before relaxing)
- .debug_str     0x00000000000ad3de      0x1f5 ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_gpio.o
+ .debug_str     0x00000000000ad3df      0x1f5 ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_gpio.o
                                       0xa84d3 (size before relaxing)
- .debug_str     0x00000000000ad5d3      0x59a ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_pwr.o
+ .debug_str     0x00000000000ad5d4      0x59a ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_pwr.o
                                       0xa88d2 (size before relaxing)
- .debug_str     0x00000000000adb6d      0x711 ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_pwr_ex.o
+ .debug_str     0x00000000000adb6e      0x711 ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_pwr_ex.o
                                       0xa8c32 (size before relaxing)
- .debug_str     0x00000000000ae27e      0xb20 ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_rcc.o
+ .debug_str     0x00000000000ae27f      0xb20 ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_rcc.o
                                       0xa9246 (size before relaxing)
- .debug_str     0x00000000000aed9e      0x5d6 ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_rcc_ex.o
+ .debug_str     0x00000000000aed9f      0x5d6 ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_rcc_ex.o
                                       0xa8da1 (size before relaxing)
- .debug_str     0x00000000000af374      0x9a3 ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_uart.o
+ .debug_str     0x00000000000af375      0x9a3 ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_uart.o
                                       0xa94b8 (size before relaxing)
- .debug_str     0x00000000000afd17      0x2d8 ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_uart_ex.o
+ .debug_str     0x00000000000afd18      0x2d8 ./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_uart_ex.o
                                       0xa8bb1 (size before relaxing)
 
 .comment        0x0000000000000000       0x50

@@ -16,7 +16,7 @@
 /*
  * The number of entries in the queue
  */
-#define QUEUE_SIZE 4
+#define QUEUE_SIZE 16
 
 /*
  * The number of characters in each buffer

@@ -21,29 +21,29 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, ALLOC, LOAD, DATA
   8 .data         0000000c  20000000  080053cc  00020000  2**2
                   CONTENTS, ALLOC, LOAD, DATA
-  9 .bss          00000214  2000000c  080053d8  0002000c  2**2
+  9 .bss          00000514  2000000c  080053d8  0002000c  2**2
                   ALLOC
- 10 ._user_heap_stack 00000600  20000220  080053d8  00020220  2**0
+ 10 ._user_heap_stack 00000600  20000520  080053d8  00020520  2**0
                   ALLOC
  11 .ARM.attributes 0000002a  00000000  00000000  0002000c  2**0
                   CONTENTS, READONLY
- 12 .debug_info   00010f0c  00000000  00000000  00020036  2**0
+ 12 .debug_info   00010f0e  00000000  00000000  00020036  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 13 .debug_abbrev 00002714  00000000  00000000  00030f42  2**0
+ 13 .debug_abbrev 00002723  00000000  00000000  00030f44  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_aranges 000010a0  00000000  00000000  00033658  2**3
+ 14 .debug_aranges 000010a0  00000000  00000000  00033668  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_ranges 00000fb8  00000000  00000000  000346f8  2**3
+ 15 .debug_ranges 00000fb8  00000000  00000000  00034708  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_macro  0001c27d  00000000  00000000  000356b0  2**0
+ 16 .debug_macro  0001c27d  00000000  00000000  000356c0  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_line   00010266  00000000  00000000  0005192d  2**0
+ 17 .debug_line   00010266  00000000  00000000  0005193d  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    000affef  00000000  00000000  00061b93  2**0
+ 18 .debug_str    000afff0  00000000  00000000  00061ba3  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000050  00000000  00000000  00111b82  2**0
+ 19 .comment      00000050  00000000  00000000  00111b93  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  00004424  00000000  00000000  00111bd4  2**2
+ 20 .debug_frame  00004424  00000000  00000000  00111be4  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -403,7 +403,7 @@ void initDesktopCommunication(UART_HandleTypeDef* uartHandle) {
  80004ae:	bd80      	pop	{r7, pc}
  80004b0:	2000002c 	.word	0x2000002c
  80004b4:	20000030 	.word	0x20000030
- 80004b8:	200000bc 	.word	0x200000bc
+ 80004b8:	2000023c 	.word	0x2000023c
  80004bc:	20000028 	.word	0x20000028
 
 080004c0 <reportToDesktopApp>:
@@ -508,7 +508,7 @@ REPORT_QUEUE_STATUS reportToDesktopApp(char header[UART_MESSAGE_HEADER_SIZE],
  800054a:	3728      	adds	r7, #40	; 0x28
  800054c:	46bd      	mov	sp, r7
  800054e:	bd80      	pop	{r7, pc}
- 8000550:	200000bc 	.word	0x200000bc
+ 8000550:	2000023c 	.word	0x2000023c
  8000554:	2000002c 	.word	0x2000002c
  8000558:	40013800 	.word	0x40013800
  800055c:	40004400 	.word	0x40004400
@@ -689,8 +689,8 @@ void flushReportQueue(void) {
  800065a:	bf00      	nop
  800065c:	bd80      	pop	{r7, pc}
  800065e:	bf00      	nop
- 8000660:	20000148 	.word	0x20000148
- 8000664:	200000bc 	.word	0x200000bc
+ 8000660:	20000448 	.word	0x20000448
+ 8000664:	2000023c 	.word	0x2000023c
 
 08000668 <startDesktopAppCommunication>:
 
@@ -754,8 +754,8 @@ void deskAppRxCompleteISR(void) {
  80006a8:	bd80      	pop	{r7, pc}
  80006aa:	bf00      	nop
  80006ac:	20000030 	.word	0x20000030
- 80006b0:	20000168 	.word	0x20000168
- 80006b4:	20000148 	.word	0x20000148
+ 80006b0:	20000468 	.word	0x20000468
+ 80006b4:	20000448 	.word	0x20000448
  80006b8:	080052b0 	.word	0x080052b0
  80006bc:	080052d0 	.word	0x080052d0
 
@@ -819,7 +819,7 @@ void _txMessage_IT(void) {
  80006f8:	bd80      	pop	{r7, pc}
  80006fa:	bf00      	nop
  80006fc:	2000002c 	.word	0x2000002c
- 8000700:	20000148 	.word	0x20000148
+ 8000700:	20000448 	.word	0x20000448
  8000704:	20000029 	.word	0x20000029
 
 08000708 <_rxMessage_IT>:
@@ -850,7 +850,7 @@ void _rxMessage_IT(void) {
  8000728:	bd80      	pop	{r7, pc}
  800072a:	bf00      	nop
  800072c:	2000002c 	.word	0x2000002c
- 8000730:	20000168 	.word	0x20000168
+ 8000730:	20000468 	.word	0x20000468
  8000734:	2000002a 	.word	0x2000002a
 
 08000738 <_txMessage_Poll>:
@@ -881,7 +881,7 @@ void _txMessage_Poll(void) {
  8000758:	bd80      	pop	{r7, pc}
  800075a:	bf00      	nop
  800075c:	2000002c 	.word	0x2000002c
- 8000760:	20000148 	.word	0x20000148
+ 8000760:	20000448 	.word	0x20000448
  8000764:	20000029 	.word	0x20000029
 
 08000768 <LL_RCC_LSE_SetDriveCapability>:
@@ -1141,7 +1141,7 @@ int main(void)
 	  if (checkRxTxError())
  80008b4:	e7e1      	b.n	800087a <main+0x26>
  80008b6:	bf00      	nop
- 80008b8:	20000188 	.word	0x20000188
+ 80008b8:	20000488 	.word	0x20000488
 
 080008bc <SystemClock_Config>:
 /**
@@ -1386,7 +1386,7 @@ static void MX_USART2_UART_Init(void)
  8000a0e:	bf00      	nop
  8000a10:	bd80      	pop	{r7, pc}
  8000a12:	bf00      	nop
- 8000a14:	20000188 	.word	0x20000188
+ 8000a14:	20000488 	.word	0x20000488
  8000a18:	40004400 	.word	0x40004400
 
 08000a1c <MX_GPIO_Init>:
@@ -1814,7 +1814,7 @@ void USART2_IRQHandler(void)
  8000ba2:	bf00      	nop
  8000ba4:	bd80      	pop	{r7, pc}
  8000ba6:	bf00      	nop
- 8000ba8:	20000188 	.word	0x20000188
+ 8000ba8:	20000488 	.word	0x20000488
 
 08000bac <composeMessage>:
 /*
@@ -1896,8 +1896,8 @@ uint8_t nextIdx(uint8_t index) {
  8000c0e:	79fb      	ldrb	r3, [r7, #7]
  8000c10:	3301      	adds	r3, #1
  8000c12:	425a      	negs	r2, r3
- 8000c14:	f003 0303 	and.w	r3, r3, #3
- 8000c18:	f002 0203 	and.w	r2, r2, #3
+ 8000c14:	f003 030f 	and.w	r3, r3, #15
+ 8000c18:	f002 020f 	and.w	r2, r2, #15
  8000c1c:	bf58      	it	pl
  8000c1e:	4253      	negpl	r3, r2
  8000c20:	b2db      	uxtb	r3, r3
@@ -2060,7 +2060,7 @@ void uartQueue_init(UART_Queue* queue) {
  8000d00:	3301      	adds	r3, #1
  8000d02:	60fb      	str	r3, [r7, #12]
  8000d04:	68fb      	ldr	r3, [r7, #12]
- 8000d06:	2b03      	cmp	r3, #3
+ 8000d06:	2b0f      	cmp	r3, #15
  8000d08:	dde7      	ble.n	8000cda <uartQueue_init+0x20>
 }
  8000d0a:	bf00      	nop
@@ -2333,7 +2333,7 @@ LoopForever:
   ldr r2, =_sbss
  8000e24:	2000000c 	.word	0x2000000c
   ldr r4, =_ebss
- 8000e28:	20000220 	.word	0x20000220
+ 8000e28:	20000520 	.word	0x20000520
 
 08000e2c <ADC_IRQHandler>:
  * @retval : None
@@ -2526,7 +2526,7 @@ __weak void HAL_IncTick(void)
  8000efc:	bc80      	pop	{r7}
  8000efe:	4770      	bx	lr
  8000f00:	20000008 	.word	0x20000008
- 8000f04:	2000021c 	.word	0x2000021c
+ 8000f04:	2000051c 	.word	0x2000051c
 
 08000f08 <HAL_GetTick>:
   * @note This function is declared as __weak to be overwritten in case of other
@@ -2545,7 +2545,7 @@ __weak uint32_t HAL_GetTick(void)
  8000f12:	46bd      	mov	sp, r7
  8000f14:	bc80      	pop	{r7}
  8000f16:	4770      	bx	lr
- 8000f18:	2000021c 	.word	0x2000021c
+ 8000f18:	2000051c 	.word	0x2000051c
 
 08000f1c <__NVIC_SetPriorityGrouping>:
            In case of a conflict between priority grouping and available
