@@ -1,5 +1,5 @@
 # Defines the character to postfix a packet's body segment with
-emptyBodyFillerChar = '\0'
+emptyBodyFillerChar = '*'
 
 
 class UartPacket:
@@ -93,7 +93,7 @@ class UartPacket:
 		assert packetLength > headerLength, '''UartPacket parameter packetLength must be greater than headerLength'''
 
 		# test string conforms to packet length requirements
-		assert len(packetString) == packetLength, '''UartPacket parameter packetString must be as long as packetLength'''
+		assert len(packetString) == packetLength, '''UartPacket parameter packetString must be as long as packetLength.'''
 
 		# all tests passed, parse and store parameters
 		self._packetLength = packetLength

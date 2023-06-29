@@ -136,6 +136,7 @@ int main(void)
   char messageHeader[UART_MESSAGE_HEADER_SIZE];
   char messageBody[UART_MESSAGE_BODY_SIZE];
   PROCESS_QUEUE_STATUS messageStatus;
+  int messageCount = 0;
   while (1)
   {
 	  // check if there was an error in rx or tx
@@ -152,6 +153,8 @@ int main(void)
 	  if (messageStatus == PROCESS_DEQUEUED) {
 		  // echo back to computer
 		  reportToDesktopApp(messageHeader, messageBody);
+		  messageCount++;
+		  (void)0; // no operation
 	  }
 
     /* USER CODE END WHILE */

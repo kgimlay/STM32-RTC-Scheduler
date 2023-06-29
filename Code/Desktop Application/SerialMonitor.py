@@ -47,3 +47,12 @@ if __name__ == '__main__':
             break
     if serial_connection._connection.isOpen():
         print("Success!")
+
+        send_recv_count = 10
+
+        for i in range(send_recv_count):
+            serial_connection.send('ECHO', str(i))
+        for i in range(send_recv_count):
+            print("Received (" + str(i) + "):  " + serial_connection.receive()._bodyText, flush=True)
+
+        print("Done")

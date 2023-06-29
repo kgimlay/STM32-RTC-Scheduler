@@ -48,6 +48,7 @@ class SerialConnection:
     def send(self, header_info, text_info):
         # create packet to send
         packet = UartPacket.UartPacket(header_info, text_info, self._header_size, self._packet_size)
+        # print('Sending:\n' + str(packet))
         try:
             self._connection.write(packet.format().encode('ascii'))
             self._connection.flush()
@@ -62,12 +63,16 @@ class SerialConnection:
 
 
     def receive(self):
-        time.sleep(0.1)
+        # time.sleep(0.02)
         received_data = self._connection.read(self._packet_size)
         try:
             return UartPacket.UartPacket(received_data.decode('ascii'), self._header_size, self._packet_size)
         except UnicodeDecodeError:
             print('Error decoding')
+            return None
+        except AssertionError:
+            print('Malformed packet: ', end='')
+            print(received_data)
             return None
 
 
@@ -81,7 +86,7 @@ class SerialConnection:
 
         # handshake
         self.send('ECHO', 'Hello!')
-        time.sleep(0.1)
+        # time.sleep(0.1)
         read_packet = self.receive()
 
         # connection successful
