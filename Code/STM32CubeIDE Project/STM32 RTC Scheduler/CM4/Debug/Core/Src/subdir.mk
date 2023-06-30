@@ -5,34 +5,31 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../Core/Src/desktop_app_communication.c \
 ../Core/Src/main.c \
 ../Core/Src/stm32wlxx_hal_msp.c \
 ../Core/Src/stm32wlxx_it.c \
 ../Core/Src/syscalls.c \
 ../Core/Src/sysmem.c \
-../Core/Src/uart_messge.c \
-../Core/Src/uart_queue.c 
+../Core/Src/uart_basic_com.c \
+../Core/Src/uart_messge.c 
 
 OBJS += \
-./Core/Src/desktop_app_communication.o \
 ./Core/Src/main.o \
 ./Core/Src/stm32wlxx_hal_msp.o \
 ./Core/Src/stm32wlxx_it.o \
 ./Core/Src/syscalls.o \
 ./Core/Src/sysmem.o \
-./Core/Src/uart_messge.o \
-./Core/Src/uart_queue.o 
+./Core/Src/uart_basic_com.o \
+./Core/Src/uart_messge.o 
 
 C_DEPS += \
-./Core/Src/desktop_app_communication.d \
 ./Core/Src/main.d \
 ./Core/Src/stm32wlxx_hal_msp.d \
 ./Core/Src/stm32wlxx_it.d \
 ./Core/Src/syscalls.d \
 ./Core/Src/sysmem.d \
-./Core/Src/uart_messge.d \
-./Core/Src/uart_queue.d 
+./Core/Src/uart_basic_com.d \
+./Core/Src/uart_messge.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
@@ -42,7 +39,7 @@ Core/Src/%.o Core/Src/%.su Core/Src/%.cyclo: ../Core/Src/%.c Core/Src/subdir.mk
 clean: clean-Core-2f-Src
 
 clean-Core-2f-Src:
-	-$(RM) ./Core/Src/desktop_app_communication.cyclo ./Core/Src/desktop_app_communication.d ./Core/Src/desktop_app_communication.o ./Core/Src/desktop_app_communication.su ./Core/Src/main.cyclo ./Core/Src/main.d ./Core/Src/main.o ./Core/Src/main.su ./Core/Src/stm32wlxx_hal_msp.cyclo ./Core/Src/stm32wlxx_hal_msp.d ./Core/Src/stm32wlxx_hal_msp.o ./Core/Src/stm32wlxx_hal_msp.su ./Core/Src/stm32wlxx_it.cyclo ./Core/Src/stm32wlxx_it.d ./Core/Src/stm32wlxx_it.o ./Core/Src/stm32wlxx_it.su ./Core/Src/syscalls.cyclo ./Core/Src/syscalls.d ./Core/Src/syscalls.o ./Core/Src/syscalls.su ./Core/Src/sysmem.cyclo ./Core/Src/sysmem.d ./Core/Src/sysmem.o ./Core/Src/sysmem.su ./Core/Src/uart_messge.cyclo ./Core/Src/uart_messge.d ./Core/Src/uart_messge.o ./Core/Src/uart_messge.su ./Core/Src/uart_queue.cyclo ./Core/Src/uart_queue.d ./Core/Src/uart_queue.o ./Core/Src/uart_queue.su
+	-$(RM) ./Core/Src/main.cyclo ./Core/Src/main.d ./Core/Src/main.o ./Core/Src/main.su ./Core/Src/stm32wlxx_hal_msp.cyclo ./Core/Src/stm32wlxx_hal_msp.d ./Core/Src/stm32wlxx_hal_msp.o ./Core/Src/stm32wlxx_hal_msp.su ./Core/Src/stm32wlxx_it.cyclo ./Core/Src/stm32wlxx_it.d ./Core/Src/stm32wlxx_it.o ./Core/Src/stm32wlxx_it.su ./Core/Src/syscalls.cyclo ./Core/Src/syscalls.d ./Core/Src/syscalls.o ./Core/Src/syscalls.su ./Core/Src/sysmem.cyclo ./Core/Src/sysmem.d ./Core/Src/sysmem.o ./Core/Src/sysmem.su ./Core/Src/uart_basic_com.cyclo ./Core/Src/uart_basic_com.d ./Core/Src/uart_basic_com.o ./Core/Src/uart_basic_com.su ./Core/Src/uart_messge.cyclo ./Core/Src/uart_messge.d ./Core/Src/uart_messge.o ./Core/Src/uart_messge.su
 
 .PHONY: clean-Core-2f-Src
 

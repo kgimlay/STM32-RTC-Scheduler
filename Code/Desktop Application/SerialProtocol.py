@@ -52,7 +52,7 @@ class SerialConnection:
         try:
             self._connection.write(packet.format().encode('ascii'))
             self._connection.flush()
-            time.sleep(0.1)
+            # time.sleep(0.05)
             return True
         except serial.serialutil.SerialTimeoutException:
             print('Serial send time out.')
@@ -63,7 +63,7 @@ class SerialConnection:
 
 
     def receive(self):
-        # time.sleep(0.02)
+        # time.sleep(0.05)
         received_data = self._connection.read(self._packet_size)
         try:
             return UartPacket.UartPacket(received_data.decode('ascii'), self._header_size, self._packet_size)

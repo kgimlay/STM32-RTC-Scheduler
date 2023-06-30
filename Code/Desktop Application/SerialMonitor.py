@@ -1,12 +1,3 @@
-# import SerialProtocol
-
-# if __name__ == '__main__':
-# 	connection = SerialProtocol.SerialConnection()
-# 	connection.handshake()
-
-
-# Author: Kevin Imlay
-
 import SerialProtocol
 import platform
 import os
@@ -48,11 +39,14 @@ if __name__ == '__main__':
     if serial_connection._connection.isOpen():
         print("Success!")
 
-        send_recv_count = 10
+        send_recv_count = 10000
 
+        received_messages = []
         for i in range(send_recv_count):
             serial_connection.send('ECHO', str(i))
-        for i in range(send_recv_count):
-            print("Received (" + str(i) + "):  " + serial_connection.receive()._bodyText, flush=True)
+            received_messages.append(serial_connection.receive())
+
+        for i in range(len(received_messages)):
+            print(str(i) + "--" + received_messages[i]._bodyText)
 
         print("Done")

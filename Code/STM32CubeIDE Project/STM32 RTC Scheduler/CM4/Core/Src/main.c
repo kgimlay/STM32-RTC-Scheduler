@@ -17,11 +17,11 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
+#include <uart_basic_com.h>
 #include "main.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "desktop_app_communication.h"
 #include "string.h"
 /* USER CODE END Includes */
 
@@ -65,7 +65,7 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *UartHandle)
 		(void)0;  // no operation
 
 	else if (UartHandle->Instance == USART2)
-		deskAppErrorISR();
+		uartBasic_Error_ISR();
 }
 
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *UartHandle)
@@ -74,7 +74,7 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *UartHandle)
 		(void)0;  // no operation
 
 	else if (UartHandle->Instance == USART2)
-		deskAppTxCompleteISR();
+		uartBasic_TX_Complete_ISR();
 }
 
 
@@ -84,7 +84,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 		(void)0;  // no operation
 
 	else if (UartHandle->Instance == USART2)
-		deskAppRxCompleteISR();
+		uartBasic_RX_Complete_ISR();
 }
 /* USER CODE END 0 */
 
@@ -128,33 +128,26 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 
   // initialize the desktop communication module (doesn't establish connection!)
-  initDesktopCommunication(&huart2);
+  uartBasic_init(&huart2);
 
   // begin listening for messages from desktop
-  startDesktopAppCommunication();
+  uartBasic_RX_IT();
 
   char messageHeader[UART_MESSAGE_HEADER_SIZE];
   char messageBody[UART_MESSAGE_BODY_SIZE];
-  PROCESS_QUEUE_STATUS messageStatus;
+  bool messageStatus;
   int messageCount = 0;
   while (1)
   {
-	  // check if there was an error in rx or tx
-	  if (checkRxTxError())
-		  while (1) {}
-
-	  // flush the report queue
-	  flushReportQueue();
-
 	  // check for message in the process queue
-	  messageStatus = retrieveFromDesktopApp(messageHeader, messageBody);
+	  messageStatus = uartBasic_get_RX(messageHeader, messageBody);
 
 	  // if message present, handle message
-	  if (messageStatus == PROCESS_DEQUEUED) {
+	  if (messageStatus == true) {
 		  // echo back to computer
-		  reportToDesktopApp(messageHeader, messageBody);
+		  uartBasic_TX_IT(messageHeader, messageBody);
 		  messageCount++;
-		  (void)0; // no operation
+		  uartBasic_RX_IT();
 	  }
 
     /* USER CODE END WHILE */
