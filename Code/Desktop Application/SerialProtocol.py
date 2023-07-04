@@ -1,19 +1,26 @@
-import UartConnection
-import UartPacket
+# Author: Kevin Imlay
+
+import SerialConnection
+import SerialPacket
+import serial
 
 
-headerLength = 4
-messageLength = 32
+# Defines message parameters
+HEADER_LENGTH = 4
+MESSAGE_LENGTH = 32
 
 
 class PortException(Exception):
+	# 
 	def __init__(self, errMessage):
 		super().__init__(self, errMessage)
 
 
 def _openPort(port):
+	# 
+
 	# create new UART Connection on port
-	tempConnection = UartConnection.UartConnection()
+	tempConnection = SerialConnection.SerialConnection()
 	try:
 		# attempt to open port
 		tempConnection.openPort(port)
@@ -27,22 +34,25 @@ def _openPort(port):
 
 
 def _closePort(connection):
+	#
+
 	# close the port
 	connection.closePort()
 
 
 def _handshake(connection):
+	# 
 	try:
 		# compose acknowledge message
-		synMessage = UartPacket.UartPacket('SNYC', '', headerLength, messageLength)
+		synMessage = SerialPacket.SerialPacket(MESSAGE_LENGTH, HEADER_LENGTH, 'SNYC', '')
 		sendData = synMessage.format()
 		
 		# send acknowledge message
 		connection.send(sendData)
 		
 		# listen for echo back
-		receivedData = connection.receive(messageLength)
-		synackMessage = UartPacket.UartPacket(receivedData, headerLength, messageLength)
+		receivedData = connection.receive(MESSAGE_LENGTH)
+		synackMessage = SerialPacket.SerialPacket(MESSAGE_LENGTH, HEADER_LENGTH, receivedData)
 
 		# test that received message is echoed correctly
 		if synackMessage == synMessage:
@@ -55,20 +65,22 @@ def _handshake(connection):
 
 	# Raise PortException if a serial exception occured
 	except serial.SerialException:
-		raise errMessage('Handshake failed due to port becomming unavailable or unresponsive.')
+		raise PortException('Handshake failed due to port becomming unavailable.')
+
+	# Raise Port Exception if malformed response from MCU
+	except AssertionError:
+		raise PortException('Malformed message from MCU.')
 
 	# Raise a PortException is a timeout exception occured
 	except serial.SerialTimeoutException:
-		raise errMessage('Handshake failed due to timeout.')
+		raise PortException('Handshake failed due to timeout.')
 
 
 class SerialProtocol:
+	# 
 
 	# connection object
 	_connection = None
-
-	# port
-	_port = None
 
 
 	def __new__(cls, port):
@@ -97,18 +109,27 @@ class SerialProtocol:
 
 
 	def __init__(self, port):
-		# save port simply for referencing
-		self._port = port
+		# 
+
+		#
+		pass
 
 
 	def __del__(self):
+		# 
+
 		# close connection
 		_closePort(self._connection)
 
 
 	def echo(self, messageText):
-		message = UartPacket.UartPacket('ECHO', '{}'.format(messageText), headerLength, messageLength).format()
-		self._connection.send(message)
+		# 
+
+		message = SerialPacket.SerialPacket(
+			MESSAGE_LENGTH, HEADER_LENGTH, 'ECHO', '{}'.format(messageText))
+		self._connection.send(message.format())
 		
 	def receive(self):
-		return self._connection.receive(messageLength)[headerLength:]
+		# 
+
+		return self._connection.receive(MESSAGE_LENGTH)[HEADER_LENGTH:]

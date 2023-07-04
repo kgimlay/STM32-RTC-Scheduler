@@ -1,3 +1,5 @@
+# Author: Kevin Imlay
+
 import SerialProtocol
 import platform
 import os
@@ -29,15 +31,11 @@ def getPorts():
     return serialPorts
 
 
-def applicationLoop(connection):
-    for i in range(1000):
-        connection.echo(str(i))
-        inMessage = connection.receive()
-        print(str(i) + '  --  ' + inMessage)
-
-
-
 if __name__ == '__main__':
+    # ---------------------------------------
+    # ---------- Application Setup ----------
+    # ---------------------------------------
+
     # get a list of the ports available on the machine
     testPorts = getPorts()
 
@@ -59,7 +57,7 @@ if __name__ == '__main__':
                 print('Connected to port {}'.format(availablePort))
 
                 # start application loop
-                applicationLoop(serialConnection)
+                
 
                 # disconnect
                 del serialConnection
@@ -71,12 +69,12 @@ if __name__ == '__main__':
                 print('Connection could not be made with port {}'.format(availablePort))
 
         # if a PortOpenException is thrown at any time, report and exit program
-        except SerialProtocol.PortException:
-            print('Port {} is unavailable.'.format(availablePort))
+        except SerialProtocol.PortException as e:
+            print('Port {} is unavailable.\n\t{}'.format(availablePort, str(e)))
             exit(0)
 
         # just to handle when a keyboard interrupt occurs, to make things
         # tidy
-        except KeyboardInterrupt:
-            print('\n\nProgram ended unexpectedly!\n')
+        except KeyboardInterrupt as e:
+            print('\n\nProgram ended unexpectedly!  User terminated program.')
             exit(0)
