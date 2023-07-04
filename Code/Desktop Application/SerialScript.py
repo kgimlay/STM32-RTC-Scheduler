@@ -59,7 +59,9 @@ if __name__ == '__main__':
                 # --------------------------------------
                 # ---------- Application Loop ----------
                 # --------------------------------------
-                pass
+                for i in range (100):
+                    serialConnection.send('ECHO', str(i))
+                    print(serialConnection.receive())
 
                 # -----------------------------------------
                 # ---------- Application Cleanup ----------
