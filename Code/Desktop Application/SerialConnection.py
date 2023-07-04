@@ -29,6 +29,8 @@ class SerialConnection:
     def __init__(self):
         # Initialize new connection object with defualt serial parameters.
         # These parameters are what are also programmed into the MCU.
+        #
+        # Raises a ValueError if a value is out of range
 
         # Create new serial object
         self._connection = serial.Serial()
@@ -50,6 +52,8 @@ class SerialConnection:
     def openPort(self, port):
         # Alias to open a serial connection.  The port must be a string
         # representation of the directory and port to open on the OS.
+        # 
+        # Raises a serial.SerialException if opening on the port fails.
 
         # Test for valid port parameter.
         if not isinstance(port, str): raise TypeError
@@ -71,6 +75,8 @@ class SerialConnection:
     def send(self, message):
         # Alias to send a message over the serial connection.  The message
         # must be a string that can be encoded to ASCII.
+        #
+        # Raises a serial.SerialException if the connection is not open.
 
         # Test for valid message parameter.
         if not isinstance(message, str): raise TypeError
@@ -84,6 +90,8 @@ class SerialConnection:
     def receive(self, length):
         # Alias to receive a message from the serial connection.  The length
         # must be an integer greater than 0.
+        #
+        # Raises a serial.SerialException if the connection is not open.
 
         # Test for valid length parameter.
         if not isinstance(length, int): TypeError

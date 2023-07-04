@@ -77,4 +77,4 @@ if __name__ == '__main__':
         # tidy
         except KeyboardInterrupt as e:
             print('\n\nProgram ended unexpectedly!  User terminated program.')
-            exit(0)
+            exit(1)
