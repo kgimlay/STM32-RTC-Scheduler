@@ -154,7 +154,8 @@ void uartBasic_TX_Complete_ISR(void)
  */
 void uartBasic_Error_ISR(void)
 {
-
+	while (1)
+		(void)0; // no operation
 }
 
 

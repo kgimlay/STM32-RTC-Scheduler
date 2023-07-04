@@ -1,52 +1,50 @@
-import SerialProtocol
+import UartConnection
+import UartPacket
 import platform
 import os
 import re
-import random
-import time
-from datetime import datetime, timedelta
+
+
+def getPorts():
+    # get a list of the ports on the machine
+
+    # get the OS that this code is running on
+    operatingSystem = platform.system()
+
+    # test that OS is Linux or OSX
+    # I don't have Windows machien to test this code on...  so no Windows.
+    # If you want Windows compatability, add implementation.
+    assert operatingSystem == 'Darwin', 'Only Darwin operating systems supported.'
+
+    # list of serial ports to return
+    serialPorts = None
+
+    # MAC OS
+    if operatingSystem == 'Darwin':
+        # list all device ports
+        devicePorts = ['/dev/' + port for port in os.listdir('/dev/')]
+        # remove all device ports that are not tty or cu ports
+        serialPorts = [port for port in devicePorts if re.search(r'tty\.usb', port)]
+
+    # return list of serial ports
+    return serialPorts
+
 
 
 if __name__ == '__main__':
-    serial_connection = SerialProtocol.SerialConnection()
+    testPorts = getPorts()
 
-    # choose test ports on operating system
-    operatingPlatform = platform.system()
+    connection = UartConnection.UartConnection(read_timeout=None, write_timeout=None)
+    for port in testPorts:
+        # print(port)
+        connection.openPort(port)
+        message = UartPacket.UartPacket('ECHO', 'Hello!', 4, 32).format()
 
-    # MAC OS or LINUX OS
-    if operatingPlatform == 'Darwin':
-        # todo: handle SerialTimeoutException
-        serial_ports = ['/dev/' + port for port in os.listdir('/dev/') if re.search(r"tty.usb", port) is not None]
-    elif operatingPlatform == 'Linux':
-        # todo: handle SerialTimeoutException
-        serial_ports = ['/dev/' + port for port in os.listdir('/dev/') if re.search(r"tty", port) is not None]
-    elif operatingPlatform == 'Windows':
-        print('Operating system {} is unsupported.'.format(operatingPlatform))
-        exit(1)
-    elif operatingPlatform == 'Java':
-        print('Operating system {} is unsupported.'.format(operatingPlatform))
-        exit(1)
-    else:
-        print('Operating system {} is unsupported.'.format(operatingPlatform))
-        exit(1)
+        for _ in range(3):
+            print(message)
+            connection.send(message)
+            inMessage = connection.receive(32)
+            print(inMessage)
+            # print(len(inMessage))
 
-    if len(serial_ports) == 0:
-        print('No serial ports connected to machine!')
-        exit(0)
-    for port in serial_ports:
-        if serial_connection.handshake(port):
-            break
-    if serial_connection._connection.isOpen():
-        print("Success!")
-
-        send_recv_count = 10000
-
-        received_messages = []
-        for i in range(send_recv_count):
-            serial_connection.send('ECHO', str(i))
-            received_messages.append(serial_connection.receive())
-
-        for i in range(len(received_messages)):
-            print(str(i) + "--" + received_messages[i]._bodyText)
-
-        print("Done")
+        connection.closePort()

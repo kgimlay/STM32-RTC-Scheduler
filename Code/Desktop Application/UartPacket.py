@@ -17,13 +17,13 @@ class UartPacket:
 
 	# Packet parameters.
 	# Expected length of the packet
-	_packetLength = 0
+	_packetLength = None
 
 	# Packet contents.
 	# Text of the header segment
-	_headerText = ''
+	_headerText = None
 	# Text of the body segment
-	_bodyText = ''
+	_bodyText = None
 
 	def __init__(self, *args):
 		# test the number or arguments
