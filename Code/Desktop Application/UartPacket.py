@@ -1,5 +1,5 @@
 # Defines the character to postfix a packet's body segment with
-emptyBodyFillerChar = '*'
+emptyBodyFillerChar = '\0'
 
 
 class UartPacket:
@@ -117,3 +117,7 @@ class UartPacket:
 		+ '\t' + bodyTextString
 
 		return formattedString
+
+
+	def __eq__(self, other):
+		return self._packetLength == other._packetLength and self._headerText == other._headerText and self._bodyText == other._bodyText

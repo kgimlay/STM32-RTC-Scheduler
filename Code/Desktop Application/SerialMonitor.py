@@ -1,5 +1,4 @@
-import UartConnection
-import UartPacket
+import SerialProtocol
 import platform
 import os
 import re
@@ -30,21 +29,54 @@ def getPorts():
     return serialPorts
 
 
+def applicationLoop(connection):
+    for i in range(1000):
+        connection.echo(str(i))
+        inMessage = connection.receive()
+        print(str(i) + '  --  ' + inMessage)
+
+
 
 if __name__ == '__main__':
+    # get a list of the ports available on the machine
     testPorts = getPorts()
 
-    connection = UartConnection.UartConnection(read_timeout=None, write_timeout=None)
-    for port in testPorts:
-        # print(port)
-        connection.openPort(port)
-        message = UartPacket.UartPacket('ECHO', 'Hello!', 4, 32).format()
+    # test is there are no ports
+    if len(testPorts) == 0:
+        print('There are no serial ports available on the machine.')
+        exit(0)
 
-        for _ in range(3):
-            print(message)
-            connection.send(message)
-            inMessage = connection.receive(32)
-            print(inMessage)
-            # print(len(inMessage))
+    # There are available ports, try to handshake with each one until one
+    # successfully handshakes.
+    for availablePort in testPorts:
+        try:
+            # attempt to make connection
+            serialConnection = SerialProtocol.SerialProtocol(availablePort)
 
-        connection.closePort()
+            # if the connection was successful, print message
+            if serialConnection is not None:
+                # report connection
+                print('Connected to port {}'.format(availablePort))
+
+                # start application loop
+                applicationLoop(serialConnection)
+
+                # disconnect
+                del serialConnection
+                # and report disconnection
+                print('Disconnected from port {}'.format(availablePort))
+
+            # if the message was unsuccessful, print message
+            else:
+                print('Connection could not be made with port {}'.format(availablePort))
+
+        # if a PortOpenException is thrown at any time, report and exit program
+        except SerialProtocol.PortException:
+            print('Port {} is unavailable.'.format(availablePort))
+            exit(0)
+
+        # just to handle when a keyboard interrupt occurs, to make things
+        # tidy
+        except KeyboardInterrupt:
+            print('\n\nProgram ended unexpectedly!\n')
+            exit(0)

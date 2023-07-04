@@ -53,11 +53,9 @@ class UartConnection:
 
 
     def send(self, message):
-    	# time.sleep(0.1)
     	self._connection.write(message.encode('ascii'))
     	self._connection.flush()
 
 
     def receive(self, length):
-    	# time.sleep(0.1)
     	return self._connection.read(length).decode('ascii')
