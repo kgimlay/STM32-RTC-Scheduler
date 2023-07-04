@@ -21,7 +21,9 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "string.h"
+#include "uart_message.h"
+#include "uart_basic_com.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -31,7 +33,8 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define COUNTOF(__BUFFER__)   (sizeof(__BUFFER__) / sizeof(*(__BUFFER__)))
+#define RXBUFFERSIZE UART_MESSAGE_SIZE
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -43,7 +46,7 @@
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-
+char rxBuffer[UART_MESSAGE_SIZE];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -57,6 +60,33 @@ static void MX_USART2_UART_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
+void HAL_UART_ErrorCallback(UART_HandleTypeDef *UartHandle)
+{
+	if (UartHandle->Instance == USART1)
+		(void)0;  // no operation
+
+	else if (UartHandle->Instance == USART2)
+		uartBasic_Error_ISR();
+}
+
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *UartHandle)
+{
+	if (UartHandle->Instance == USART1)
+		(void)0;  // no operation
+
+	else if (UartHandle->Instance == USART2)
+		uartBasic_TX_Complete_ISR();
+}
+
+
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
+{
+	if (UartHandle->Instance == USART1)
+		(void)0;  // no operation
+
+	else if (UartHandle->Instance == USART2)
+		uartBasic_RX_Complete_ISR();
+}
 /* USER CODE END 0 */
 
 /**
@@ -97,11 +127,34 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
+  // initialize the desktop communication module (doesn't establish connection!)
+  uartBasic_init(&huart2);
+
+  // begin listening for messages from desktop
+  uartBasic_RX_IT();
+
+  char messageHeader[UART_MESSAGE_HEADER_SIZE];
+  char messageBody[UART_MESSAGE_BODY_SIZE];
+  bool messageStatus;
+  int messageCount = 0;
   while (1)
   {
+	  // check for message in the process queue
+	  messageStatus = uartBasic_get_RX(messageHeader, messageBody);
+
+	  // if message present, handle message
+	  if (messageStatus == true) {
+		  // echo back to computer
+		  uartBasic_TX_IT(messageHeader, messageBody);
+		  messageCount++;
+		  uartBasic_RX_IT();
+	  }
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+
   }
   /* USER CODE END 3 */
 }
@@ -171,16 +224,18 @@ static void MX_USART2_UART_Init(void)
 
   /* USER CODE END USART2_Init 1 */
   huart2.Instance = USART2;
-  huart2.Init.BaudRate = 115200;
+  huart2.Init.BaudRate = 9600;
   huart2.Init.WordLength = UART_WORDLENGTH_8B;
-  huart2.Init.StopBits = UART_STOPBITS_1;
-  huart2.Init.Parity = UART_PARITY_NONE;
+  huart2.Init.StopBits = UART_STOPBITS_2;
+  huart2.Init.Parity = UART_PARITY_ODD;
   huart2.Init.Mode = UART_MODE_TX_RX;
   huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
   huart2.Init.OverSampling = UART_OVERSAMPLING_16;
   huart2.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
   huart2.Init.ClockPrescaler = UART_PRESCALER_DIV1;
-  huart2.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+  huart2.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_RXOVERRUNDISABLE_INIT|UART_ADVFEATURE_DMADISABLEONERROR_INIT;
+  huart2.AdvancedInit.OverrunDisable = UART_ADVFEATURE_OVERRUN_DISABLE;
+  huart2.AdvancedInit.DMADisableonRxError = UART_ADVFEATURE_DMA_DISABLEONRXERROR;
   if (HAL_UART_Init(&huart2) != HAL_OK)
   {
     Error_Handler();

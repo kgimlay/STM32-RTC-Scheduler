@@ -1,0 +1,2 @@
+../Core/Src/uart_messge.c:16:6:composeMessage	24	static
+../Core/Src/uart_messge.c:27:6:decomposeMessage	24	static
