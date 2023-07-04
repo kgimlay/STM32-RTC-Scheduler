@@ -56,8 +56,14 @@ if __name__ == '__main__':
                 # report connection
                 print('Connected to port {}'.format(availablePort))
 
-                # start application loop
-                
+                # --------------------------------------
+                # ---------- Application Loop ----------
+                # --------------------------------------
+                pass
+
+                # -----------------------------------------
+                # ---------- Application Cleanup ----------
+                # -----------------------------------------
 
                 # disconnect
                 del serialConnection
@@ -68,13 +74,7 @@ if __name__ == '__main__':
             else:
                 print('Connection could not be made with port {}'.format(availablePort))
 
-        # if a PortOpenException is thrown at any time, report and exit program
-        except SerialProtocol.PortException as e:
-            print('Port {} is unavailable.\n\t{}'.format(availablePort, str(e)))
-            exit(0)
-
-        # just to handle when a keyboard interrupt occurs, to make things
-        # tidy
+        # Handle when a keyboard interrupt occurs, to make things tidy.
         except KeyboardInterrupt as e:
             print('\n\nProgram ended unexpectedly!  User terminated program.')
             exit(1)
