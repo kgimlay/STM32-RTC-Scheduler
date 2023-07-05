@@ -57,6 +57,8 @@ if __name__ == '__main__':
                 print('Connected to port {}'.format(availablePort))
                 # and set flag to enter application loop
                 connectionFlag = True
+                # and exit loop
+                break
 
             # if the message was unsuccessful, print message
             else:
