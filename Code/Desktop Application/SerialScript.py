@@ -62,8 +62,12 @@ if __name__ == '__main__':
             else:
                 print('Connection could not be made with port {}'.format(availablePort))
 
-    # If a connection was established, enter application loop.
-    if connectionFlag:
+    # If a connection was not established, report.
+    if not connectionFlag:
+        print('No connection could be established with MCU.')
+    
+    # Else, a connection was established, enter application loop.
+    else:
         try:
             # --------------------------------------
             # ---------- Application Loop ----------
@@ -75,10 +79,6 @@ if __name__ == '__main__':
         # Handle when a keyboard interrupt occurs, to make things tidy.
         except KeyboardInterrupt as e:
             print('\n\nProgram ended unexpectedly!  User terminated program.')
-
-    # Else, a connection was not established, report.
-    else:
-        print('No connection could be established with MCU.')
 
     # -----------------------------------------
     # ---------- Application Cleanup ----------
