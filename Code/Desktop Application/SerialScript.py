@@ -46,8 +46,8 @@ if __name__ == '__main__':
 
     # There are available ports, try to handshake with each one until one
     # successfully handshakes.
+    connectionFlag = False
     for availablePort in testPorts:
-        try:
             # attempt to make connection
             serialConnection = SerialProtocol.SerialProtocol(availablePort)
 
@@ -55,28 +55,36 @@ if __name__ == '__main__':
             if serialConnection is not None:
                 # report connection
                 print('Connected to port {}'.format(availablePort))
-
-                # --------------------------------------
-                # ---------- Application Loop ----------
-                # --------------------------------------
-                for i in range (100):
-                    serialConnection.send('ECHO', str(i))
-                    print(serialConnection.receive())
-
-                # -----------------------------------------
-                # ---------- Application Cleanup ----------
-                # -----------------------------------------
-
-                # disconnect
-                del serialConnection
-                # and report disconnection
-                print('Disconnected from port {}'.format(availablePort))
+                # and set flag to enter application loop
+                connectionFlag = True
 
             # if the message was unsuccessful, print message
             else:
                 print('Connection could not be made with port {}'.format(availablePort))
 
+    # If a connection was established, enter application loop.
+    if connectionFlag:
+        try:
+            # --------------------------------------
+            # ---------- Application Loop ----------
+            # --------------------------------------
+            for i in range (100):
+                serialConnection.send('ECHO', str(i))
+                print(serialConnection.receive())
+
         # Handle when a keyboard interrupt occurs, to make things tidy.
         except KeyboardInterrupt as e:
             print('\n\nProgram ended unexpectedly!  User terminated program.')
-            exit(1)
+
+    # Else, a connection was not established, report.
+    else:
+        print('No connection could be established with MCU.')
+
+    # -----------------------------------------
+    # ---------- Application Cleanup ----------
+    # -----------------------------------------
+    
+    # disconnect
+    del serialConnection
+    # and report disconnection
+    print('Disconnected from port {}'.format(availablePort))
