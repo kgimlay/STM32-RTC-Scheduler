@@ -139,11 +139,11 @@ int main(void)
   // set calendar time
   DateTime now = {
 		  .year = 23,
-		  .month = 7,
-		  .day = 7,
-		  .hour = 13,
-		  .minute = 45,
-		  .second = 0
+		  .month = 12,
+		  .day = 31,
+		  .hour = 23,
+		  .minute = 59,
+		  .second = 45
   };
   calendar_setDateTime(now);
 
@@ -177,7 +177,7 @@ int main(void)
 
 	  calendar_getDateTime(&now);
 	  memset(messageBody,0,UART_MESSAGE_BODY_SIZE);
-	  snprintf(messageBody, UART_MESSAGE_BODY_SIZE, "20%02d:%02d:%02d  %02d:%02d:%02d\n", now.year, now.month, now.day, now.hour, now.minute, now.second);
+	  snprintf(messageBody, UART_MESSAGE_BODY_SIZE, "20%02d/%02d/%02d  %02d:%02d:%02d\n", now.year, now.month, now.day, now.hour, now.minute, now.second);
 	  uartBasic_TX_IT("TIME", messageBody);
 	  timeSeconds++;
 	  timeMinutes++;

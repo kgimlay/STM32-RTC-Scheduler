@@ -27,13 +27,13 @@ void setDateTime(uint8_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t
   RTC_DateTypeDef date;
   RTC_TimeTypeDef time;
 
-  date.Year = year;
-  date.Month = month;
-  date.Date = day;
+  date.Year = ((year/10) << 4) | (year % 10);
+  date.Month = ((month/10) << 4) | (month % 10);
+  date.Date = ((day/10) << 4) | (day % 10);
   date.WeekDay = 0;
-  time.Hours = hour;
-  time.Minutes = minute;
-  time.Seconds = second;
+  time.Hours = ((hour/10) << 4) | (hour % 10);
+  time.Minutes = ((minute/10) << 4) | (minute % 10);
+  time.Seconds = ((second/10) << 4) | (second % 10);
 
   // Set the date.
   if (HAL_RTC_SetDate(_rtc_handle, &date, RTC_FORMAT) != HAL_OK) {
@@ -71,12 +71,12 @@ void getDateTime(uint8_t* year, uint8_t* month, uint8_t* day, uint8_t* hour, uin
   }
 
   // Return through parameters
-  *year = date.Year;
-  *month = date.Month;
-  *day = date.Date;
-  *hour = time.Hours;
-  *minute = time.Minutes;
-  *second = time.Seconds;
+  *year = ((date.Year & 0b11110000) >> 4) * 10 + (date.Year & 0b00001111);
+  *month = ((date.Month & 0b00010000) >> 4) * 10 + (date.Month & 0b00001111);
+  *day = ((date.Date & 0b00110000) >> 4) * 10 + (date.Date & 0b00001111);
+  *hour = ((time.Hours & 0b00110000) >> 4) * 10 + (time.Hours & 0b00001111);
+  *minute = ((time.Minutes & 0b01110000) >> 4) * 10 + (time.Minutes & 0b00001111);
+  *second = ((time.Seconds & 0b01110000) >> 4) * 10 + (time.Seconds & 0b00001111);
 }
 
 
