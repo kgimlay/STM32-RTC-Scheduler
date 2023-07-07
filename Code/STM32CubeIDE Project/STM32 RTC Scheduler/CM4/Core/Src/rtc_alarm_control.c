@@ -20,7 +20,7 @@ void rtcAlarmControl_init(RTC_HandleTypeDef* hrtc) {
 }
 
 
-/* Set the date and time in the RTC.
+/*
  *
  */
 void setDateTime(uint8_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second) {
@@ -51,7 +51,7 @@ void setDateTime(uint8_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t
 }
 
 
-/* Get the time and date in the RTC.
+/*
  *
  */
 void getDateTime(uint8_t* year, uint8_t* month, uint8_t* day, uint8_t* hour, uint8_t* minute, uint8_t* second) {
@@ -80,7 +80,7 @@ void getDateTime(uint8_t* year, uint8_t* month, uint8_t* day, uint8_t* hour, uin
 }
 
 
-/* Set the time and date for alarm A.
+/*
  *
  */
 void setAlarm_A(uint8_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second) {
@@ -104,7 +104,7 @@ void setAlarm_A(uint8_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t 
 }
 
 
-/* Get the time and date of alarm A.
+/*
  *
  */
 void getAlarm_A(uint8_t* year, uint8_t* month, uint8_t* day, uint8_t* hour, uint8_t* minute, uint8_t* second) {

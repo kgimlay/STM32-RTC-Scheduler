@@ -3,3 +3,4 @@ calendar.c:33:6:calendar_setDateTime	1
 calendar.c:41:6:calendar_getDateTime	1
 calendar.c:49:6:setEvents	1
 calendar.c:57:6:updateCalendar	1
+calendar.c:65:6:calendar_AlarmA_ISR	1

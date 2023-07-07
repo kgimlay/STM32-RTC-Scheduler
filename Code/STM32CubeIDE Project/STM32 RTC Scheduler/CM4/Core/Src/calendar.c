@@ -30,6 +30,14 @@ void calendar_init(RTC_HandleTypeDef* hrtc) {
 /*
  *
  */
+void calendar_start(void) {
+
+}
+
+
+/*
+ *
+ */
 void calendar_setDateTime(DateTime dateTime) {
 	setDateTime(dateTime.year, dateTime.month, dateTime.day, dateTime.hour, dateTime.minute, dateTime.second);
 }
@@ -54,6 +62,6 @@ void setEvents(CalendarEvent events[MAX_NUM_EVENTS]) {
 /*
  *
  */
-void updateCalendar(void) {
+void calendar_AlarmA_ISR(void) {
 
 }
