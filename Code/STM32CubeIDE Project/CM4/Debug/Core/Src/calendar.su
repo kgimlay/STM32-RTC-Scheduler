@@ -1,6 +1,6 @@
-../Core/Src/calendar.c:24:6:calendar_init	16	static
-../Core/Src/calendar.c:36:6:calendar_start	8	static
-../Core/Src/calendar.c:48:6:calendar_setDateTime	32	static
-../Core/Src/calendar.c:56:6:calendar_getDateTime	32	static
-../Core/Src/calendar.c:64:6:calendar_setEvents	16	static
-../Core/Src/calendar.c:72:6:calendar_AlarmA_ISR	4	static
+../Core/Src/calendar.c:26:6:calendar_init	16	static
+../Core/Src/calendar.c:38:6:calendar_setDateTime	32	static
+../Core/Src/calendar.c:46:6:calendar_getDateTime	32	static
+../Core/Src/calendar.c:54:6:calendar_setEvents	16	static
+../Core/Src/calendar.c:62:6:calendar_start	8	static
+../Core/Src/calendar.c:74:6:calendar_AlarmA_ISR	32	static

@@ -100,7 +100,7 @@ void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc)
 	calendar_AlarmA_ISR();
 
 	// send message for debugging
-	char messageBody[UART_MESSAGE_BODY_SIZE] = "ALARM EVENT!\n\0";
+	char messageBody[UART_MESSAGE_BODY_SIZE] = "\n\nALARM EVENT!\n\n\0";
 	uartBasic_TX_IT("TIME", messageBody);
 }
 /* USER CODE END 0 */
@@ -164,12 +164,71 @@ int main(void)
 
   // set some events
   CalendarEvent events[MAX_NUM_EVENTS] = {0};
+
   events[0].start_year = 23;
   events[0].start_month = 7;
   events[0].start_day = 8;
   events[0].start_hour = 2;
   events[0].start_minute = 30;
   events[0].start_second = 10;
+  events[0].end_year = 23;
+  events[0].end_month = 7;
+  events[0].end_day = 8;
+  events[0].end_hour = 2;
+  events[0].end_minute = 30;
+  events[0].end_second = 20;
+
+  events[1].start_year = 23;
+  events[1].start_month = 7;
+  events[1].start_day = 8;
+  events[1].start_hour = 2;
+  events[1].start_minute = 30;
+  events[1].start_second = 30;
+  events[1].end_year = 23;
+  events[1].end_month = 7;
+  events[1].end_day = 8;
+  events[1].end_hour = 2;
+  events[1].end_minute = 30;
+  events[1].end_second = 40;
+
+  events[2].start_year = 23;
+  events[2].start_month = 7;
+  events[2].start_day = 8;
+  events[2].start_hour = 2;
+  events[2].start_minute = 30;
+  events[2].start_second = 50;
+  events[2].end_year = 23;
+  events[2].end_month = 7;
+  events[2].end_day = 8;
+  events[2].end_hour = 2;
+  events[2].end_minute = 31;
+  events[2].end_second = 0;
+
+  events[3].start_year = 23;
+  events[3].start_month = 7;
+  events[3].start_day = 8;
+  events[3].start_hour = 2;
+  events[3].start_minute = 31;
+  events[3].start_second = 10;
+  events[3].end_year = 23;
+  events[3].end_month = 7;
+  events[3].end_day = 8;
+  events[3].end_hour = 2;
+  events[3].end_minute = 31;
+  events[3].end_second = 20;
+
+  events[4].start_year = 23;
+  events[4].start_month = 7;
+  events[4].start_day = 8;
+  events[4].start_hour = 2;
+  events[4].start_minute = 31;
+  events[4].start_second = 30;
+  events[4].end_year = 23;
+  events[4].end_month = 7;
+  events[4].end_day = 8;
+  events[4].end_hour = 2;
+  events[4].end_minute = 31;
+  events[4].end_second = 40;
 
   calendar_setEvents(events);
 

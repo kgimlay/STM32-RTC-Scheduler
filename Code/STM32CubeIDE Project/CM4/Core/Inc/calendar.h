@@ -59,12 +59,6 @@ void calendar_init(RTC_HandleTypeDef* hrtc);
 /*
  *
  */
-void calendar_start(void);
-
-
-/*
- *
- */
 void calendar_setDateTime(DateTime dateTime);
 
 
@@ -78,6 +72,12 @@ void calendar_getDateTime(DateTime* dateTime);
  *
  */
 void calendar_setEvents(CalendarEvent events[MAX_NUM_EVENTS]);
+
+
+/*
+ *
+ */
+void calendar_start(void);
 
 
 /*
