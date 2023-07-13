@@ -1,5 +1,6 @@
 "./Common/System/system_stm32wlxx.o"
 "./Core/Src/calendar.o"
+"./Core/Src/led_debug.o"
 "./Core/Src/main.o"
 "./Core/Src/rtc_alarm_control.o"
 "./Core/Src/stm32wlxx_hal_msp.o"
