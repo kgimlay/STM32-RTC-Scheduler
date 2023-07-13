@@ -9,6 +9,10 @@
 #include "calendar.h"
 #include "rtc_alarm_control.h"
 #include "stdbool.h"
+#include "string.h"
+
+int compareDateTime(DateTime dateTime_1, DateTime dateTime_2);
+int dateTimeToSeconds(DateTime dateTime);
 
 
 /*
@@ -64,7 +68,16 @@ void calendar_start(void) {
 	_currentEventIdx = 0;
 
 	// set alarm for start of first event in list
-	setAlarm_A(_calendarEvents[0].start_day, _calendarEvents[0].start_hour, _calendarEvents[0].start_minute, _calendarEvents[0].start_second);
+	setAlarm_A(_calendarEvents[0].start.day, _calendarEvents[0].start.hour, _calendarEvents[0].start.minute, _calendarEvents[0].start.second);
+}
+
+
+
+/*
+ *
+ */
+void calendar_updateEvents(void) {
+
 }
 
 
@@ -79,19 +92,65 @@ void calendar_AlarmA_ISR(void) {
 
 	// if not in event, event started
 	if (!_inEvent) {
-		_inEvent = true;
 
-		// set alarm for end of event
-		setAlarm_A(_calendarEvents[_currentEventIdx].end_day, _calendarEvents[_currentEventIdx].end_hour, _calendarEvents[_currentEventIdx].end_minute, _calendarEvents[_currentEventIdx].end_second);
+		// if alarm triggered at correct month/year
+		// this line can break if it takes 1 or more seconds from when the alarm interrupt fires
+		if (compareDateTime(now, _calendarEvents[_currentEventIdx].start) == 0) {
+
+			_inEvent = true;
+
+			// set alarm for end of event
+			setAlarm_A(_calendarEvents[_currentEventIdx].end.day, _calendarEvents[_currentEventIdx].end.hour, _calendarEvents[_currentEventIdx].end.minute, _calendarEvents[_currentEventIdx].end.second);
+		}
+
+		// else not at start of event, restart alarm
+		else {
+			setAlarm_A(_calendarEvents[_currentEventIdx].start.day, _calendarEvents[_currentEventIdx].start.hour, _calendarEvents[_currentEventIdx].start.minute, _calendarEvents[_currentEventIdx].start.second);
+		}
 	}
 
 	// if in event
 	else {
-		_inEvent = false;
+		// if alarm triggered at correct month/year
+		// this line can break if it takes 1 or more seconds from when the alarm interrupt fires
+		if (compareDateTime(now, _calendarEvents[_currentEventIdx].end) == 0) {
+			_currentEventIdx++;
 
-		_currentEventIdx++;
+			// set alarm for start of next event
+			setAlarm_A(_calendarEvents[_currentEventIdx].start.day, _calendarEvents[_currentEventIdx].start.hour, _calendarEvents[_currentEventIdx].start.minute, _calendarEvents[_currentEventIdx].start.second);
 
-		// set alarm for start of next event
-		setAlarm_A(_calendarEvents[_currentEventIdx].start_day, _calendarEvents[_currentEventIdx].start_hour, _calendarEvents[_currentEventIdx].start_minute, _calendarEvents[_currentEventIdx].start_second);
+			_inEvent = false;
+		}
+
+		// else not at start of event, restart alarm
+		else {
+			setAlarm_A(_calendarEvents[_currentEventIdx].end.day, _calendarEvents[_currentEventIdx].end.hour, _calendarEvents[_currentEventIdx].end.minute, _calendarEvents[_currentEventIdx].end.second);
+		}
 	}
+}
+
+
+/* Find the time difference in seconds of dateTime1 and dateTime2.
+ *
+ * Note: Does not account for leap years.
+ */
+int compareDateTime(DateTime dateTime_1, DateTime dateTime_2) {
+  // return net comparison (date time 1 - date time 2)
+  return dateTimeToSeconds(dateTime_1) - dateTimeToSeconds(dateTime_2);
+}
+
+
+/*
+ *
+ */
+int dateTimeToSeconds(DateTime dateTime) {
+	// Convert to seconds. Note: assumes 30 days in a month and
+	// no leap years, it is not needed for the calculation because
+	// they are used for relative comparisons, not absolute values.
+	return (dateTime.second
+			+ (dateTime.minute * 60)
+			+ (dateTime.hour * 3600)
+			+ ((dateTime.day - 1) * 86400)
+			+ ((dateTime.month - 1) * 2592000)
+			+ (dateTime.year * 31104000));
 }

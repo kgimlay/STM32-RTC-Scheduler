@@ -33,20 +33,9 @@ typedef struct {
  *
  */
 typedef struct {
-  uint8_t start_year;
-  uint8_t start_month;
-  uint8_t start_day;
-  uint8_t start_hour;
-  uint8_t start_minute;
-  uint8_t start_second;
+  DateTime start;
   void* start_callback;
-  uint8_t end_year;
-  uint8_t end_month;
-  uint8_t end_day;
-  uint8_t end_hour;
-  uint8_t end_minute;
-  uint8_t end_second;
-  void* end_callback;
+  DateTime end;
 } CalendarEvent;
 
 

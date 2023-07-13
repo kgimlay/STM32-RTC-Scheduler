@@ -1,6 +1,9 @@
-calendar.c:26:6:calendar_init	1
-calendar.c:38:6:calendar_setDateTime	1
-calendar.c:46:6:calendar_getDateTime	1
-calendar.c:54:6:calendar_setEvents	1
-calendar.c:62:6:calendar_start	1
-calendar.c:74:6:calendar_AlarmA_ISR	2
+calendar.c:30:6:calendar_init	1
+calendar.c:42:6:calendar_setDateTime	1
+calendar.c:50:6:calendar_getDateTime	1
+calendar.c:58:6:calendar_setEvents	1
+calendar.c:66:6:calendar_start	1
+calendar.c:79:6:calendar_updateEvents	1
+calendar.c:87:6:calendar_AlarmA_ISR	4
+calendar.c:137:5:compareDateTime	1
+calendar.c:146:5:dateTimeToSeconds	1

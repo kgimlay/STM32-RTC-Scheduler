@@ -128,32 +128,3 @@ void getAlarm_A(uint8_t* year, uint8_t* month, uint8_t* day, uint8_t* hour, uint
   *minute = alarm.AlarmTime.Minutes;
   *second = alarm.AlarmTime.Seconds;
 }
-
-
-/* Find the time difference in seconds of dateTime1 and dateTime2.
- *
- * Note: Does not account for leap years.
- */
-int compareDateTime(uint8_t year_1, uint8_t month_1, uint8_t day_1, uint8_t hour_1, uint8_t minute_1, uint8_t second_1,
-		uint8_t year_2, uint8_t month_2, uint8_t day_2, uint8_t hour_2, uint8_t minute_2, uint8_t second_2) {
-  uint32_t dateTime1_seconds, dateTime2_seconds;
-
-  // Convert to seconds. Note: assumes 30 days in a month and
-  // no leap years, it is not needed for the calculation because
-  // they are used for relative comparisons, not absolute values.
-  dateTime1_seconds = second_1
-        + (minute_1 * 60)
-        + (hour_1 * 3600)
-        + ((day_1 - 1) * 86400)
-        + ((month_1 - 1) * 2592000)
-        + (year_1 * 31104000);
-  dateTime2_seconds = second_2
-        + (minute_2 * 60)
-        + (hour_2 * 3600)
-        + ((day_2 - 1) * 86400)
-        + ((month_2 - 1) * 2592000)
-        + (year_2 * 31104000);
-
-  // return net comparison (date time 1 - date time 2)
-  return dateTime1_seconds - dateTime2_seconds;
-}
