@@ -1223,9 +1223,9 @@ int main(void)
  8000a06:	6018      	str	r0, [r3, #0]
  8000a08:	3304      	adds	r3, #4
  8000a0a:	8019      	strh	r1, [r3, #0]
-		  .day = 8,
-		  .hour = 2,
-		  .minute = 30,
+		  .day = 1,
+		  .hour = 0,
+		  .minute = 0,
 		  .second = 0
   };
   calendar_setDateTime(now);
@@ -1241,186 +1241,186 @@ int main(void)
  8000a20:	4618      	mov	r0, r3
  8000a22:	f005 fcb7 	bl	8006394 <memset>
 
-  events[0].start.year = 23;
- 8000a26:	2317      	movs	r3, #23
+  events[0].start.year = 0;
+ 8000a26:	2300      	movs	r3, #0
  8000a28:	f887 3020 	strb.w	r3, [r7, #32]
-  events[0].start.month = 7;
- 8000a2c:	2307      	movs	r3, #7
+  events[0].start.month = 1;
+ 8000a2c:	2301      	movs	r3, #1
  8000a2e:	f887 3021 	strb.w	r3, [r7, #33]	; 0x21
-  events[0].start.day = 8;
- 8000a32:	2308      	movs	r3, #8
+  events[0].start.day = 1;
+ 8000a32:	2301      	movs	r3, #1
  8000a34:	f887 3022 	strb.w	r3, [r7, #34]	; 0x22
-  events[0].start.hour = 2;
- 8000a38:	2302      	movs	r3, #2
+  events[0].start.hour = 0;
+ 8000a38:	2300      	movs	r3, #0
  8000a3a:	f887 3023 	strb.w	r3, [r7, #35]	; 0x23
-  events[0].start.minute = 30;
- 8000a3e:	231e      	movs	r3, #30
+  events[0].start.minute = 0;
+ 8000a3e:	2300      	movs	r3, #0
  8000a40:	f887 3024 	strb.w	r3, [r7, #36]	; 0x24
   events[0].start.second = 10;
  8000a44:	230a      	movs	r3, #10
  8000a46:	f887 3025 	strb.w	r3, [r7, #37]	; 0x25
-  events[0].end.year = 23;
- 8000a4a:	2317      	movs	r3, #23
+  events[0].end.year = 0;
+ 8000a4a:	2300      	movs	r3, #0
  8000a4c:	f887 302c 	strb.w	r3, [r7, #44]	; 0x2c
-  events[0].end.month = 7;
- 8000a50:	2307      	movs	r3, #7
+  events[0].end.month = 1;
+ 8000a50:	2301      	movs	r3, #1
  8000a52:	f887 302d 	strb.w	r3, [r7, #45]	; 0x2d
-  events[0].end.day = 8;
- 8000a56:	2308      	movs	r3, #8
+  events[0].end.day = 1;
+ 8000a56:	2301      	movs	r3, #1
  8000a58:	f887 302e 	strb.w	r3, [r7, #46]	; 0x2e
-  events[0].end.hour = 2;
- 8000a5c:	2302      	movs	r3, #2
+  events[0].end.hour = 0;
+ 8000a5c:	2300      	movs	r3, #0
  8000a5e:	f887 302f 	strb.w	r3, [r7, #47]	; 0x2f
-  events[0].end.minute = 30;
- 8000a62:	231e      	movs	r3, #30
+  events[0].end.minute = 0;
+ 8000a62:	2300      	movs	r3, #0
  8000a64:	f887 3030 	strb.w	r3, [r7, #48]	; 0x30
   events[0].end.second = 20;
  8000a68:	2314      	movs	r3, #20
  8000a6a:	f887 3031 	strb.w	r3, [r7, #49]	; 0x31
 
-  events[1].start.year = 23;
- 8000a6e:	2317      	movs	r3, #23
+  events[1].start.year = 0;
+ 8000a6e:	2300      	movs	r3, #0
  8000a70:	f887 3034 	strb.w	r3, [r7, #52]	; 0x34
-  events[1].start.month = 7;
- 8000a74:	2307      	movs	r3, #7
+  events[1].start.month = 1;
+ 8000a74:	2301      	movs	r3, #1
  8000a76:	f887 3035 	strb.w	r3, [r7, #53]	; 0x35
-  events[1].start.day = 8;
- 8000a7a:	2308      	movs	r3, #8
+  events[1].start.day = 1;
+ 8000a7a:	2301      	movs	r3, #1
  8000a7c:	f887 3036 	strb.w	r3, [r7, #54]	; 0x36
-  events[1].start.hour = 2;
- 8000a80:	2302      	movs	r3, #2
+  events[1].start.hour = 0;
+ 8000a80:	2300      	movs	r3, #0
  8000a82:	f887 3037 	strb.w	r3, [r7, #55]	; 0x37
-  events[1].start.minute = 30;
- 8000a86:	231e      	movs	r3, #30
+  events[1].start.minute = 0;
+ 8000a86:	2300      	movs	r3, #0
  8000a88:	f887 3038 	strb.w	r3, [r7, #56]	; 0x38
   events[1].start.second = 30;
  8000a8c:	231e      	movs	r3, #30
  8000a8e:	f887 3039 	strb.w	r3, [r7, #57]	; 0x39
-  events[1].end.year = 23;
- 8000a92:	2317      	movs	r3, #23
+  events[1].end.year = 0;
+ 8000a92:	2300      	movs	r3, #0
  8000a94:	f887 3040 	strb.w	r3, [r7, #64]	; 0x40
-  events[1].end.month = 7;
- 8000a98:	2307      	movs	r3, #7
+  events[1].end.month = 1;
+ 8000a98:	2301      	movs	r3, #1
  8000a9a:	f887 3041 	strb.w	r3, [r7, #65]	; 0x41
-  events[1].end.day = 8;
- 8000a9e:	2308      	movs	r3, #8
+  events[1].end.day = 1;
+ 8000a9e:	2301      	movs	r3, #1
  8000aa0:	f887 3042 	strb.w	r3, [r7, #66]	; 0x42
-  events[1].end.hour = 2;
- 8000aa4:	2302      	movs	r3, #2
+  events[1].end.hour = 0;
+ 8000aa4:	2300      	movs	r3, #0
  8000aa6:	f887 3043 	strb.w	r3, [r7, #67]	; 0x43
-  events[1].end.minute = 30;
- 8000aaa:	231e      	movs	r3, #30
+  events[1].end.minute = 0;
+ 8000aaa:	2300      	movs	r3, #0
  8000aac:	f887 3044 	strb.w	r3, [r7, #68]	; 0x44
   events[1].end.second = 40;
  8000ab0:	2328      	movs	r3, #40	; 0x28
  8000ab2:	f887 3045 	strb.w	r3, [r7, #69]	; 0x45
 
-  events[2].start.year = 23;
- 8000ab6:	2317      	movs	r3, #23
+  events[2].start.year = 0;
+ 8000ab6:	2300      	movs	r3, #0
  8000ab8:	f887 3048 	strb.w	r3, [r7, #72]	; 0x48
-  events[2].start.month = 7;
- 8000abc:	2307      	movs	r3, #7
+  events[2].start.month = 1;
+ 8000abc:	2301      	movs	r3, #1
  8000abe:	f887 3049 	strb.w	r3, [r7, #73]	; 0x49
-  events[2].start.day = 8;
- 8000ac2:	2308      	movs	r3, #8
+  events[2].start.day = 1;
+ 8000ac2:	2301      	movs	r3, #1
  8000ac4:	f887 304a 	strb.w	r3, [r7, #74]	; 0x4a
-  events[2].start.hour = 2;
- 8000ac8:	2302      	movs	r3, #2
+  events[2].start.hour = 0;
+ 8000ac8:	2300      	movs	r3, #0
  8000aca:	f887 304b 	strb.w	r3, [r7, #75]	; 0x4b
-  events[2].start.minute = 30;
- 8000ace:	231e      	movs	r3, #30
+  events[2].start.minute = 0;
+ 8000ace:	2300      	movs	r3, #0
  8000ad0:	f887 304c 	strb.w	r3, [r7, #76]	; 0x4c
   events[2].start.second = 50;
  8000ad4:	2332      	movs	r3, #50	; 0x32
  8000ad6:	f887 304d 	strb.w	r3, [r7, #77]	; 0x4d
-  events[2].end.year = 23;
- 8000ada:	2317      	movs	r3, #23
+  events[2].end.year = 0;
+ 8000ada:	2300      	movs	r3, #0
  8000adc:	f887 3054 	strb.w	r3, [r7, #84]	; 0x54
-  events[2].end.month = 7;
- 8000ae0:	2307      	movs	r3, #7
+  events[2].end.month = 1;
+ 8000ae0:	2301      	movs	r3, #1
  8000ae2:	f887 3055 	strb.w	r3, [r7, #85]	; 0x55
-  events[2].end.day = 8;
- 8000ae6:	2308      	movs	r3, #8
+  events[2].end.day = 1;
+ 8000ae6:	2301      	movs	r3, #1
  8000ae8:	f887 3056 	strb.w	r3, [r7, #86]	; 0x56
-  events[2].end.hour = 2;
- 8000aec:	2302      	movs	r3, #2
+  events[2].end.hour = 0;
+ 8000aec:	2300      	movs	r3, #0
  8000aee:	f887 3057 	strb.w	r3, [r7, #87]	; 0x57
-  events[2].end.minute = 31;
- 8000af2:	231f      	movs	r3, #31
+  events[2].end.minute = 1;
+ 8000af2:	2301      	movs	r3, #1
  8000af4:	f887 3058 	strb.w	r3, [r7, #88]	; 0x58
   events[2].end.second = 0;
  8000af8:	2300      	movs	r3, #0
  8000afa:	f887 3059 	strb.w	r3, [r7, #89]	; 0x59
 
-  events[3].start.year = 23;
- 8000afe:	2317      	movs	r3, #23
+  events[3].start.year = 0;
+ 8000afe:	2300      	movs	r3, #0
  8000b00:	f887 305c 	strb.w	r3, [r7, #92]	; 0x5c
-  events[3].start.month = 7;
- 8000b04:	2307      	movs	r3, #7
+  events[3].start.month = 1;
+ 8000b04:	2301      	movs	r3, #1
  8000b06:	f887 305d 	strb.w	r3, [r7, #93]	; 0x5d
-  events[3].start.day = 8;
- 8000b0a:	2308      	movs	r3, #8
+  events[3].start.day = 1;
+ 8000b0a:	2301      	movs	r3, #1
  8000b0c:	f887 305e 	strb.w	r3, [r7, #94]	; 0x5e
-  events[3].start.hour = 2;
- 8000b10:	2302      	movs	r3, #2
+  events[3].start.hour = 0;
+ 8000b10:	2300      	movs	r3, #0
  8000b12:	f887 305f 	strb.w	r3, [r7, #95]	; 0x5f
-  events[3].start.minute = 31;
- 8000b16:	231f      	movs	r3, #31
+  events[3].start.minute = 1;
+ 8000b16:	2301      	movs	r3, #1
  8000b18:	f887 3060 	strb.w	r3, [r7, #96]	; 0x60
   events[3].start.second = 10;
  8000b1c:	230a      	movs	r3, #10
  8000b1e:	f887 3061 	strb.w	r3, [r7, #97]	; 0x61
-  events[3].end.year = 23;
- 8000b22:	2317      	movs	r3, #23
+  events[3].end.year = 0;
+ 8000b22:	2300      	movs	r3, #0
  8000b24:	f887 3068 	strb.w	r3, [r7, #104]	; 0x68
-  events[3].end.month = 7;
- 8000b28:	2307      	movs	r3, #7
+  events[3].end.month = 1;
+ 8000b28:	2301      	movs	r3, #1
  8000b2a:	f887 3069 	strb.w	r3, [r7, #105]	; 0x69
-  events[3].end.day = 8;
- 8000b2e:	2308      	movs	r3, #8
+  events[3].end.day = 1;
+ 8000b2e:	2301      	movs	r3, #1
  8000b30:	f887 306a 	strb.w	r3, [r7, #106]	; 0x6a
-  events[3].end.hour = 2;
- 8000b34:	2302      	movs	r3, #2
+  events[3].end.hour = 0;
+ 8000b34:	2300      	movs	r3, #0
  8000b36:	f887 306b 	strb.w	r3, [r7, #107]	; 0x6b
-  events[3].end.minute = 31;
- 8000b3a:	231f      	movs	r3, #31
+  events[3].end.minute = 1;
+ 8000b3a:	2301      	movs	r3, #1
  8000b3c:	f887 306c 	strb.w	r3, [r7, #108]	; 0x6c
   events[3].end.second = 20;
  8000b40:	2314      	movs	r3, #20
  8000b42:	f887 306d 	strb.w	r3, [r7, #109]	; 0x6d
 
-  events[4].start.year = 23;
- 8000b46:	2317      	movs	r3, #23
+  events[4].start.year = 0;
+ 8000b46:	2300      	movs	r3, #0
  8000b48:	f887 3070 	strb.w	r3, [r7, #112]	; 0x70
-  events[4].start.month = 7;
- 8000b4c:	2307      	movs	r3, #7
+  events[4].start.month = 1;
+ 8000b4c:	2301      	movs	r3, #1
  8000b4e:	f887 3071 	strb.w	r3, [r7, #113]	; 0x71
-  events[4].start.day = 8;
- 8000b52:	2308      	movs	r3, #8
+  events[4].start.day = 1;
+ 8000b52:	2301      	movs	r3, #1
  8000b54:	f887 3072 	strb.w	r3, [r7, #114]	; 0x72
-  events[4].start.hour = 2;
- 8000b58:	2302      	movs	r3, #2
+  events[4].start.hour = 0;
+ 8000b58:	2300      	movs	r3, #0
  8000b5a:	f887 3073 	strb.w	r3, [r7, #115]	; 0x73
-  events[4].start.minute = 31;
- 8000b5e:	231f      	movs	r3, #31
+  events[4].start.minute = 1;
+ 8000b5e:	2301      	movs	r3, #1
  8000b60:	f887 3074 	strb.w	r3, [r7, #116]	; 0x74
   events[4].start.second = 30;
  8000b64:	231e      	movs	r3, #30
  8000b66:	f887 3075 	strb.w	r3, [r7, #117]	; 0x75
-  events[4].end.year = 23;
- 8000b6a:	2317      	movs	r3, #23
+  events[4].end.year = 0;
+ 8000b6a:	2300      	movs	r3, #0
  8000b6c:	f887 307c 	strb.w	r3, [r7, #124]	; 0x7c
-  events[4].end.month = 7;
- 8000b70:	2307      	movs	r3, #7
+  events[4].end.month = 1;
+ 8000b70:	2301      	movs	r3, #1
  8000b72:	f887 307d 	strb.w	r3, [r7, #125]	; 0x7d
-  events[4].end.day = 8;
- 8000b76:	2308      	movs	r3, #8
+  events[4].end.day = 1;
+ 8000b76:	2301      	movs	r3, #1
  8000b78:	f887 307e 	strb.w	r3, [r7, #126]	; 0x7e
-  events[4].end.hour = 2;
- 8000b7c:	2302      	movs	r3, #2
+  events[4].end.hour = 0;
+ 8000b7c:	2300      	movs	r3, #0
  8000b7e:	f887 307f 	strb.w	r3, [r7, #127]	; 0x7f
-  events[4].end.minute = 31;
- 8000b82:	231f      	movs	r3, #31
+  events[4].end.minute = 1;
+ 8000b82:	2301      	movs	r3, #1
  8000b84:	f887 3080 	strb.w	r3, [r7, #128]	; 0x80
   events[4].end.second = 40;
  8000b88:	2328      	movs	r3, #40	; 0x28
@@ -1838,8 +1838,8 @@ static void MX_RTC_Init(void)
   sAlarm.AlarmTime.Minutes = 0x0;
  8000e1e:	2300      	movs	r3, #0
  8000e20:	717b      	strb	r3, [r7, #5]
-  sAlarm.AlarmTime.Seconds = 0x0;
- 8000e22:	2300      	movs	r3, #0
+  sAlarm.AlarmTime.Seconds = 0x5;
+ 8000e22:	2305      	movs	r3, #5
  8000e24:	71bb      	strb	r3, [r7, #6]
   sAlarm.AlarmTime.SubSeconds = 0x0;
  8000e26:	2300      	movs	r3, #0

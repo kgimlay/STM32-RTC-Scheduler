@@ -153,11 +153,11 @@ int main(void)
 
   // set calendar time
   DateTime now = {
-		  .year = 23,
-		  .month = 7,
-		  .day = 8,
-		  .hour = 2,
-		  .minute = 30,
+		  .year = 0,
+		  .month = 1,
+		  .day = 1,
+		  .hour = 0,
+		  .minute = 0,
 		  .second = 0
   };
   calendar_setDateTime(now);
@@ -165,69 +165,69 @@ int main(void)
   // set some events
   CalendarEvent events[MAX_NUM_EVENTS] = {0};
 
-  events[0].start.year = 23;
-  events[0].start.month = 7;
-  events[0].start.day = 8;
-  events[0].start.hour = 2;
-  events[0].start.minute = 30;
+  events[0].start.year = 0;
+  events[0].start.month = 1;
+  events[0].start.day = 1;
+  events[0].start.hour = 0;
+  events[0].start.minute = 0;
   events[0].start.second = 10;
-  events[0].end.year = 23;
-  events[0].end.month = 7;
-  events[0].end.day = 8;
-  events[0].end.hour = 2;
-  events[0].end.minute = 30;
+  events[0].end.year = 0;
+  events[0].end.month = 1;
+  events[0].end.day = 1;
+  events[0].end.hour = 0;
+  events[0].end.minute = 0;
   events[0].end.second = 20;
 
-  events[1].start.year = 23;
-  events[1].start.month = 7;
-  events[1].start.day = 8;
-  events[1].start.hour = 2;
-  events[1].start.minute = 30;
+  events[1].start.year = 0;
+  events[1].start.month = 1;
+  events[1].start.day = 1;
+  events[1].start.hour = 0;
+  events[1].start.minute = 0;
   events[1].start.second = 30;
-  events[1].end.year = 23;
-  events[1].end.month = 7;
-  events[1].end.day = 8;
-  events[1].end.hour = 2;
-  events[1].end.minute = 30;
+  events[1].end.year = 0;
+  events[1].end.month = 1;
+  events[1].end.day = 1;
+  events[1].end.hour = 0;
+  events[1].end.minute = 0;
   events[1].end.second = 40;
 
-  events[2].start.year = 23;
-  events[2].start.month = 7;
-  events[2].start.day = 8;
-  events[2].start.hour = 2;
-  events[2].start.minute = 30;
+  events[2].start.year = 0;
+  events[2].start.month = 1;
+  events[2].start.day = 1;
+  events[2].start.hour = 0;
+  events[2].start.minute = 0;
   events[2].start.second = 50;
-  events[2].end.year = 23;
-  events[2].end.month = 7;
-  events[2].end.day = 8;
-  events[2].end.hour = 2;
-  events[2].end.minute = 31;
+  events[2].end.year = 0;
+  events[2].end.month = 1;
+  events[2].end.day = 1;
+  events[2].end.hour = 0;
+  events[2].end.minute = 1;
   events[2].end.second = 0;
 
-  events[3].start.year = 23;
-  events[3].start.month = 7;
-  events[3].start.day = 8;
-  events[3].start.hour = 2;
-  events[3].start.minute = 31;
+  events[3].start.year = 0;
+  events[3].start.month = 1;
+  events[3].start.day = 1;
+  events[3].start.hour = 0;
+  events[3].start.minute = 1;
   events[3].start.second = 10;
-  events[3].end.year = 23;
-  events[3].end.month = 7;
-  events[3].end.day = 8;
-  events[3].end.hour = 2;
-  events[3].end.minute = 31;
+  events[3].end.year = 0;
+  events[3].end.month = 1;
+  events[3].end.day = 1;
+  events[3].end.hour = 0;
+  events[3].end.minute = 1;
   events[3].end.second = 20;
 
-  events[4].start.year = 23;
-  events[4].start.month = 7;
-  events[4].start.day = 8;
-  events[4].start.hour = 2;
-  events[4].start.minute = 31;
+  events[4].start.year = 0;
+  events[4].start.month = 1;
+  events[4].start.day = 1;
+  events[4].start.hour = 0;
+  events[4].start.minute = 1;
   events[4].start.second = 30;
-  events[4].end.year = 23;
-  events[4].end.month = 7;
-  events[4].end.day = 8;
-  events[4].end.hour = 2;
-  events[4].end.minute = 31;
+  events[4].end.year = 0;
+  events[4].end.month = 1;
+  events[4].end.day = 1;
+  events[4].end.hour = 0;
+  events[4].end.minute = 1;
   events[4].end.second = 40;
 
   calendar_setEvents(events);
@@ -394,7 +394,7 @@ static void MX_RTC_Init(void)
   */
   sAlarm.AlarmTime.Hours = 0x0;
   sAlarm.AlarmTime.Minutes = 0x0;
-  sAlarm.AlarmTime.Seconds = 0x0;
+  sAlarm.AlarmTime.Seconds = 0x5;
   sAlarm.AlarmTime.SubSeconds = 0x0;
   sAlarm.AlarmTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
   sAlarm.AlarmTime.StoreOperation = RTC_STOREOPERATION_RESET;
