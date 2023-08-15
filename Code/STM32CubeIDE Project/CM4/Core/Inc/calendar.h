@@ -12,6 +12,9 @@
 #include <stdint.h>
 #include "stm32wlxx_hal.h"
 
+#include "uart_message.h"
+#include "uart_basic_com.h"
+
 
 #define MAX_NUM_EVENTS 10
 
@@ -60,7 +63,7 @@ void calendar_getDateTime(DateTime* dateTime);
 /*
  *
  */
-void calendar_setEvents(CalendarEvent events[MAX_NUM_EVENTS]);
+void calendar_setEvents(CalendarEvent events[MAX_NUM_EVENTS], unsigned int numEvents);
 
 
 /*

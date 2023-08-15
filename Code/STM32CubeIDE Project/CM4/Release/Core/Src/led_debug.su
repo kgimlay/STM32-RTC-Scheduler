@@ -1,0 +1,4 @@
+../Core/Src/led_debug.c:24:6:blink_led	48	static
+../Core/Src/led_debug.c:10:6:blink_led_sequence	32	static
+../Core/Src/led_debug.c:63:6:activate_led	40	static
+../Core/Src/led_debug.c:88:6:deactivate_led	8	static

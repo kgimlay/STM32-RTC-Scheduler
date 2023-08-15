@@ -1,0 +1,10 @@
+../Core/Src/calendar.c:31:6:calendar_init	0	static
+../Core/Src/calendar.c:43:6:calendar_setDateTime	24	static
+../Core/Src/calendar.c:51:6:calendar_getDateTime	16	static
+../Core/Src/calendar.c:59:6:calendar_setEvents	8	static
+../Core/Src/calendar.c:83:6:calendar_updateEvents	0	static
+../Core/Src/calendar.c:120:10:dateTimeToSeconds	8	static
+../Core/Src/calendar.c:106:9:compareDateTime	32	static
+../Core/Src/calendar.c:136:10:getNextAlarm	120	static
+../Core/Src/calendar.c:68:6:calendar_start	16	static
+../Core/Src/calendar.c:91:6:calendar_AlarmA_ISR	0	static

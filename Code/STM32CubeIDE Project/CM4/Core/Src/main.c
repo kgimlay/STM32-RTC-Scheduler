@@ -137,6 +137,14 @@ int main(void)
   MX_RTC_Init();
   /* USER CODE BEGIN 2 */
 
+//  // Attempt to fix RTC alarm A infinite interrupts
+//  __HAL_RTC_WRITEPROTECTION_DISABLE(&hrtc);
+//  HAL_StatusTypeDef synchro = HAL_RTC_WaitForSynchro(&hrtc);
+//  if (synchro != HAL_OK) {
+//	  Error_Handler();
+//  }
+//  __HAL_RTC_WRITEPROTECTION_ENABLE(&hrtc);
+
   /* USER CODE END 2 */
 
   /* Boot CPU2 */
@@ -154,7 +162,7 @@ int main(void)
   // set calendar time
   DateTime now = {
 		  .year = 0,
-		  .month = 1,
+		  .month = 2,
 		  .day = 1,
 		  .hour = 0,
 		  .minute = 0,
@@ -166,13 +174,13 @@ int main(void)
   CalendarEvent events[MAX_NUM_EVENTS] = {0};
 
   events[0].start.year = 0;
-  events[0].start.month = 1;
+  events[0].start.month = 2;
   events[0].start.day = 1;
   events[0].start.hour = 0;
   events[0].start.minute = 0;
-  events[0].start.second = 10;
+  events[0].start.second = 5;
   events[0].end.year = 0;
-  events[0].end.month = 1;
+  events[0].end.month = 2;
   events[0].end.day = 1;
   events[0].end.hour = 0;
   events[0].end.minute = 0;
@@ -230,9 +238,11 @@ int main(void)
   events[4].end.minute = 1;
   events[4].end.second = 40;
 
-  calendar_setEvents(events);
+  calendar_setEvents(events, 5);
 
   // start calendar
+  HAL_NVIC_SetPriority(RTC_Alarm_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(RTC_Alarm_IRQn);
   calendar_start();
 
   // begin listening for messages from desktop
@@ -394,7 +404,7 @@ static void MX_RTC_Init(void)
   */
   sAlarm.AlarmTime.Hours = 0x0;
   sAlarm.AlarmTime.Minutes = 0x0;
-  sAlarm.AlarmTime.Seconds = 0x5;
+  sAlarm.AlarmTime.Seconds = 0x0;
   sAlarm.AlarmTime.SubSeconds = 0x0;
   sAlarm.AlarmTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
   sAlarm.AlarmTime.StoreOperation = RTC_STOREOPERATION_RESET;

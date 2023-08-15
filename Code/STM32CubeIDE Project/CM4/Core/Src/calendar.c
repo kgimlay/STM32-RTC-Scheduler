@@ -11,15 +11,16 @@
 #include "stdbool.h"
 #include "string.h"
 
-int compareDateTime(DateTime dateTime_1, DateTime dateTime_2);
-int dateTimeToSeconds(DateTime dateTime);
+int32_t compareDateTime(DateTime dateTime_1, DateTime dateTime_2);
+uint32_t dateTimeToSeconds(DateTime dateTime);
+DateTime getNextAlarm(void);
 
 
 /*
  *
  */
 static CalendarEvent _calendarEvents[MAX_NUM_EVENTS] = {0};
-volatile static int _currentEventIdx = 0;
+volatile static int _numberEvents = 0;
 volatile static bool _inEvent = false;
 RTC_HandleTypeDef* _hrtc;
 
@@ -55,8 +56,9 @@ void calendar_getDateTime(DateTime* dateTime) {
 /*
  *
  */
-void calendar_setEvents(CalendarEvent events[MAX_NUM_EVENTS]) {
+void calendar_setEvents(CalendarEvent events[MAX_NUM_EVENTS], unsigned int numEvents) {
 	memcpy(_calendarEvents, events, sizeof(CalendarEvent)*MAX_NUM_EVENTS);
+	_numberEvents = numEvents;
 }
 
 
@@ -64,11 +66,13 @@ void calendar_setEvents(CalendarEvent events[MAX_NUM_EVENTS]) {
  *
  */
 void calendar_start(void) {
-	// reset current event index
-	_currentEventIdx = 0;
+	DateTime nextAlarm;
+
+	// get calendar alarm for next alarm in event list relative to now
+	nextAlarm = getNextAlarm();
 
 	// set alarm for start of first event in list
-	setAlarm_A(_calendarEvents[0].start.day, _calendarEvents[0].start.hour, _calendarEvents[0].start.minute, _calendarEvents[0].start.second);
+	setAlarm_A(nextAlarm.day, nextAlarm.hour, nextAlarm.minute, nextAlarm.second);
 }
 
 
@@ -85,48 +89,13 @@ void calendar_updateEvents(void) {
  *
  */
 void calendar_AlarmA_ISR(void) {
-	DateTime now;
+	DateTime nextAlarm;
 
-	// get the current time
-	getDateTime(&now.year, &now.month, &now.day, &now.month, &now.minute, &now.second);
+	// get calendar alarm for next alarm in event list relative to now
+	nextAlarm = getNextAlarm();
 
-	// if not in event, event started
-	if (!_inEvent) {
-
-		// if alarm triggered at correct month/year
-		// this line can break if it takes 1 or more seconds from when the alarm interrupt fires
-		if (compareDateTime(now, _calendarEvents[_currentEventIdx].start) == 0) {
-
-			_inEvent = true;
-
-			// set alarm for end of event
-			setAlarm_A(_calendarEvents[_currentEventIdx].end.day, _calendarEvents[_currentEventIdx].end.hour, _calendarEvents[_currentEventIdx].end.minute, _calendarEvents[_currentEventIdx].end.second);
-		}
-
-		// else not at start of event, restart alarm
-		else {
-			setAlarm_A(_calendarEvents[_currentEventIdx].start.day, _calendarEvents[_currentEventIdx].start.hour, _calendarEvents[_currentEventIdx].start.minute, _calendarEvents[_currentEventIdx].start.second);
-		}
-	}
-
-	// if in event
-	else {
-		// if alarm triggered at correct month/year
-		// this line can break if it takes 1 or more seconds from when the alarm interrupt fires
-		if (compareDateTime(now, _calendarEvents[_currentEventIdx].end) == 0) {
-			_currentEventIdx++;
-
-			// set alarm for start of next event
-			setAlarm_A(_calendarEvents[_currentEventIdx].start.day, _calendarEvents[_currentEventIdx].start.hour, _calendarEvents[_currentEventIdx].start.minute, _calendarEvents[_currentEventIdx].start.second);
-
-			_inEvent = false;
-		}
-
-		// else not at start of event, restart alarm
-		else {
-			setAlarm_A(_calendarEvents[_currentEventIdx].end.day, _calendarEvents[_currentEventIdx].end.hour, _calendarEvents[_currentEventIdx].end.minute, _calendarEvents[_currentEventIdx].end.second);
-		}
-	}
+	// set alarm for start of first event in list
+	setAlarm_A(nextAlarm.day, nextAlarm.hour, nextAlarm.minute, nextAlarm.second);
 }
 
 
@@ -134,16 +103,21 @@ void calendar_AlarmA_ISR(void) {
  *
  * Note: Does not account for leap years.
  */
-int compareDateTime(DateTime dateTime_1, DateTime dateTime_2) {
-  // return net comparison (date time 1 - date time 2)
-  return dateTimeToSeconds(dateTime_1) - dateTimeToSeconds(dateTime_2);
+int32_t compareDateTime(DateTime dateTime_1, DateTime dateTime_2) {
+	uint32_t dateTimeSeconds_1, dateTimeSeconds_2;
+
+	dateTimeSeconds_1 = dateTimeToSeconds(dateTime_1);
+	dateTimeSeconds_2 = dateTimeToSeconds(dateTime_2);
+
+	// return net comparison (date time 1 - date time 2)
+	return dateTimeSeconds_1 - dateTimeSeconds_2;
 }
 
 
 /*
  *
  */
-int dateTimeToSeconds(DateTime dateTime) {
+uint32_t dateTimeToSeconds(DateTime dateTime) {
 	// Convert to seconds. Note: assumes 30 days in a month and
 	// no leap years, it is not needed for the calculation because
 	// they are used for relative comparisons, not absolute values.
@@ -153,4 +127,76 @@ int dateTimeToSeconds(DateTime dateTime) {
 			+ ((dateTime.day - 1) * 86400)
 			+ ((dateTime.month - 1) * 2592000)
 			+ (dateTime.year * 31104000));
+}
+
+
+/*
+ *
+ */
+DateTime getNextAlarm(void) {
+	int eventIdx;
+	bool nextAlarmFound;
+	DateTime now;
+	DateTime nextAlarmDateTime = {0};
+
+	// get the current date and time
+	getDateTime(&now.year, &now.month, &now.day, &now.month, &now.minute, &now.second);
+
+	// Traverse over the events list and find where 'now' falls.  This can be before
+	// any events, within an event, between events, or after all the events.
+	eventIdx = 0;
+	nextAlarmFound = false;
+	while (eventIdx < _numberEvents && !nextAlarmFound) {
+		// test if before event
+		if (compareDateTime(now, _calendarEvents[eventIdx].start) < 0)
+		{
+			// then the next alarm is the beginning of this event
+			nextAlarmDateTime.year = _calendarEvents[eventIdx].start.year;
+			nextAlarmDateTime.month = _calendarEvents[eventIdx].start.month;
+			nextAlarmDateTime.day = _calendarEvents[eventIdx].start.day;
+			nextAlarmDateTime.hour = _calendarEvents[eventIdx].start.hour;
+			nextAlarmDateTime.minute = _calendarEvents[eventIdx].start.minute;
+			nextAlarmDateTime.second = _calendarEvents[eventIdx].start.second;
+
+			// set found
+			nextAlarmFound = true;
+		}
+
+		// test if within event
+		else if(compareDateTime(now, _calendarEvents[eventIdx].start) >= 0
+				&& compareDateTime(now, _calendarEvents[eventIdx].end) < 0) {
+			// then the next alarm is the end of this event
+			nextAlarmDateTime.year = _calendarEvents[eventIdx].end.year;
+			nextAlarmDateTime.month = _calendarEvents[eventIdx].end.month;
+			nextAlarmDateTime.day = _calendarEvents[eventIdx].end.day;
+			nextAlarmDateTime.hour = _calendarEvents[eventIdx].end.hour;
+			nextAlarmDateTime.minute = _calendarEvents[eventIdx].end.minute;
+			nextAlarmDateTime.second = _calendarEvents[eventIdx].end.second;
+
+			// set found
+			nextAlarmFound = true;
+		}
+
+		// traverse to next event
+		else {
+			eventIdx++;
+		}
+	}
+
+	// If there is no next alarm, then return a generic alarm for
+	// the beginning of time (1/1/99 0:0:0)
+	if (!nextAlarmFound) {
+		nextAlarmDateTime.year = 99;
+		nextAlarmDateTime.month = 1;
+		nextAlarmDateTime.day = 1;
+		nextAlarmDateTime.hour = 0;
+		nextAlarmDateTime.minute = 0;
+		nextAlarmDateTime.second = 0;
+	}
+
+	// Return the next alarm found.
+	char messageBody[UART_MESSAGE_BODY_SIZE];
+	snprintf(messageBody, UART_MESSAGE_BODY_SIZE, "20%02d/%02d/%02d  %02d:%02d:%02d\n", nextAlarmDateTime.year, nextAlarmDateTime.month, nextAlarmDateTime.day, nextAlarmDateTime.hour, nextAlarmDateTime.minute, nextAlarmDateTime.second);
+	uartBasic_TX_IT("NEXT", messageBody);
+	return nextAlarmDateTime;
 }

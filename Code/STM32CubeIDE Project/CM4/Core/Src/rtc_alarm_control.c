@@ -71,12 +71,12 @@ void getDateTime(uint8_t* year, uint8_t* month, uint8_t* day, uint8_t* hour, uin
   }
 
   // Return through parameters
-  *year = ((date.Year & 0b11110000) >> 4) * 10 + (date.Year & 0b00001111);
-  *month = ((date.Month & 0b00010000) >> 4) * 10 + (date.Month & 0b00001111);
-  *day = ((date.Date & 0b00110000) >> 4) * 10 + (date.Date & 0b00001111);
-  *hour = ((time.Hours & 0b00110000) >> 4) * 10 + (time.Hours & 0b00001111);
-  *minute = ((time.Minutes & 0b01110000) >> 4) * 10 + (time.Minutes & 0b00001111);
-  *second = ((time.Seconds & 0b01110000) >> 4) * 10 + (time.Seconds & 0b00001111);
+  *year = ((date.Year & 0xF0) >> 4) * 10 + (date.Year & 0x0F);
+  *month = ((date.Month & 0xF0) >> 4) * 10 + (date.Month & 0x0F);
+  *day = ((date.Date & 0xF0) >> 4) * 10 + (date.Date & 0x0F);
+  *hour = ((time.Hours & 0xF0) >> 4) * 10 + (time.Hours & 0x0F);
+  *minute = ((time.Minutes & 0xF0) >> 4) * 10 + (time.Minutes & 0x0F);
+  *second = ((time.Seconds & 0xF0) >> 4) * 10 + (time.Seconds & 0x0F);
 }
 
 

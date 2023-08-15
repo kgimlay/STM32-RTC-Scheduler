@@ -1,0 +1,5 @@
+rtc_alarm_control.c:18:6:rtcAlarmControl_init	1
+rtc_alarm_control.c:26:6:setDateTime	3
+rtc_alarm_control.c:57:6:getDateTime	3
+rtc_alarm_control.c:86:6:setAlarm_A	2
+rtc_alarm_control.c:113:6:getAlarm_A	2
