@@ -137,14 +137,6 @@ int main(void)
   MX_RTC_Init();
   /* USER CODE BEGIN 2 */
 
-//  // Attempt to fix RTC alarm A infinite interrupts
-//  __HAL_RTC_WRITEPROTECTION_DISABLE(&hrtc);
-//  HAL_StatusTypeDef synchro = HAL_RTC_WaitForSynchro(&hrtc);
-//  if (synchro != HAL_OK) {
-//	  Error_Handler();
-//  }
-//  __HAL_RTC_WRITEPROTECTION_ENABLE(&hrtc);
-
   /* USER CODE END 2 */
 
   /* Boot CPU2 */
@@ -241,8 +233,8 @@ int main(void)
   calendar_setEvents(events, 5);
 
   // start calendar
-  HAL_NVIC_SetPriority(RTC_Alarm_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(RTC_Alarm_IRQn);
+//  HAL_NVIC_SetPriority(RTC_Alarm_IRQn, 0, 0);
+//  HAL_NVIC_EnableIRQ(RTC_Alarm_IRQn);
   calendar_start();
 
   // begin listening for messages from desktop
