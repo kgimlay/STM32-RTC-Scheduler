@@ -75,6 +75,12 @@ void calendar_start(void);
 /*
  *
  */
+void calendar_handleAlarm(void);
+
+
+/*
+ *
+ */
 void calendar_AlarmA_ISR(void);
 
 

@@ -98,10 +98,6 @@ void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc)
 {
 	// call ISR for handling calendar events
 	calendar_AlarmA_ISR();
-
-	// send message for debugging
-	char messageBody[UART_MESSAGE_BODY_SIZE] = "\n\nALARM EVENT!\n\n\0";
-	uartBasic_TX_IT("TIME", messageBody);
 }
 /* USER CODE END 0 */
 
@@ -248,6 +244,9 @@ int main(void)
   int timeMinutes = 0;
   while (1)
   {
+	  // handle a calendar alarm event
+	  calendar_handleAlarm();
+
 	  // check for message in the process queue
 	  messageStatus = uartBasic_get_RX(messageHeader, messageBody);
 

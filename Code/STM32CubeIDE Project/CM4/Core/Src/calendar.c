@@ -11,6 +11,7 @@
 #include "stdbool.h"
 #include "string.h"
 
+
 int32_t compareDateTime(DateTime dateTime_1, DateTime dateTime_2);
 uint32_t dateTimeToSeconds(DateTime dateTime);
 DateTime getNextAlarm(void);
@@ -21,8 +22,8 @@ DateTime getNextAlarm(void);
  */
 static CalendarEvent _calendarEvents[MAX_NUM_EVENTS] = {0};
 volatile static int _numberEvents = 0;
-volatile static bool _inEvent = false;
-RTC_HandleTypeDef* _hrtc;
+volatile bool _alarmFired = false;
+RTC_HandleTypeDef* _hrtc = NULL;
 
 
 /*
@@ -73,8 +74,37 @@ void calendar_start(void) {
 
 	// set alarm for start of first event in list
 	setAlarm_A(nextAlarm.day, nextAlarm.hour, nextAlarm.minute, nextAlarm.second);
+
+	// make sure that alarm fired is cleared/reset
+	_alarmFired = false;
 }
 
+
+/*
+ *
+ */
+void calendar_handleAlarm(void) {
+	DateTime nextAlarm;
+
+	if (_alarmFired) {
+		// get calendar alarm for next alarm in event list relative to now
+		nextAlarm = getNextAlarm();
+
+		// set alarm for start of first event in list
+		setAlarm_A(nextAlarm.day, nextAlarm.hour, nextAlarm.minute, nextAlarm.second);
+
+		// reset alarm fired flag
+		_alarmFired = false;
+
+		// send message for debugging
+		char messageBody[UART_MESSAGE_BODY_SIZE] = "\n\nALARM EVENT!\n\n\0";
+		uartBasic_TX_IT("TIME", messageBody);
+	}
+
+	else {
+
+	}
+}
 
 
 /*
@@ -89,13 +119,8 @@ void calendar_updateEvents(void) {
  *
  */
 void calendar_AlarmA_ISR(void) {
-	DateTime nextAlarm;
-
-	// get calendar alarm for next alarm in event list relative to now
-	nextAlarm = getNextAlarm();
-
-	// set alarm for start of first event in list
-	setAlarm_A(nextAlarm.day, nextAlarm.hour, nextAlarm.minute, nextAlarm.second);
+	// set flag that an alarm fired
+	_alarmFired = true;
 }
 
 
@@ -195,8 +220,8 @@ DateTime getNextAlarm(void) {
 	}
 
 	// Return the next alarm found.
-	char messageBody[UART_MESSAGE_BODY_SIZE];
-	snprintf(messageBody, UART_MESSAGE_BODY_SIZE, "20%02d/%02d/%02d  %02d:%02d:%02d\n", nextAlarmDateTime.year, nextAlarmDateTime.month, nextAlarmDateTime.day, nextAlarmDateTime.hour, nextAlarmDateTime.minute, nextAlarmDateTime.second);
-	uartBasic_TX_IT("NEXT", messageBody);
+//	char messageBody[UART_MESSAGE_BODY_SIZE];
+//	snprintf(messageBody, UART_MESSAGE_BODY_SIZE, "20%02d/%02d/%02d  %02d:%02d:%02d\n", nextAlarmDateTime.year, nextAlarmDateTime.month, nextAlarmDateTime.day, nextAlarmDateTime.hour, nextAlarmDateTime.minute, nextAlarmDateTime.second);
+//	uartBasic_TX_IT("NEXT", messageBody);
 	return nextAlarmDateTime;
 }

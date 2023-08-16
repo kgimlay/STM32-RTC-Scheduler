@@ -1,2 +1,2 @@
-uart_messge.c:16:6:composeMessage	2
-uart_messge.c:27:6:decomposeMessage	2
+uart_messge.c:16:6:composeMessage	1
+uart_messge.c:27:6:decomposeMessage	1
