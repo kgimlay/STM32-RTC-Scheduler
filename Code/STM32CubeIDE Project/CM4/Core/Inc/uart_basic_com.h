@@ -42,6 +42,17 @@ bool uartBasic_TX_IT(char header[UART_MESSAGE_HEADER_SIZE],
 bool uartBasic_RX_IT(void);
 
 /*
+ * Start transmitting message over UART.
+ */
+bool uartBasic_TX_Poll(char header[UART_MESSAGE_HEADER_SIZE],
+		char body[UART_MESSAGE_BODY_SIZE]);
+
+/*
+ * Begins listening for messages over UART.
+ */
+bool uartBasic_RX_Poll(void);
+
+/*
  * Get received message from RX buffer.
  */
 bool uartBasic_get_RX(char header[UART_MESSAGE_HEADER_SIZE],

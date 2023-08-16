@@ -98,6 +98,62 @@ bool uartBasic_RX_IT(void)
 
 
 /*
+ * Start transmitting message over UART.
+ */
+bool uartBasic_TX_Poll(char header[UART_MESSAGE_HEADER_SIZE],
+		char body[UART_MESSAGE_BODY_SIZE])
+{
+	// if the buffer is not full
+	if (!_txBuffer_full)
+	{
+		// Compose header and body into one message
+		composeMessage(header, body, _txBuffer);
+		_txBuffer_full = true;
+
+		// and send
+		_txMessage_Poll();
+
+		// clear buffer full
+		_txBuffer_full = false;
+
+		// report successfully queued
+		return true;
+	}
+
+	else
+	{
+		// return full buffer
+		return false;
+	}
+}
+
+
+/*
+ * Begins listening for messages over UART.
+ */
+bool uartBasic_RX_Poll(void)
+{
+	// todo: need to fully implement into system
+	// if the buffer is not full
+	if (!_rxBuffer_full)
+	{
+		// start receiving
+		_rxMessage_Poll();
+
+		// return success
+		return true;
+	}
+
+	// rx buffer is full
+	else
+	{
+		// return full buffer
+		return false;
+	}
+}
+
+
+/*
  *
  */
 bool uartBasic_get_RX(char header[UART_MESSAGE_HEADER_SIZE],

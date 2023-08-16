@@ -97,8 +97,8 @@ void calendar_handleAlarm(void) {
 		_alarmFired = false;
 
 		// send message for debugging
-		char messageBody[UART_MESSAGE_BODY_SIZE] = "\n\nALARM EVENT!\n\n\0";
-		uartBasic_TX_IT("TIME", messageBody);
+		char messageBody[UART_MESSAGE_BODY_SIZE] = "\nALARM EVENT!\n\n\0";
+		uartBasic_TX_Poll("\0\0\0\0", messageBody);
 	}
 
 	else {
@@ -220,8 +220,8 @@ DateTime getNextAlarm(void) {
 	}
 
 	// Return the next alarm found.
-//	char messageBody[UART_MESSAGE_BODY_SIZE];
-//	snprintf(messageBody, UART_MESSAGE_BODY_SIZE, "20%02d/%02d/%02d  %02d:%02d:%02d\n", nextAlarmDateTime.year, nextAlarmDateTime.month, nextAlarmDateTime.day, nextAlarmDateTime.hour, nextAlarmDateTime.minute, nextAlarmDateTime.second);
-//	uartBasic_TX_IT("NEXT", messageBody);
+	char messageBody[UART_MESSAGE_BODY_SIZE];
+	snprintf(messageBody, UART_MESSAGE_BODY_SIZE, "20%02d/%02d/%02d  %02d:%02d:%02d\n", nextAlarmDateTime.year, nextAlarmDateTime.month, nextAlarmDateTime.day, nextAlarmDateTime.hour, nextAlarmDateTime.minute, nextAlarmDateTime.second);
+	uartBasic_TX_Poll("NEXT", messageBody);
 	return nextAlarmDateTime;
 }

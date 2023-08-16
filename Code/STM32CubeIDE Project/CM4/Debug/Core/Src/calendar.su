@@ -8,4 +8,4 @@
 ../Core/Src/calendar.c:121:6:calendar_AlarmA_ISR	4	static
 ../Core/Src/calendar.c:131:9:compareDateTime	40	static
 ../Core/Src/calendar.c:145:10:dateTimeToSeconds	16	static
-../Core/Src/calendar.c:161:10:getNextAlarm	56	static
+../Core/Src/calendar.c:161:10:getNextAlarm	104	static

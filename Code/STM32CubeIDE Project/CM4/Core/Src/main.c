@@ -253,7 +253,7 @@ int main(void)
 	  // if message present, handle message
 	  if (messageStatus == true) {
 		  // echo back to computer
-		  uartBasic_TX_IT(messageHeader, messageBody);
+		  uartBasic_TX_Poll(messageHeader, messageBody);
 		  messageCount++;
 		  uartBasic_RX_IT();
 	  }
@@ -261,7 +261,7 @@ int main(void)
 	  calendar_getDateTime(&now);
 	  memset(messageBody,0,UART_MESSAGE_BODY_SIZE);
 	  snprintf(messageBody, UART_MESSAGE_BODY_SIZE, "20%02d/%02d/%02d  %02d:%02d:%02d\n", now.year, now.month, now.day, now.hour, now.minute, now.second);
-	  uartBasic_TX_IT("TIME", messageBody);
+	  uartBasic_TX_Poll("TIME", messageBody);
 	  timeSeconds++;
 	  timeMinutes++;
 
