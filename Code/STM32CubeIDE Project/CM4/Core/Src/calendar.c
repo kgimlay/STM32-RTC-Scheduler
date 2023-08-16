@@ -159,13 +159,13 @@ uint32_t dateTimeToSeconds(DateTime dateTime) {
  *
  */
 DateTime getNextAlarm(void) {
-	int eventIdx;
-	bool nextAlarmFound;
-	DateTime now;
+	int eventIdx = 0;
+	bool nextAlarmFound = false;
+	DateTime now = {0};
 	DateTime nextAlarmDateTime = {0};
 
 	// get the current date and time
-	getDateTime(&now.year, &now.month, &now.day, &now.month, &now.minute, &now.second);
+	getDateTime(&now.year, &now.month, &now.day, &now.hour, &now.minute, &now.second);
 
 	// Traverse over the events list and find where 'now' falls.  This can be before
 	// any events, within an event, between events, or after all the events.
