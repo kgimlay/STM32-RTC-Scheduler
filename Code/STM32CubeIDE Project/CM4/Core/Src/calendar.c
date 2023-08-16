@@ -168,7 +168,7 @@ DateTime getNextAlarm(void) {
 	getDateTime(&now.year, &now.month, &now.day, &now.hour, &now.minute, &now.second);
 
 	// Traverse over the events list and find where 'now' falls.  This can be before
-	// any events, within an event, between events, or after all the events.
+	// any all the events, within an event, between events, or after all the events.
 	eventIdx = 0;
 	nextAlarmFound = false;
 	while (eventIdx < _numberEvents && !nextAlarmFound) {
@@ -209,9 +209,9 @@ DateTime getNextAlarm(void) {
 	}
 
 	// If there is no next alarm, then return a generic alarm for
-	// the beginning of time (1/1/99 0:0:0)
+	// the beginning of time (1/1/0 0:0:0)
 	if (!nextAlarmFound) {
-		nextAlarmDateTime.year = 99;
+		nextAlarmDateTime.year = 0;
 		nextAlarmDateTime.month = 1;
 		nextAlarmDateTime.day = 1;
 		nextAlarmDateTime.hour = 0;
@@ -221,7 +221,7 @@ DateTime getNextAlarm(void) {
 
 	// Return the next alarm found.
 	char messageBody[UART_MESSAGE_BODY_SIZE];
-	snprintf(messageBody, UART_MESSAGE_BODY_SIZE, "20%02d/%02d/%02d  %02d:%02d:%02d\n", nextAlarmDateTime.year, nextAlarmDateTime.month, nextAlarmDateTime.day, nextAlarmDateTime.hour, nextAlarmDateTime.minute, nextAlarmDateTime.second);
-	uartBasic_TX_Poll("NEXT", messageBody);
+	snprintf(messageBody, UART_MESSAGE_BODY_SIZE, " 20%02d/%02d/%02d  %02d:%02d:%02d\n\n", nextAlarmDateTime.year, nextAlarmDateTime.month, nextAlarmDateTime.day, nextAlarmDateTime.hour, nextAlarmDateTime.minute, nextAlarmDateTime.second);
+	uartBasic_TX_Poll("\nNEXT", messageBody);
 	return nextAlarmDateTime;
 }

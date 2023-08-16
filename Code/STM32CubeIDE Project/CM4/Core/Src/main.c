@@ -149,9 +149,9 @@ int main(void)
 
   // set calendar time
   DateTime now = {
-		  .year = 23,
-		  .month = 8,
-		  .day = 16,
+		  .year = 0,
+		  .month = 0,
+		  .day = 0,
 		  .hour = 0,
 		  .minute = 0,
 		  .second = 0
@@ -161,72 +161,46 @@ int main(void)
   // set some events
   CalendarEvent events[MAX_NUM_EVENTS] = {0};
 
-  events[0].start.year = 23;
-  events[0].start.month = 8;
-  events[0].start.day = 16;
+  events[0].start.year = 0;
+  events[0].start.month = 0;
+  events[0].start.day = 0;
   events[0].start.hour = 0;
   events[0].start.minute = 0;
   events[0].start.second = 5;
-  events[0].end.year = 23;
-  events[0].end.month = 8;
-  events[0].end.day = 16;
+  events[0].end.year = 0;
+  events[0].end.month = 0;
+  events[0].end.day = 0;
   events[0].end.hour = 0;
   events[0].end.minute = 0;
-  events[0].end.second = 20;
+  events[0].end.second = 10;
 
-  events[1].start.year = 26;
-  events[1].start.month = 8;
-  events[1].start.day = 16;
+  events[1].start.year = 0;
+  events[1].start.month = 0;
+  events[1].start.day = 0;
   events[1].start.hour = 0;
   events[1].start.minute = 0;
-  events[1].start.second = 30;
-  events[1].end.year = 23;
-  events[1].end.month = 8;
-  events[1].end.day = 16;
+  events[1].start.second = 15;
+  events[1].end.year = 0;
+  events[1].end.month = 0;
+  events[1].end.day = 0;
   events[1].end.hour = 0;
   events[1].end.minute = 0;
-  events[1].end.second = 40;
+  events[1].end.second = 20;
 
-  events[2].start.year = 23;
-  events[2].start.month = 8;
-  events[2].start.day = 16;
+  events[2].start.year = 0;
+  events[2].start.month = 0;
+  events[2].start.day = 0;
   events[2].start.hour = 0;
   events[2].start.minute = 0;
-  events[2].start.second = 50;
-  events[2].end.year = 23;
-  events[2].end.month = 8;
-  events[2].end.day = 16;
+  events[2].start.second = 20;
+  events[2].end.year = 0;
+  events[2].end.month = 0;
+  events[2].end.day = 0;
   events[2].end.hour = 0;
-  events[2].end.minute = 1;
-  events[2].end.second = 0;
+  events[2].end.minute = 0;
+  events[2].end.second = 25;
 
-  events[3].start.year = 23;
-  events[3].start.month = 8;
-  events[3].start.day = 16;
-  events[3].start.hour = 0;
-  events[3].start.minute = 1;
-  events[3].start.second = 10;
-  events[3].end.year = 23;
-  events[3].end.month = 8;
-  events[3].end.day = 16;
-  events[3].end.hour = 0;
-  events[3].end.minute = 1;
-  events[3].end.second = 20;
-
-  events[4].start.year = 23;
-  events[4].start.month = 8;
-  events[4].start.day = 16;
-  events[4].start.hour = 0;
-  events[4].start.minute = 1;
-  events[4].start.second = 30;
-  events[4].end.year = 23;
-  events[4].end.month = 8;
-  events[4].end.day = 16;
-  events[4].end.hour = 0;
-  events[4].end.minute = 1;
-  events[4].end.second = 40;
-
-  calendar_setEvents(events, 5);
+  calendar_setEvents(events, 3);
 
   // start calendar
 //  HAL_NVIC_SetPriority(RTC_Alarm_IRQn, 0, 0);
