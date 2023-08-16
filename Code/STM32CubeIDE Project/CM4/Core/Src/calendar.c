@@ -12,9 +12,15 @@
 #include "string.h"
 
 
+typedef enum {
+	NO_ALARM_FOUND = 0,
+	ALARM_FOUND = 1
+} _ALARM_FOUND_STATUS;
+
+
 int32_t compareDateTime(DateTime dateTime_1, DateTime dateTime_2);
 uint32_t dateTimeToSeconds(DateTime dateTime);
-DateTime getNextAlarm(void);
+_ALARM_FOUND_STATUS getNextAlarm(DateTime* dateTime);
 
 
 /*
@@ -68,15 +74,18 @@ void calendar_setEvents(CalendarEvent events[MAX_NUM_EVENTS], unsigned int numEv
  */
 void calendar_start(void) {
 	DateTime nextAlarm;
+	_ALARM_FOUND_STATUS status;
 
 	// get calendar alarm for next alarm in event list relative to now
-	nextAlarm = getNextAlarm();
+	status = getNextAlarm(&nextAlarm);
 
-	// set alarm for start of first event in list
-	setAlarm_A(nextAlarm.day, nextAlarm.hour, nextAlarm.minute, nextAlarm.second);
+	if (status) {
+		// set alarm for start of first event in list
+		setAlarm_A(nextAlarm.day, nextAlarm.hour, nextAlarm.minute, nextAlarm.second);
 
-	// make sure that alarm fired is cleared/reset
-	_alarmFired = false;
+		// make sure that alarm fired is cleared/reset
+		_alarmFired = false;
+	}
 }
 
 
@@ -85,20 +94,22 @@ void calendar_start(void) {
  */
 void calendar_handleAlarm(void) {
 	DateTime nextAlarm;
+	_ALARM_FOUND_STATUS status;
 
 	if (_alarmFired) {
-		// get calendar alarm for next alarm in event list relative to now
-		nextAlarm = getNextAlarm();
-
-		// set alarm for start of first event in list
-		setAlarm_A(nextAlarm.day, nextAlarm.hour, nextAlarm.minute, nextAlarm.second);
-
-		// reset alarm fired flag
-		_alarmFired = false;
-
 		// send message for debugging
 		char messageBody[UART_MESSAGE_BODY_SIZE] = "\nALARM EVENT!\n\n\0";
 		uartBasic_TX_Poll("\0\0\0\0", messageBody);
+
+		// get calendar alarm for next alarm in event list relative to now
+		status = getNextAlarm(&nextAlarm);
+		if (status) {
+			// set alarm for start of first event in list
+			setAlarm_A(nextAlarm.day, nextAlarm.hour, nextAlarm.minute, nextAlarm.second);
+		}
+
+		// reset alarm fired flag
+		_alarmFired = false;
 	}
 
 	else {
@@ -158,7 +169,7 @@ uint32_t dateTimeToSeconds(DateTime dateTime) {
 /*
  *
  */
-DateTime getNextAlarm(void) {
+_ALARM_FOUND_STATUS getNextAlarm(DateTime* dateTime) {
 	int eventIdx = 0;
 	bool nextAlarmFound = false;
 	DateTime now = {0};
@@ -208,20 +219,13 @@ DateTime getNextAlarm(void) {
 		}
 	}
 
-	// If there is no next alarm, then return a generic alarm for
-	// the beginning of time (1/1/0 0:0:0)
+	// If there is no next alarm, then return no alarm
 	if (!nextAlarmFound) {
-		nextAlarmDateTime.year = 0;
-		nextAlarmDateTime.month = 1;
-		nextAlarmDateTime.day = 1;
-		nextAlarmDateTime.hour = 0;
-		nextAlarmDateTime.minute = 0;
-		nextAlarmDateTime.second = 0;
+		dateTime = NULL;
+		return NO_ALARM_FOUND;
 	}
 
 	// Return the next alarm found.
-	char messageBody[UART_MESSAGE_BODY_SIZE];
-	snprintf(messageBody, UART_MESSAGE_BODY_SIZE, " 20%02d/%02d/%02d  %02d:%02d:%02d\n\n", nextAlarmDateTime.year, nextAlarmDateTime.month, nextAlarmDateTime.day, nextAlarmDateTime.hour, nextAlarmDateTime.minute, nextAlarmDateTime.second);
-	uartBasic_TX_Poll("\nNEXT", messageBody);
-	return nextAlarmDateTime;
+	*dateTime = nextAlarmDateTime;
+	return ALARM_FOUND;
 }

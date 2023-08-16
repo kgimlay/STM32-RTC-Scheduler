@@ -2,7 +2,7 @@ uart_basic_com.c:41:6:uartBasic_init	1
 uart_basic_com.c:51:6:uartBasic_TX_IT	2
 uart_basic_com.c:79:6:uartBasic_RX_IT	2
 uart_basic_com.c:103:6:uartBasic_TX_Poll	2
-uart_basic_com.c:134:6:uartBasic_RX_Poll	1
+uart_basic_com.c:134:6:uartBasic_RX_Poll	2
 uart_basic_com.c:159:6:uartBasic_get_RX	2
 uart_basic_com.c:193:6:uartBasic_RX_Complete_ISR	1
 uart_basic_com.c:202:6:uartBasic_TX_Complete_ISR	1
