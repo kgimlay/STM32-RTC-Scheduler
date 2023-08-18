@@ -82,7 +82,8 @@ void calendar_start(void) {
 
 		// if starting within an event, run the start callback
 		if (withinEvent) {
-			(*_calendarEvents[currentEventIdx].start_callback)();
+			if (_calendarEvents[currentEventIdx].start_callback != NULL)
+				(*_calendarEvents[currentEventIdx].start_callback)();
 			_currentEvent = currentEventIdx;
 		}
 
@@ -122,7 +123,8 @@ void calendar_handleAlarm(void) {
 			if (withinEvent && !CURRENTLY_IN_EVENT) {
 
 				// call start event callback
-				(*_calendarEvents[currentEventIdx].start_callback)();
+				if (_calendarEvents[currentEventIdx].start_callback != NULL)
+					(*_calendarEvents[currentEventIdx].start_callback)();
 
 				// update current event
 				_currentEvent = currentEventIdx;
@@ -131,10 +133,12 @@ void calendar_handleAlarm(void) {
 			// if entering an event from another event
 			else if (withinEvent && CURRENTLY_IN_EVENT) {
 				// call end event callback for event just left
-				(*_calendarEvents[_currentEvent].end_callback)();
+				if (_calendarEvents[_currentEvent].end_callback != NULL)
+					(*_calendarEvents[_currentEvent].end_callback)();
 
 				// call start event callback for event just entered
-				(*_calendarEvents[currentEventIdx].start_callback)();
+				if (_calendarEvents[currentEventIdx].start_callback != NULL)
+					(*_calendarEvents[currentEventIdx].start_callback)();
 
 				// update current event
 				_currentEvent = currentEventIdx;
@@ -144,7 +148,8 @@ void calendar_handleAlarm(void) {
 			// if exiting an event into no event
 			else if (!withinEvent && CURRENTLY_IN_EVENT) {
 				// call end event callback for event just left
-				(*_calendarEvents[_currentEvent].end_callback)();
+				if (_calendarEvents[_currentEvent].end_callback != NULL)
+					(*_calendarEvents[_currentEvent].end_callback)();
 
 				// update current event
 				_currentEvent = currentEventIdx;
@@ -161,7 +166,8 @@ void calendar_handleAlarm(void) {
 
 			if (CURRENTLY_IN_EVENT) {
 				// call end event callback for event just left
-				(*_calendarEvents[_currentEvent].end_callback)();
+				if (_calendarEvents[_currentEvent].end_callback != NULL)
+					(*_calendarEvents[_currentEvent].end_callback)();
 			}
 		}
 
