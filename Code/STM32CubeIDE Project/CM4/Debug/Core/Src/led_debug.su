@@ -1,0 +1,7 @@
+../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_ll_bus.h:449:22:LL_AHB2_GRP1_EnableClock	24	static
+../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_ll_bus.h:471:26:LL_AHB2_GRP1_IsEnabledClock	16	static
+../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_ll_bus.h:489:22:LL_AHB2_GRP1_DisableClock	16	static
+../Core/Src/led_debug.c:10:6:blink_led_sequence	32	static
+../Core/Src/led_debug.c:24:6:blink_led	56	static
+../Core/Src/led_debug.c:63:6:activate_led	40	static
+../Core/Src/led_debug.c:88:6:deactivate_led	16	static

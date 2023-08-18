@@ -1,0 +1,7 @@
+stm32wlxx_ll_bus.h:449:22:LL_AHB2_GRP1_EnableClock	1
+stm32wlxx_ll_bus.h:471:26:LL_AHB2_GRP1_IsEnabledClock	2
+stm32wlxx_ll_bus.h:489:22:LL_AHB2_GRP1_DisableClock	1
+led_debug.c:10:6:blink_led_sequence	3
+led_debug.c:24:6:blink_led	6
+led_debug.c:63:6:activate_led	2
+led_debug.c:88:6:deactivate_led	2
