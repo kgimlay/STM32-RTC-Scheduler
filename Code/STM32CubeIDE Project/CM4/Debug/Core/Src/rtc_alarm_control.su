@@ -3,3 +3,4 @@
 ../Core/Src/rtc_alarm_control.c:57:6:getDateTime	48	static,ignoring_inline_asm
 ../Core/Src/rtc_alarm_control.c:86:6:setAlarm_A	72	static,ignoring_inline_asm
 ../Core/Src/rtc_alarm_control.c:113:6:getAlarm_A	72	static,ignoring_inline_asm
+../Core/Src/rtc_alarm_control.c:136:6:diableAlarm_A	8	static,ignoring_inline_asm

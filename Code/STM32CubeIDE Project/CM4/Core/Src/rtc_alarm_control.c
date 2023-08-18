@@ -128,3 +128,15 @@ void getAlarm_A(uint8_t* year, uint8_t* month, uint8_t* day, uint8_t* hour, uint
   *minute = alarm.AlarmTime.Minutes;
   *second = alarm.AlarmTime.Seconds;
 }
+
+
+/*
+ *
+ */
+void diableAlarm_A(void) {
+	if(HAL_RTC_DeactivateAlarm(_rtc_handle, RTC_ALARM_A) != HAL_OK) {
+		__disable_irq();
+		while (1)
+			(void)0;
+	}
+}

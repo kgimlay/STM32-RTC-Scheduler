@@ -3,9 +3,8 @@
 ../Core/Src/calendar.c:58:6:calendar_getDateTime	32	static
 ../Core/Src/calendar.c:66:6:calendar_setEvents	16	static
 ../Core/Src/calendar.c:75:6:calendar_start	16	static
-../Core/Src/calendar.c:95:6:calendar_handleAlarm	56	static
-../Core/Src/calendar.c:124:6:calendar_updateEvents	4	static
-../Core/Src/calendar.c:132:6:calendar_AlarmA_ISR	4	static
-../Core/Src/calendar.c:142:9:compareDateTime	40	static
-../Core/Src/calendar.c:156:10:dateTimeToSeconds	16	static
-../Core/Src/calendar.c:172:21:getNextAlarm	56	static
+../Core/Src/calendar.c:100:6:calendar_handleAlarm	56	static
+../Core/Src/calendar.c:134:6:calendar_AlarmA_ISR	4	static
+../Core/Src/calendar.c:144:9:compareDateTime	40	static
+../Core/Src/calendar.c:158:10:dateTimeToSeconds	16	static
+../Core/Src/calendar.c:174:21:getNextAlarm	56	static

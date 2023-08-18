@@ -3,9 +3,8 @@ calendar.c:50:6:calendar_setDateTime	1
 calendar.c:58:6:calendar_getDateTime	1
 calendar.c:66:6:calendar_setEvents	1
 calendar.c:75:6:calendar_start	2
-calendar.c:95:6:calendar_handleAlarm	3
-calendar.c:124:6:calendar_updateEvents	1
-calendar.c:132:6:calendar_AlarmA_ISR	1
-calendar.c:142:9:compareDateTime	1
-calendar.c:156:10:dateTimeToSeconds	1
-calendar.c:172:21:getNextAlarm	7
+calendar.c:100:6:calendar_handleAlarm	3
+calendar.c:134:6:calendar_AlarmA_ISR	1
+calendar.c:144:9:compareDateTime	1
+calendar.c:158:10:dateTimeToSeconds	1
+calendar.c:174:21:getNextAlarm	7

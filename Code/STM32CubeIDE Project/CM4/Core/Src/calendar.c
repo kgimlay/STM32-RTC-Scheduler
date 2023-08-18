@@ -28,7 +28,7 @@ _ALARM_FOUND_STATUS getNextAlarm(DateTime* dateTime);
  */
 static CalendarEvent _calendarEvents[MAX_NUM_EVENTS] = {0};
 volatile static int _numberEvents = 0;
-volatile bool _alarmFired = false;
+volatile bool _alarmAFired = false;
 RTC_HandleTypeDef* _hrtc = NULL;
 
 
@@ -84,7 +84,12 @@ void calendar_start(void) {
 		setAlarm_A(nextAlarm.day, nextAlarm.hour, nextAlarm.minute, nextAlarm.second);
 
 		// make sure that alarm fired is cleared/reset
-		_alarmFired = false;
+		_alarmAFired = false;
+	}
+
+	// if there is no alarm to set, disable the alarm
+	else {
+		diableAlarm_A();
 	}
 }
 
@@ -96,7 +101,7 @@ void calendar_handleAlarm(void) {
 	DateTime nextAlarm;
 	_ALARM_FOUND_STATUS status;
 
-	if (_alarmFired) {
+	if (_alarmAFired) {
 		// send message for debugging
 		char messageBody[UART_MESSAGE_BODY_SIZE] = "\nALARM EVENT!\n\n\0";
 		uartBasic_TX_Poll("\0\0\0\0", messageBody);
@@ -108,8 +113,13 @@ void calendar_handleAlarm(void) {
 			setAlarm_A(nextAlarm.day, nextAlarm.hour, nextAlarm.minute, nextAlarm.second);
 		}
 
+		// if there is no alarm to set, disable the alarm
+		else {
+			diableAlarm_A();
+		}
+
 		// reset alarm fired flag
-		_alarmFired = false;
+		_alarmAFired = false;
 	}
 
 	else {
@@ -121,17 +131,9 @@ void calendar_handleAlarm(void) {
 /*
  *
  */
-void calendar_updateEvents(void) {
-
-}
-
-
-/*
- *
- */
 void calendar_AlarmA_ISR(void) {
 	// set flag that an alarm fired
-	_alarmFired = true;
+	_alarmAFired = true;
 }
 
 
