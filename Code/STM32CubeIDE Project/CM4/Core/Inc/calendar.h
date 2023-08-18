@@ -37,8 +37,9 @@ typedef struct {
  */
 typedef struct {
   DateTime start;
-  void* start_callback;
+  void (*start_callback)(void);
   DateTime end;
+  void (*end_callback)(void);
 } CalendarEvent;
 
 

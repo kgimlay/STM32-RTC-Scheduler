@@ -26,6 +26,7 @@
 #include "uart_message.h"
 #include "uart_basic_com.h"
 #include "calendar.h"
+#include "led_debug.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -99,6 +100,40 @@ void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc)
 	// call ISR for handling calendar events
 	calendar_AlarmA_ISR();
 }
+
+
+void event_0_start_cb(void)
+{
+	activate_led(RED_LED);
+}
+
+void event_0_end_cb(void)
+{
+	deactivate_led(RED_LED);
+}
+
+
+void event_1_start_cb(void)
+{
+	activate_led(GREEN_LED);
+}
+
+void event_1_end_cb(void)
+{
+	deactivate_led(GREEN_LED);
+}
+
+
+void event_2_start_cb(void)
+{
+	activate_led(BLUE_LED);
+}
+
+void event_2_end_cb(void)
+{
+	deactivate_led(BLUE_LED);
+}
+
 /* USER CODE END 0 */
 
 /**
@@ -173,6 +208,8 @@ int main(void)
   events[0].end.hour = 0;
   events[0].end.minute = 0;
   events[0].end.second = 10;
+  events[0].start_callback = event_0_start_cb;
+  events[0].end_callback = event_0_end_cb;
 
   events[1].start.year = 0;
   events[1].start.month = 0;
@@ -186,6 +223,8 @@ int main(void)
   events[1].end.hour = 0;
   events[1].end.minute = 0;
   events[1].end.second = 20;
+  events[1].start_callback = event_1_start_cb;
+  events[1].end_callback = event_1_end_cb;
 
   events[2].start.year = 0;
   events[2].start.month = 0;
@@ -199,6 +238,8 @@ int main(void)
   events[2].end.hour = 0;
   events[2].end.minute = 0;
   events[2].end.second = 25;
+  events[2].start_callback = event_2_start_cb;
+  events[2].end_callback = event_2_end_cb;
 
   calendar_setEvents(events, 3);
 

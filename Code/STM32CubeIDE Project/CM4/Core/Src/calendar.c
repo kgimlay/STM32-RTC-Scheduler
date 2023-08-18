@@ -12,23 +12,21 @@
 #include "string.h"
 
 
-typedef enum {
-	NO_ALARM_FOUND = 0,
-	ALARM_FOUND = 1
-} _ALARM_FOUND_STATUS;
+#define CURRENTLY_IN_EVENT (_currentEvent != -1)
 
 
 int32_t compareDateTime(DateTime dateTime_1, DateTime dateTime_2);
 uint32_t dateTimeToSeconds(DateTime dateTime);
-_ALARM_FOUND_STATUS getNextAlarm(DateTime* dateTime);
+bool getNextAlarm(DateTime* dateTime, int* nowEventIdx, bool* inEvent);
 
 
 /*
  *
  */
 static CalendarEvent _calendarEvents[MAX_NUM_EVENTS] = {0};
-volatile static int _numberEvents = 0;
-volatile bool _alarmAFired = false;
+static int _numberEvents = 0;
+static int _currentEvent = -1;
+volatile static bool _alarmAFired = false;
 RTC_HandleTypeDef* _hrtc = NULL;
 
 
@@ -74,14 +72,19 @@ void calendar_setEvents(CalendarEvent events[MAX_NUM_EVENTS], unsigned int numEv
  */
 void calendar_start(void) {
 	DateTime nextAlarm;
-	_ALARM_FOUND_STATUS status;
+	int currentEventIdx;
+	bool withinEvent;
 
 	// get calendar alarm for next alarm in event list relative to now
-	status = getNextAlarm(&nextAlarm);
-
-	if (status) {
-		// set alarm for start of first event in list
+	if (getNextAlarm(&nextAlarm, &currentEventIdx, &withinEvent)) {
+		// set alarm for next event transition (start or end of event)
 		setAlarm_A(nextAlarm.day, nextAlarm.hour, nextAlarm.minute, nextAlarm.second);
+
+		// if starting within an event, run the start callback
+		if (withinEvent) {
+			(*_calendarEvents[currentEventIdx].start_callback)();
+			_currentEvent = currentEventIdx;
+		}
 
 		// make sure that alarm fired is cleared/reset
 		_alarmAFired = false;
@@ -99,7 +102,8 @@ void calendar_start(void) {
  */
 void calendar_handleAlarm(void) {
 	DateTime nextAlarm;
-	_ALARM_FOUND_STATUS status;
+	int currentEventIdx;
+	bool withinEvent;
 
 	if (_alarmAFired) {
 		// send message for debugging
@@ -107,15 +111,58 @@ void calendar_handleAlarm(void) {
 		uartBasic_TX_Poll("\0\0\0\0", messageBody);
 
 		// get calendar alarm for next alarm in event list relative to now
-		status = getNextAlarm(&nextAlarm);
-		if (status) {
-			// set alarm for start of first event in list
+		if (getNextAlarm(&nextAlarm, &currentEventIdx, &withinEvent)) {
+			// set alarm for next event transition (start or end of event)
 			setAlarm_A(nextAlarm.day, nextAlarm.hour, nextAlarm.minute, nextAlarm.second);
+
+			// if the current event has changed (event ended or began), then run appropriate
+			// callback functions
+
+			// if entering an event from no event
+			if (withinEvent && !CURRENTLY_IN_EVENT) {
+
+				// call start event callback
+				(*_calendarEvents[currentEventIdx].start_callback)();
+
+				// update current event
+				_currentEvent = currentEventIdx;
+			}
+
+			// if entering an event from another event
+			else if (withinEvent && CURRENTLY_IN_EVENT) {
+				// call end event callback for event just left
+				(*_calendarEvents[_currentEvent].end_callback)();
+
+				// call start event callback for event just entered
+				(*_calendarEvents[currentEventIdx].start_callback)();
+
+				// update current event
+				_currentEvent = currentEventIdx;
+
+			}
+
+			// if exiting an event into no event
+			else if (!withinEvent && CURRENTLY_IN_EVENT) {
+				// call end event callback for event just left
+				(*_calendarEvents[_currentEvent].end_callback)();
+
+				// update current event
+				_currentEvent = currentEventIdx;
+
+			}
+
+			// else, alarm is just being reset for next month/year
+
 		}
 
-		// if there is no alarm to set, disable the alarm
+		// if there is no alarm to set, disable the alarm and exit any events
 		else {
 			diableAlarm_A();
+
+			if (CURRENTLY_IN_EVENT) {
+				// call end event callback for event just left
+				(*_calendarEvents[_currentEvent].end_callback)();
+			}
 		}
 
 		// reset alarm fired flag
@@ -171,8 +218,9 @@ uint32_t dateTimeToSeconds(DateTime dateTime) {
 /*
  *
  */
-_ALARM_FOUND_STATUS getNextAlarm(DateTime* dateTime) {
+bool getNextAlarm(DateTime* dateTime, int* nowEventIdx, bool* inEvent) {
 	int eventIdx = 0;
+	int currentIdx = 0;
 	bool nextAlarmFound = false;
 	DateTime now = {0};
 	DateTime nextAlarmDateTime = {0};
@@ -183,6 +231,7 @@ _ALARM_FOUND_STATUS getNextAlarm(DateTime* dateTime) {
 	// Traverse over the events list and find where 'now' falls.  This can be before
 	// any all the events, within an event, between events, or after all the events.
 	eventIdx = 0;
+	currentIdx = eventIdx - 1;
 	nextAlarmFound = false;
 	while (eventIdx < _numberEvents && !nextAlarmFound) {
 		// test if before event
@@ -198,6 +247,8 @@ _ALARM_FOUND_STATUS getNextAlarm(DateTime* dateTime) {
 
 			// set found
 			nextAlarmFound = true;
+			currentIdx = eventIdx - 1;
+			*inEvent = false;
 		}
 
 		// test if within event
@@ -213,6 +264,8 @@ _ALARM_FOUND_STATUS getNextAlarm(DateTime* dateTime) {
 
 			// set found
 			nextAlarmFound = true;
+			currentIdx = eventIdx;
+			*inEvent = true;
 		}
 
 		// traverse to next event
@@ -224,10 +277,14 @@ _ALARM_FOUND_STATUS getNextAlarm(DateTime* dateTime) {
 	// If there is no next alarm, then return no alarm
 	if (!nextAlarmFound) {
 		dateTime = NULL;
-		return NO_ALARM_FOUND;
+		*nowEventIdx = -1;
+		return false;
 	}
 
 	// Return the next alarm found.
-	*dateTime = nextAlarmDateTime;
-	return ALARM_FOUND;
+	else {
+		*dateTime = nextAlarmDateTime;
+		*nowEventIdx = currentIdx;
+		return true;
+	}
 }

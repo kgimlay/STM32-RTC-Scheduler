@@ -3,3 +3,4 @@ rtc_alarm_control.c:26:6:setDateTime	3
 rtc_alarm_control.c:57:6:getDateTime	3
 rtc_alarm_control.c:86:6:setAlarm_A	2
 rtc_alarm_control.c:113:6:getAlarm_A	2
+rtc_alarm_control.c:136:6:diableAlarm_A	2
