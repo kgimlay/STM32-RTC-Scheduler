@@ -74,8 +74,7 @@ if __name__ == '__main__':
             # --------------------------------------
             # ---------- Application Loop ----------
             # --------------------------------------
-            for i in range (100):
-                serialConnection.send('ECHO', str(i))
+            while True:
                 print(serialConnection.receive())
 
         # Handle when a keyboard interrupt occurs, to make things tidy.

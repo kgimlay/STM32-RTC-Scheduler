@@ -8,8 +8,8 @@
 #ifndef INC_UART_BASIC_COM_H_
 #define INC_UART_BASIC_COM_H_
 
+#include <com_datalink_layer.h>
 #include "stdbool.h"
-#include "uart_message.h"
 #include "stm32wlxx_hal.h"
 
 /*

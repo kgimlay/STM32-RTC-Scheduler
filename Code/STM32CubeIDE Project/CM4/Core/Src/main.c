@@ -23,8 +23,7 @@
 /* USER CODE BEGIN Includes */
 #include "string.h"
 #include "stdio.h"
-#include "uart_message.h"
-#include "uart_basic_com.h"
+#include "com_session_layer.h"
 #include "calendar.h"
 #include "led_debug.h"
 /* USER CODE END Includes */
@@ -66,72 +65,10 @@ static void MX_RTC_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-void HAL_UART_ErrorCallback(UART_HandleTypeDef *UartHandle)
-{
-	if (UartHandle->Instance == USART1)
-		(void)0;  // no operation
-
-	else if (UartHandle->Instance == USART2)
-		uartBasic_Error_ISR();
-}
-
-void HAL_UART_TxCpltCallback(UART_HandleTypeDef *UartHandle)
-{
-	if (UartHandle->Instance == USART1)
-		(void)0;  // no operation
-
-	else if (UartHandle->Instance == USART2)
-		uartBasic_TX_Complete_ISR();
-}
-
-
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
-{
-	if (UartHandle->Instance == USART1)
-		(void)0;  // no operation
-
-	else if (UartHandle->Instance == USART2)
-		uartBasic_RX_Complete_ISR();
-}
-
-
 void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc)
 {
 	// call ISR for handling calendar events
 	calendar_AlarmA_ISR();
-}
-
-
-void event_0_start_cb(void)
-{
-	activate_led(RED_LED);
-}
-
-void event_0_end_cb(void)
-{
-	deactivate_led(RED_LED);
-}
-
-
-void event_1_start_cb(void)
-{
-	activate_led(GREEN_LED);
-}
-
-void event_1_end_cb(void)
-{
-	deactivate_led(GREEN_LED);
-}
-
-
-void event_2_start_cb(void)
-{
-	activate_led(BLUE_LED);
-}
-
-void event_2_end_cb(void)
-{
-	deactivate_led(BLUE_LED);
 }
 
 /* USER CODE END 0 */
@@ -177,7 +114,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 
   // initialize the desktop communication module (doesn't establish connection!)
-  uartBasic_init(&huart2);
+  com_session_init(&huart2);
 
   // initialize calendar
   calendar_init(&hrtc);
@@ -193,95 +130,51 @@ int main(void)
   };
   calendar_setDateTime(now);
 
-  // set some events
-  CalendarEvent events[MAX_NUM_EVENTS] = {0};
-
-  events[0].start.year = 0;
-  events[0].start.month = 0;
-  events[0].start.day = 0;
-  events[0].start.hour = 0;
-  events[0].start.minute = 0;
-  events[0].start.second = 5;
-  events[0].end.year = 0;
-  events[0].end.month = 0;
-  events[0].end.day = 0;
-  events[0].end.hour = 0;
-  events[0].end.minute = 0;
-  events[0].end.second = 10;
-  events[0].start_callback = event_0_start_cb;
-  events[0].end_callback = event_0_end_cb;
-
-  events[1].start.year = 0;
-  events[1].start.month = 0;
-  events[1].start.day = 0;
-  events[1].start.hour = 0;
-  events[1].start.minute = 0;
-  events[1].start.second = 15;
-  events[1].end.year = 0;
-  events[1].end.month = 0;
-  events[1].end.day = 0;
-  events[1].end.hour = 0;
-  events[1].end.minute = 0;
-  events[1].end.second = 20;
-  events[1].start_callback = event_1_start_cb;
-  events[1].end_callback = event_1_end_cb;
-
-  events[2].start.year = 0;
-  events[2].start.month = 0;
-  events[2].start.day = 0;
-  events[2].start.hour = 0;
-  events[2].start.minute = 0;
-  events[2].start.second = 20;
-  events[2].end.year = 0;
-  events[2].end.month = 0;
-  events[2].end.day = 0;
-  events[2].end.hour = 0;
-  events[2].end.minute = 0;
-  events[2].end.second = 25;
-  events[2].start_callback = event_2_start_cb;
-  events[2].end_callback = event_2_end_cb;
-
-  calendar_setEvents(events, 3);
-
   // start calendar
-//  HAL_NVIC_SetPriority(RTC_Alarm_IRQn, 0, 0);
-//  HAL_NVIC_EnableIRQ(RTC_Alarm_IRQn);
+  HAL_NVIC_SetPriority(RTC_Alarm_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(RTC_Alarm_IRQn);
   calendar_start();
 
   // begin listening for messages from desktop
-  uartBasic_RX_IT();
+  if (start_session() != SESSION_OKAY)
+  {
+	  activate_led(RED_LED);
+  }
+  else
+  {
+	  activate_led(GREEN_LED);
+  }
 
   char messageHeader[UART_MESSAGE_HEADER_SIZE];
   char messageBody[UART_MESSAGE_BODY_SIZE];
-  bool messageStatus;
-  int messageCount = 0;
-  int timeSeconds = 0;
-  int timeMinutes = 0;
   while (1)
   {
 	  // handle a calendar alarm event
 	  calendar_handleAlarm();
 
-	  // check for message in the process queue
-	  messageStatus = uartBasic_get_RX(messageHeader, messageBody);
-
-	  // if message present, handle message
-	  if (messageStatus == true) {
-		  // echo back to computer
-		  uartBasic_TX_Poll(messageHeader, messageBody);
-		  messageCount++;
-		  uartBasic_RX_IT();
+	  // try connection if not present
+	  if (start_session() != SESSION_OKAY)
+	  {
+		  activate_led(RED_LED);
+	  }
+	  else
+	  {
+		  deactivate_led(RED_LED);
+		  activate_led(GREEN_LED);
 	  }
 
+	  // if message present, handle message
+
+
+	  // report date/time over uart
 	  calendar_getDateTime(&now);
 	  memset(messageBody,0,UART_MESSAGE_BODY_SIZE);
 	  snprintf(messageBody, UART_MESSAGE_BODY_SIZE, "20%02d/%02d/%02d  %02d:%02d:%02d\n", now.year, now.month, now.day, now.hour, now.minute, now.second);
-	  uartBasic_TX_Poll("TIME", messageBody);
-	  timeSeconds++;
-	  timeMinutes++;
+	  snprintf(messageHeader, UART_MESSAGE_HEADER_SIZE, "ECHO");
+	  tell(messageHeader, messageBody);
 
 	  long int i = 0;
-	  while (i < 65535*2)
+	  while (i < 65535*4)
 		  i++;
 
     /* USER CODE END WHILE */

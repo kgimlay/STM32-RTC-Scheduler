@@ -1,5 +1,5 @@
 Core/Src/uart_basic_com.o: ../Core/Src/uart_basic_com.c \
- ../Core/Inc/uart_basic_com.h ../Core/Inc/uart_message.h \
+ ../Core/Inc/uart_basic_com.h ../Core/Inc/com_datalink_layer.h \
  ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal.h \
  ../Core/Inc/stm32wlxx_hal_conf.h \
  ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_dma.h \
@@ -36,7 +36,7 @@ Core/Src/uart_basic_com.o: ../Core/Src/uart_basic_com.c \
  ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_uart_ex.h \
  ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_ll_system.h
 ../Core/Inc/uart_basic_com.h:
-../Core/Inc/uart_message.h:
+../Core/Inc/com_datalink_layer.h:
 ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal.h:
 ../Core/Inc/stm32wlxx_hal_conf.h:
 ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_dma.h:

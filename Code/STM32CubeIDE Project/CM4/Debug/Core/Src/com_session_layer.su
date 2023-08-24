@@ -1,0 +1,6 @@
+../Core/Src/com_session_layer.c:23:6:com_session_init	16	static
+../Core/Src/com_session_layer.c:43:16:start_session	16	static
+../Core/Src/com_session_layer.c:73:16:end_session	4	static
+../Core/Src/com_session_layer.c:98:16:tell	24	static
+../Core/Src/com_session_layer.c:145:16:listen	24	static
+../Core/Src/com_session_layer.c:187:16:handshake	56	static

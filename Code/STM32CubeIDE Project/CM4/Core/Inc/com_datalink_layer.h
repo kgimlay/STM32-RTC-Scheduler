@@ -5,8 +5,8 @@
  *      Author: kevinimlay
  */
 
-#ifndef INC_UART_MESSAGE_H_
-#define INC_UART_MESSAGE_H_
+#ifndef INC_COM_DATALINK_LAYER_H_
+#define INC_COM_DATALINK_LAYER_H_
 
 #include "stdint.h"
 
@@ -39,4 +39,4 @@ void composeMessage(char header[UART_MESSAGE_HEADER_SIZE], char body[UART_MESSAG
 void decomposeMessage(char header[UART_MESSAGE_HEADER_SIZE], char body[UART_MESSAGE_BODY_SIZE],
 		char message[UART_MESSAGE_SIZE]);
 
-#endif /* INC_UART_MESSAGE_H_ */
+#endif /* INC_COM_DATALINK_LAYER_H_ */

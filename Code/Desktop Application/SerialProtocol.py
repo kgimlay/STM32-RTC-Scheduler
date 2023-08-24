@@ -26,7 +26,7 @@ class SerialProtocol:
 
             # compose acknowledge message
             synMessage = SerialPacket.SerialPacket(MESSAGE_LENGTH, 
-                HEADER_LENGTH, 'SNYC', '')
+                HEADER_LENGTH, 'SYNC', '')
             sendData = synMessage.format()
             
             # send acknowledge message
@@ -37,8 +37,18 @@ class SerialProtocol:
             synackMessage = SerialPacket.SerialPacket(MESSAGE_LENGTH, 
                 HEADER_LENGTH, receivedData)
 
-            # test that received message is echoed correctly
-            if synackMessage == synMessage:
+            # test that received message is an acknowledge message
+            ackMessage = SerialPacket.SerialPacket(MESSAGE_LENGTH, 
+                HEADER_LENGTH, 'ACKN', '')
+            if synackMessage == ackMessage:
+                # compose synack message
+                synackMessage = SerialPacket.SerialPacket(MESSAGE_LENGTH,
+                    HEADER_LENGTH, 'SYNA', '')
+                sendData = synackMessage.format()
+
+                # send synack message
+                connection.send(sendData)
+
                 # return successful handshake
                 return True
 
