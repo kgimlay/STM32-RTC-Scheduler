@@ -1,6 +1,6 @@
 # Author: Kevin Imlay
 
-import SerialProtocol
+import SerialSession
 import platform
 import os
 import re
@@ -49,10 +49,10 @@ if __name__ == '__main__':
     connectionFlag = False
     for availablePort in testPorts:
             # attempt to make connection
-            serialConnection = SerialProtocol.SerialProtocol(availablePort)
+            Stm32Session = SerialSession.STM32SerialCom(availablePort)
 
             # if the connection was successful, print message
-            if serialConnection is not None:
+            if Stm32Session is not None:
                 # report connection
                 print('Connected to port {}'.format(availablePort))
                 # and set flag to enter application loop
@@ -75,17 +75,18 @@ if __name__ == '__main__':
             # ---------- Application Loop ----------
             # --------------------------------------
             while True:
-                print(serialConnection.receive())
+                pass
 
         # Handle when a keyboard interrupt occurs, to make things tidy.
         except KeyboardInterrupt as e:
-            print('\n\nProgram ended unexpectedly!  User terminated program.')
+            print('\n\nUser terminated program.')
 
     # -----------------------------------------
     # ---------- Application Cleanup ----------
     # -----------------------------------------
     
     # disconnect
-    del serialConnection
-    # and report disconnection
-    print('Disconnected from port {}'.format(availablePort))
+    if Stm32Session is not None:
+        del Stm32Session
+        # and report disconnection
+        print('Disconnected from port {}'.format(availablePort))

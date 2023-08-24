@@ -21,7 +21,7 @@ class SerialProtocol:
         # Attempts to open a connection on the port provided.  If successful,
         # a SerialProtocol object is created.  If not, an exception is thrown.
 
-        def _handshake(connection):
+        def _connect_handshake(connection):
             # 
 
             # compose acknowledge message
@@ -34,8 +34,18 @@ class SerialProtocol:
             
             # listen for echo back
             receivedData = connection.receive(MESSAGE_LENGTH)
-            synackMessage = SerialPacket.SerialPacket(MESSAGE_LENGTH, 
-                HEADER_LENGTH, receivedData)
+            try:
+                synackMessage = SerialPacket.SerialPacket(MESSAGE_LENGTH, 
+                    HEADER_LENGTH, receivedData)
+            except ValueError:
+                # Note: a value error can be thrown for several reasons while
+                # parsing a message string into a packet object.  This case,
+                # it can only happen when not enough characters were received
+                # from the MCU.  It is likely that the MCU is unresponsive to
+                # the SYNC message sent and did not respond with the proper
+                # ACKN message.
+                print('Malformed packet or no packet was received.')
+                return False
 
             # test that received message is an acknowledge message
             ackMessage = SerialPacket.SerialPacket(MESSAGE_LENGTH, 
@@ -68,7 +78,7 @@ class SerialProtocol:
 
         # Attempt handshake with port.  If handshake successful, then create 
         # object.
-        if _handshake(tempConnection):
+        if _connect_handshake(tempConnection):
             instance = super().__new__(cls)
             instance.__init__(port)
             instance._connection = tempConnection
@@ -80,16 +90,19 @@ class SerialProtocol:
 
 
     def __init__(self, port):
-        # 
-
-        #
+        # All initialization was performed in __new__().
         pass
 
 
     def __del__(self):
         # 
 
+        def _disconnect_handshake():
+            # todo: implement
+            pass
+
         # close connection
+        # todo: disconnect handshake
         self._connection.closePort()
 
 

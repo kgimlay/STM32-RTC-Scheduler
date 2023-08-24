@@ -18,7 +18,7 @@ DEFAULT_EXCLUSIVE = False
 
 
 class SerialConnection:
-    # UART Connection encapsulates the most basic functions for sending and
+    # Serial Connection encapsulates the most basic functions for sending and
     # receiving data over the UART to the STM32 MCU.  Communication is
     # performed using the pySerial package.
 
