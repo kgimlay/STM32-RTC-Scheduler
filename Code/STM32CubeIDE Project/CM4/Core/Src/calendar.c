@@ -107,10 +107,6 @@ void calendar_handleAlarm(void) {
 	bool withinEvent;
 
 	if (_alarmAFired) {
-		// send message for debugging
-		char messageBody[UART_MESSAGE_BODY_SIZE] = "\nALARM EVENT!\n\n\0";
-		uartBasic_TX_Poll("\0\0\0\0", messageBody);
-
 		// get calendar alarm for next alarm in event list relative to now
 		if (getNextAlarm(&nextAlarm, &currentEventIdx, &withinEvent)) {
 			// set alarm for next event transition (start or end of event)

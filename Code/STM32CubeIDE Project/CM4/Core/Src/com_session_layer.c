@@ -7,6 +7,7 @@
 
 
 #include <string.h>
+#include <stdio.h>
 #include "com_session_layer.h"
 
 
@@ -14,7 +15,9 @@ static bool _sessionOpen = false;
 static bool _sessionInit = false;
 
 
-SESSION_STATUS handshake(unsigned int timeout_ms);
+SESSION_STATUS _handshake(unsigned int timeout_ms);
+SESSION_STATUS _session_cycle(void);
+SESSION_STATUS _message_phase(char header[UART_MESSAGE_HEADER_SIZE], char body[UART_MESSAGE_BODY_SIZE], bool* messageReceived);
 
 
 /*
@@ -48,7 +51,7 @@ SESSION_STATUS start_session(void)
 	{
 		if (!_sessionOpen)
 		{
-			handshakeStatus = handshake(SESSION_START_TIMEOUT_MS);
+			handshakeStatus = _handshake(SESSION_START_TIMEOUT_MS);
 			if (handshakeStatus == SESSION_OKAY)
 				_sessionOpen = true;
 			return handshakeStatus;
@@ -70,18 +73,18 @@ SESSION_STATUS start_session(void)
 /*
  *
  */
-SESSION_STATUS end_session(void)
+SESSION_STATUS session_cycle(void)
 {
 	if (_sessionInit)
 	{
 		if (_sessionOpen)
 		{
-			// todo
+			return _session_cycle();
 		}
 
 		else
 		{
-			// todo
+			return SESSION_NOT_OPEN;
 		}
 	}
 
@@ -128,7 +131,7 @@ SESSION_STATUS tell(char header[UART_MESSAGE_HEADER_SIZE], char body[UART_MESSAG
 
 		else
 		{
-			return SESSION_NO_HANDSHAKE;
+			return SESSION_NOT_OPEN;
 		}
 	}
 
@@ -170,7 +173,7 @@ SESSION_STATUS listen(char header[UART_MESSAGE_HEADER_SIZE], char body[UART_MESS
 
 		else
 		{
-			return SESSION_NO_HANDSHAKE;
+			return SESSION_NOT_OPEN;
 		}
 	}
 
@@ -184,7 +187,7 @@ SESSION_STATUS listen(char header[UART_MESSAGE_HEADER_SIZE], char body[UART_MESS
 /*
  *
  */
-SESSION_STATUS handshake(unsigned int timeout_ms)
+SESSION_STATUS _handshake(unsigned int timeout_ms)
 {
 	unsigned int state = 0;
 	bool error = false;
@@ -287,4 +290,69 @@ SESSION_STATUS handshake(unsigned int timeout_ms)
 			return SESSION_ERROR;
 		}
 	}
+}
+
+
+/*
+ *
+ */
+SESSION_STATUS _session_cycle(void)
+{
+	char messageHeader[UART_MESSAGE_HEADER_SIZE] = {0};
+	char messageBody[UART_MESSAGE_BODY_SIZE] = {0};
+	bool* isMessage = false;
+
+	// Perform message phase of session cycle.
+	return _message_phase(messageHeader, messageBody, isMessage);
+}
+
+
+/*
+ *
+ */
+SESSION_STATUS _message_phase(char header[UART_MESSAGE_HEADER_SIZE], char body[UART_MESSAGE_BODY_SIZE], bool* messageReceived)
+{
+	TRANSPORT_STATUS transportStatus;
+	char messageBody[UART_MESSAGE_BODY_SIZE] = {0};
+
+	// CTS Window
+	// Tx the CTS message to signal to desktop that the MCU is about to be ready to
+	// receive a message.
+	memset(messageBody,0,UART_MESSAGE_BODY_SIZE);
+	snprintf(messageBody, UART_MESSAGE_BODY_SIZE, "Clear to send!\n");
+	transportStatus = queue_tx(CTS_HEADER, messageBody);
+
+	if (transportStatus != TRANSPORT_OKAY)
+	{
+		return SESSION_ERROR;
+	}
+
+	transportStatus = tx(TX_TIMEOUT_MS);
+
+	if (transportStatus == TRANSPORT_TIMEOUT)
+	{
+		return SESSION_TIMEOUT;
+	}
+	else if (transportStatus != TRANSPORT_OKAY)
+	{
+		return SESSION_ERROR;
+	}
+
+	// Message Window
+	// Rx to receive a packet from the desktop.
+	transportStatus = rx(RX_TIMEOUT_MS);
+
+	if (transportStatus == TRANSPORT_TIMEOUT)
+	{
+		return SESSION_TIMEOUT;
+	}
+	else if (transportStatus != TRANSPORT_OKAY)
+	{
+		return SESSION_ERROR;
+	}
+
+	transportStatus = dequeue_rx(header, body);
+	*messageReceived = true;
+
+	return SESSION_OKAY;
 }

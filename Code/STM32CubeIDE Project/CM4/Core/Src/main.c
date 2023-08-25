@@ -136,11 +136,7 @@ int main(void)
   calendar_start();
 
   // begin listening for messages from desktop
-  if (start_session() != SESSION_OKAY)
-  {
-	  activate_led(RED_LED);
-  }
-  else
+  if (start_session() == SESSION_OKAY)
   {
 	  activate_led(GREEN_LED);
   }
@@ -153,26 +149,23 @@ int main(void)
 	  calendar_handleAlarm();
 
 	  // try connection if not present
-	  if (start_session() != SESSION_OKAY)
+	  if (start_session() == SESSION_OKAY)
+	  {
+		  activate_led(GREEN_LED);
+	  }
+
+	  // if message present, handle message
+	  if (session_cycle() != SESSION_OKAY)
 	  {
 		  activate_led(RED_LED);
 	  }
 	  else
 	  {
 		  deactivate_led(RED_LED);
-		  activate_led(GREEN_LED);
 	  }
 
-	  // if message present, handle message
-
-
-	  // report date/time over uart
-	  calendar_getDateTime(&now);
-	  memset(messageBody,0,UART_MESSAGE_BODY_SIZE);
-	  snprintf(messageBody, UART_MESSAGE_BODY_SIZE, "20%02d/%02d/%02d  %02d:%02d:%02d\n", now.year, now.month, now.day, now.hour, now.minute, now.second);
-	  snprintf(messageHeader, UART_MESSAGE_HEADER_SIZE, "ECHO");
-	  tell(messageHeader, messageBody);
-
+	  // simulate time delay from performing operations
+	  // (and slows things down a bit to make them human readable
 	  long int i = 0;
 	  while (i < 65535*4)
 		  i++;

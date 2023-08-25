@@ -75,7 +75,7 @@ if __name__ == '__main__':
             # ---------- Application Loop ----------
             # --------------------------------------
             while True:
-                pass
+                print(Stm32Session._connection.receive())
 
         # Handle when a keyboard interrupt occurs, to make things tidy.
         except KeyboardInterrupt as e:

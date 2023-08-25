@@ -13,8 +13,6 @@
 #include <stdint.h>
 #include "stm32wlxx_hal.h"
 
-#include "uart_basic_com.h"
-
 
 #define MAX_NUM_EVENTS 10
 

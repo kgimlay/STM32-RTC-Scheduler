@@ -21,6 +21,7 @@
 #define HANDSHAKE_HEADER_SYNC "SYNC\0"
 #define HANDSHAKE_HEADER_ACKN "ACKN\0"
 #define HANDSHAKE_HEADER_SYNACK "SYNA\0"
+#define CTS_HEADER "CTS\0"
 
 
 /* Public Types */
@@ -29,9 +30,20 @@ typedef enum {
 	SESSION_TIMEOUT,
 	SESSION_ERROR,
 	SESSION_NOT_INIT,
-	SESSION_NO_HANDSHAKE,
+	SESSION_NOT_OPEN,
 	SESSION_BUSY
 } SESSION_STATUS;
+
+
+typedef enum {
+	SET_CALENDAR_DATETIME
+} AppActionsMapping;
+
+
+typedef struct {
+	AppActionsMapping action;
+	char info[UART_MESSAGE_BODY_SIZE];
+} AppAction;
 
 
 /* Public Function Definitions */
@@ -50,7 +62,7 @@ SESSION_STATUS start_session(void);
 /*
  *
  */
-SESSION_STATUS end_session(void);
+SESSION_STATUS session_cycle(void);
 
 /*
  *

@@ -36,8 +36,7 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_ll_system.h \
  ../Core/Inc/com_session_layer.h ../Core/Inc/com_transport_layer.h \
  ../Core/Inc/com_datalink_layer.h ../Core/Inc/com_datalink_layer.h \
- ../Core/Inc/calendar.h ../Core/Inc/uart_basic_com.h \
- ../Core/Inc/led_debug.h
+ ../Core/Inc/calendar.h ../Core/Inc/led_debug.h
 ../Core/Inc/main.h:
 ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal.h:
 ../Core/Inc/stm32wlxx_hal_conf.h:
@@ -79,5 +78,4 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Core/Inc/com_datalink_layer.h:
 ../Core/Inc/com_datalink_layer.h:
 ../Core/Inc/calendar.h:
-../Core/Inc/uart_basic_com.h:
 ../Core/Inc/led_debug.h:
