@@ -17,7 +17,7 @@ static bool _sessionInit = false;
 
 SESSION_STATUS _handshake(unsigned int timeout_ms);
 SESSION_STATUS _session_cycle(void);
-SESSION_STATUS _message_phase(char header[UART_MESSAGE_HEADER_SIZE], char body[UART_MESSAGE_BODY_SIZE], bool* messageReceived);
+SESSION_STATUS _listen(void);
 
 
 /*
@@ -300,17 +300,37 @@ SESSION_STATUS _session_cycle(void)
 {
 	char messageHeader[UART_MESSAGE_HEADER_SIZE] = {0};
 	char messageBody[UART_MESSAGE_BODY_SIZE] = {0};
-	bool* isMessage = false;
+	SESSION_STATUS status;
 
-	// Perform message phase of session cycle.
-	return _message_phase(messageHeader, messageBody, isMessage);
+	// Perform Rx message phase of session cycle.
+	status = _listen();
+	if (status == SESSION_ERROR)
+	{
+		return SESSION_ERROR;
+	}
+
+	// If a message was received while listening.
+	else if (status == SESSION_OKAY)
+	{
+		// dequeue received message
+		dequeue_rx(messageHeader, messageBody);
+
+		// Check if disconnection handshake message was received.
+		// If so, set session open flag to false.
+		if (!strncmp(messageHeader, HANDSHAKE_HEADER_DISC, UART_MESSAGE_HEADER_SIZE))
+		{
+			_sessionOpen = false;
+		}
+	}
+
+	return SESSION_OKAY;
 }
 
 
 /*
  *
  */
-SESSION_STATUS _message_phase(char header[UART_MESSAGE_HEADER_SIZE], char body[UART_MESSAGE_BODY_SIZE], bool* messageReceived)
+SESSION_STATUS _listen(void)
 {
 	TRANSPORT_STATUS transportStatus;
 	char messageBody[UART_MESSAGE_BODY_SIZE] = {0};
@@ -350,9 +370,6 @@ SESSION_STATUS _message_phase(char header[UART_MESSAGE_HEADER_SIZE], char body[U
 	{
 		return SESSION_ERROR;
 	}
-
-	transportStatus = dequeue_rx(header, body);
-	*messageReceived = true;
 
 	return SESSION_OKAY;
 }

@@ -75,14 +75,13 @@ if __name__ == '__main__':
             # --------------------------------------
             # ---------- Application Loop ----------
             # --------------------------------------
-            while True:
+            # while True:
                 time.sleep(1)
-                print('Queueing messages')
                 for _ in range(10):
                     Stm32Session._outMessageQueue.put(('ECHO','Hello World!'))
-                print('Updating session')
                 Stm32Session.update()
-                print('Session updated')
+                Stm32Session._outMessageQueue.put(('DISC',''))
+                Stm32Session.update()
 
         # Handle when a keyboard interrupt occurs, to make things tidy.
         except KeyboardInterrupt as e:
