@@ -7,6 +7,7 @@
 C_SRCS += \
 ../Core/Src/calendar.c \
 ../Core/Src/com_datalink_layer.c \
+../Core/Src/com_presentation_layer.c \
 ../Core/Src/com_session_layer.c \
 ../Core/Src/com_transport_layer.c \
 ../Core/Src/led_debug.c \
@@ -20,6 +21,7 @@ C_SRCS += \
 OBJS += \
 ./Core/Src/calendar.o \
 ./Core/Src/com_datalink_layer.o \
+./Core/Src/com_presentation_layer.o \
 ./Core/Src/com_session_layer.o \
 ./Core/Src/com_transport_layer.o \
 ./Core/Src/led_debug.o \
@@ -33,6 +35,7 @@ OBJS += \
 C_DEPS += \
 ./Core/Src/calendar.d \
 ./Core/Src/com_datalink_layer.d \
+./Core/Src/com_presentation_layer.d \
 ./Core/Src/com_session_layer.d \
 ./Core/Src/com_transport_layer.d \
 ./Core/Src/led_debug.d \
@@ -51,7 +54,7 @@ Core/Src/%.o Core/Src/%.su Core/Src/%.cyclo: ../Core/Src/%.c Core/Src/subdir.mk
 clean: clean-Core-2f-Src
 
 clean-Core-2f-Src:
-	-$(RM) ./Core/Src/calendar.cyclo ./Core/Src/calendar.d ./Core/Src/calendar.o ./Core/Src/calendar.su ./Core/Src/com_datalink_layer.cyclo ./Core/Src/com_datalink_layer.d ./Core/Src/com_datalink_layer.o ./Core/Src/com_datalink_layer.su ./Core/Src/com_session_layer.cyclo ./Core/Src/com_session_layer.d ./Core/Src/com_session_layer.o ./Core/Src/com_session_layer.su ./Core/Src/com_transport_layer.cyclo ./Core/Src/com_transport_layer.d ./Core/Src/com_transport_layer.o ./Core/Src/com_transport_layer.su ./Core/Src/led_debug.cyclo ./Core/Src/led_debug.d ./Core/Src/led_debug.o ./Core/Src/led_debug.su ./Core/Src/main.cyclo ./Core/Src/main.d ./Core/Src/main.o ./Core/Src/main.su ./Core/Src/rtc_alarm_control.cyclo ./Core/Src/rtc_alarm_control.d ./Core/Src/rtc_alarm_control.o ./Core/Src/rtc_alarm_control.su ./Core/Src/stm32wlxx_hal_msp.cyclo ./Core/Src/stm32wlxx_hal_msp.d ./Core/Src/stm32wlxx_hal_msp.o ./Core/Src/stm32wlxx_hal_msp.su ./Core/Src/stm32wlxx_it.cyclo ./Core/Src/stm32wlxx_it.d ./Core/Src/stm32wlxx_it.o ./Core/Src/stm32wlxx_it.su ./Core/Src/syscalls.cyclo ./Core/Src/syscalls.d ./Core/Src/syscalls.o ./Core/Src/syscalls.su ./Core/Src/sysmem.cyclo ./Core/Src/sysmem.d ./Core/Src/sysmem.o ./Core/Src/sysmem.su
+	-$(RM) ./Core/Src/calendar.cyclo ./Core/Src/calendar.d ./Core/Src/calendar.o ./Core/Src/calendar.su ./Core/Src/com_datalink_layer.cyclo ./Core/Src/com_datalink_layer.d ./Core/Src/com_datalink_layer.o ./Core/Src/com_datalink_layer.su ./Core/Src/com_presentation_layer.cyclo ./Core/Src/com_presentation_layer.d ./Core/Src/com_presentation_layer.o ./Core/Src/com_presentation_layer.su ./Core/Src/com_session_layer.cyclo ./Core/Src/com_session_layer.d ./Core/Src/com_session_layer.o ./Core/Src/com_session_layer.su ./Core/Src/com_transport_layer.cyclo ./Core/Src/com_transport_layer.d ./Core/Src/com_transport_layer.o ./Core/Src/com_transport_layer.su ./Core/Src/led_debug.cyclo ./Core/Src/led_debug.d ./Core/Src/led_debug.o ./Core/Src/led_debug.su ./Core/Src/main.cyclo ./Core/Src/main.d ./Core/Src/main.o ./Core/Src/main.su ./Core/Src/rtc_alarm_control.cyclo ./Core/Src/rtc_alarm_control.d ./Core/Src/rtc_alarm_control.o ./Core/Src/rtc_alarm_control.su ./Core/Src/stm32wlxx_hal_msp.cyclo ./Core/Src/stm32wlxx_hal_msp.d ./Core/Src/stm32wlxx_hal_msp.o ./Core/Src/stm32wlxx_hal_msp.su ./Core/Src/stm32wlxx_it.cyclo ./Core/Src/stm32wlxx_it.d ./Core/Src/stm32wlxx_it.o ./Core/Src/stm32wlxx_it.su ./Core/Src/syscalls.cyclo ./Core/Src/syscalls.d ./Core/Src/syscalls.o ./Core/Src/syscalls.su ./Core/Src/sysmem.cyclo ./Core/Src/sysmem.d ./Core/Src/sysmem.o ./Core/Src/sysmem.su
 
 .PHONY: clean-Core-2f-Src
 

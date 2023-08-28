@@ -10,6 +10,7 @@
 
 
 #include <stdbool.h>
+#include "com_presentation_layer.h"
 #include "com_transport_layer.h"
 #include "com_datalink_layer.h"
 
@@ -33,17 +34,6 @@ typedef enum {
 	SESSION_NOT_OPEN,
 	SESSION_BUSY
 } SESSION_STATUS;
-
-
-typedef enum {
-	SET_CALENDAR_DATETIME
-} AppActionsMapping;
-
-
-typedef struct {
-	AppActionsMapping action;
-	char info[UART_MESSAGE_BODY_SIZE];
-} AppAction;
 
 
 /* Public Function Definitions */
@@ -73,6 +63,12 @@ SESSION_STATUS tell(char header[UART_MESSAGE_HEADER_SIZE], char body[UART_MESSAG
  *
  */
 SESSION_STATUS listen(char header[UART_MESSAGE_HEADER_SIZE], char body[UART_MESSAGE_BODY_SIZE]);
+
+
+/*
+ *
+ */
+
 
 
 #endif /* INC_COM_SESSION_LAYER_H_ */

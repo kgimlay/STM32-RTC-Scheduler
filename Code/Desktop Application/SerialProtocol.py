@@ -102,7 +102,7 @@ class SerialProtocol:
             pass
 
         # close connection
-        # todo: disconnect handshake
+        _disconnect_handshake()
         self._connection.closePort()
 
 
@@ -122,4 +122,8 @@ class SerialProtocol:
     def receive(self):
         # 
 
-        return self._connection.receive(MESSAGE_LENGTH)[HEADER_LENGTH:]
+        # Receive message from MCU.
+        tempMessage = self._connection.receive(MESSAGE_LENGTH)
+
+        # Return message parsed into command and data segments.
+        return tempMessage[:HEADER_LENGTH], tempMessage[HEADER_LENGTH:]

@@ -1,6 +1,7 @@
 "./Common/System/system_stm32wlxx.o"
 "./Core/Src/calendar.o"
 "./Core/Src/com_datalink_layer.o"
+"./Core/Src/com_presentation_layer.o"
 "./Core/Src/com_session_layer.o"
 "./Core/Src/com_transport_layer.o"
 "./Core/Src/led_debug.o"
