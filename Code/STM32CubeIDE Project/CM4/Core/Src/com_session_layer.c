@@ -321,6 +321,12 @@ SESSION_STATUS _session_cycle(void)
 		{
 			_sessionOpen = false;
 		}
+
+		// Check if echo command.
+		else if (!strncmp(messageHeader, ECHO_HEADER, UART_MESSAGE_HEADER_SIZE))
+		{
+			tell(messageHeader, messageBody);
+		}
 	}
 
 	return SESSION_OKAY;

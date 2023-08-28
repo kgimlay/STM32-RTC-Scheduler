@@ -23,7 +23,8 @@
 #define HANDSHAKE_HEADER_ACKN "ACKN\0"
 #define HANDSHAKE_HEADER_SYNACK "SYNA\0"
 #define HANDSHAKE_HEADER_DISC "DISC\0"
-#define CTS_HEADER "CTS\0"
+#define CTS_HEADER "CTS\0\0"
+#define ECHO_HEADER "ECHO\0"
 
 
 /* Public Types */

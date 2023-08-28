@@ -5,6 +5,7 @@ import platform
 import os
 import re
 import time
+import random
 
 
 def getPorts():
@@ -75,13 +76,13 @@ if __name__ == '__main__':
             # --------------------------------------
             # ---------- Application Loop ----------
             # --------------------------------------
-            # while True:
+            while True:
                 time.sleep(1)
                 for _ in range(10):
-                    Stm32Session._outMessageQueue.put(('ECHO','Hello World!'))
+                    Stm32Session._outMessageQueue.put(('ECHO','Hello World! {}'.format(random.randrange(200))))
                 Stm32Session.update()
-                Stm32Session._outMessageQueue.put(('DISC',''))
-                Stm32Session.update()
+                while not Stm32Session._inMessageQueue.empty():
+                    print(Stm32Session._inMessageQueue.get()[1])
 
         # Handle when a keyboard interrupt occurs, to make things tidy.
         except KeyboardInterrupt as e:

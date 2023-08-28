@@ -24,8 +24,9 @@ class SerialProtocol:
         def _connect_handshake(connection):
             # 
 
-            # clear send buffer before trying handshake
+            # clear send and receive buffers before trying handshake
             connection._connection.reset_input_buffer()
+            connection._connection.reset_output_buffer()
 
             # compose acknowledge message
             synMessage = SerialPacket.SerialPacket(MESSAGE_LENGTH, 
@@ -100,12 +101,23 @@ class SerialProtocol:
     def __del__(self):
         # 
 
-        def _disconnect_handshake():
-            # todo: implement
-            pass
+        def _disconnect_handshake(connection):
+            #
+
+            # Clear send and receive buffers before trying handshake.
+            connection._connection.reset_input_buffer()
+            connection._connection.reset_output_buffer()
+
+            # Wait for CTS.
+            while self.receive()[0] != 'CTS\x00':
+                pass
+
+            # Send disconnection command
+            self.send('DISC', '')
+
 
         # close connection
-        _disconnect_handshake()
+        _disconnect_handshake(self._connection)
         self._connection.closePort()
 
 
