@@ -24,6 +24,9 @@ class SerialProtocol:
         def _connect_handshake(connection):
             # 
 
+            # clear send buffer before trying handshake
+            connection._connection.reset_input_buffer()
+
             # compose acknowledge message
             synMessage = SerialPacket.SerialPacket(MESSAGE_LENGTH, 
                 HEADER_LENGTH, 'SYNC', '')
@@ -119,6 +122,7 @@ class SerialProtocol:
             MESSAGE_LENGTH, HEADER_LENGTH, commandStr, dataStr)
         self._connection.send(message.format())
         
+
     def receive(self):
         # 
 
@@ -127,3 +131,16 @@ class SerialProtocol:
 
         # Return message parsed into command and data segments.
         return tempMessage[:HEADER_LENGTH], tempMessage[HEADER_LENGTH:]
+
+
+    def receive_raw_noNull_noWhitespace(self):
+        # 
+
+        # Receive message from MCU.
+        tempMessage = self._connection.receive(MESSAGE_LENGTH)
+
+        # Return message parsed into command and data segments.
+        return tempMessage.replace('\0', '\\0').replace('\t', '\\t')\
+        .replace(' ', '\\ ').replace('\n', '\\n')\
+        .replace('\f', '\\f').replace('\r', '\\r')\
+        .replace('\v', '\\v')

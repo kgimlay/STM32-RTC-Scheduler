@@ -166,9 +166,9 @@ int main(void)
 
 	  // simulate time delay from performing operations
 	  // (and slows things down a bit to make them human readable
-	  long int i = 0;
-	  while (i < 65535*4)
-		  i++;
+//	  long int i = 0;
+//	  while (i < 65535*4)
+//		  i++;
 
     /* USER CODE END WHILE */
 

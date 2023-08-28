@@ -4,6 +4,7 @@ import SerialSession
 import platform
 import os
 import re
+import time
 
 
 def getPorts():
@@ -75,8 +76,13 @@ if __name__ == '__main__':
             # ---------- Application Loop ----------
             # --------------------------------------
             while True:
-                command, data = Stm32Session._connection.receive()
-                print('[' + command + '] : ' + data)
+                time.sleep(1)
+                print('Queueing messages')
+                for _ in range(10):
+                    Stm32Session._outMessageQueue.put(('ECHO','Hello World!'))
+                print('Updating session')
+                Stm32Session.update()
+                print('Session updated')
 
         # Handle when a keyboard interrupt occurs, to make things tidy.
         except KeyboardInterrupt as e:
