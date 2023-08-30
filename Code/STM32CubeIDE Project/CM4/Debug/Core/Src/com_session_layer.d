@@ -1,6 +1,6 @@
 Core/Src/com_session_layer.o: ../Core/Src/com_session_layer.c \
  ../Core/Inc/com_session_layer.h ../Core/Inc/com_presentation_layer.h \
- ../Core/Inc/com_transport_layer.h ../Core/Inc/com_datalink_layer.h \
+ ../Core/Inc/calendar.h ../Core/Inc/com_datalink_layer.h \
  ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal.h \
  ../Core/Inc/stm32wlxx_hal_conf.h \
  ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_dma.h \
@@ -36,10 +36,10 @@ Core/Src/com_session_layer.o: ../Core/Src/com_session_layer.c \
  ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_uart.h \
  ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_uart_ex.h \
  ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_ll_system.h \
- ../Core/Inc/com_datalink_layer.h
+ ../Core/Inc/com_transport_layer.h ../Core/Inc/com_datalink_layer.h
 ../Core/Inc/com_session_layer.h:
 ../Core/Inc/com_presentation_layer.h:
-../Core/Inc/com_transport_layer.h:
+../Core/Inc/calendar.h:
 ../Core/Inc/com_datalink_layer.h:
 ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal.h:
 ../Core/Inc/stm32wlxx_hal_conf.h:
@@ -76,4 +76,5 @@ Core/Src/com_session_layer.o: ../Core/Src/com_session_layer.c \
 ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_uart.h:
 ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_uart_ex.h:
 ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_ll_system.h:
+../Core/Inc/com_transport_layer.h:
 ../Core/Inc/com_datalink_layer.h:

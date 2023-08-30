@@ -35,6 +35,7 @@ class SerialProtocol:
             
             # send acknowledge message
             connection.send(sendData)
+            # print(connection._connection.out_waiting)
             
             # listen for echo back
             receivedData = connection.receive(MESSAGE_LENGTH)
@@ -109,12 +110,11 @@ class SerialProtocol:
             connection._connection.reset_output_buffer()
 
             # Wait for CTS.
-            while self.receive()[0] != 'CTS\x00':
+            while self.receive()[0] != 'CTS\0':
                 pass
 
             # Send disconnection command
             self.send('DISC', '')
-
 
         # close connection
         _disconnect_handshake(self._connection)

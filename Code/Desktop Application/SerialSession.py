@@ -52,7 +52,7 @@ class STM32SerialCom:
 		# the next CTS message if any messages need to be sent.
 		while self._connection._connection._connection.in_waiting > 0:
 			tempInMessage = self._connection.receive()
-			if tempInMessage[0] != 'CTS\x00':
+			if tempInMessage[0] != 'CTS\0':
 				self._inMessageQueue.put(tempInMessage)
 
 		# While there are messages to be sent to the MCU, wait for a CTS
@@ -61,7 +61,7 @@ class STM32SerialCom:
 		while not self._outMessageQueue.empty():
 			while True:
 				tempInMessage = self._connection.receive()
-				if tempInMessage[0] != 'CTS\x00':
+				if tempInMessage[0] != 'CTS\0':
 					self._inMessageQueue.put(tempInMessage)
 				else:
 					break

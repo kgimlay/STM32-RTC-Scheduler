@@ -1,1 +1,4 @@
-../Core/Src/com_presentation_layer.c:17:19:code_to_appActionsMapping	24	static
+../Core/Src/com_presentation_layer.c:19:12:code_to_appActions	16	static
+../Core/Src/com_presentation_layer.c:35:7:appActions_to_code	16	static
+../Core/Src/com_presentation_layer.c:51:6:parseDateTime	16	static
+../Core/Src/com_presentation_layer.c:76:6:formatDateTime	48	static

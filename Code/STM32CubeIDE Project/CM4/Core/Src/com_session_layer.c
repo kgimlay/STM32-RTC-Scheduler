@@ -13,6 +13,9 @@
 
 static bool _sessionOpen = false;
 static bool _sessionInit = false;
+static char _messageCommand[UART_MESSAGE_HEADER_SIZE];
+static char _messageData[UART_MESSAGE_BODY_SIZE];
+static bool _messageReady = false;
 
 
 SESSION_STATUS _handshake(unsigned int timeout_ms);
@@ -327,6 +330,14 @@ SESSION_STATUS _session_cycle(void)
 		{
 			tell(messageHeader, messageBody);
 		}
+
+		// Else, buffer for processing by the application
+		else
+		{
+			memcpy(_messageCommand, messageHeader, UART_MESSAGE_HEADER_SIZE*sizeof(char));
+			memcpy(_messageData, messageBody, UART_MESSAGE_BODY_SIZE*sizeof(char));
+			_messageReady = true;
+		}
 	}
 
 	return SESSION_OKAY;
@@ -378,4 +389,25 @@ SESSION_STATUS _listen(void)
 	}
 
 	return SESSION_OKAY;
+}
+
+
+/*
+ *
+ */
+SESSION_STATUS getCommand(char header[UART_MESSAGE_HEADER_SIZE], char body[UART_MESSAGE_BODY_SIZE])
+{
+	if (_messageReady)
+	{
+		memcpy(header, _messageCommand, UART_MESSAGE_HEADER_SIZE*sizeof(char));
+		memcpy(body, _messageData, UART_MESSAGE_BODY_SIZE*sizeof(char));
+		_messageReady = false;
+
+		return SESSION_OKAY;
+	}
+
+	else
+	{
+		return SESSION_ERROR;
+	}
 }

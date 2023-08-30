@@ -143,6 +143,8 @@ int main(void)
 
   char messageHeader[UART_MESSAGE_HEADER_SIZE];
   char messageBody[UART_MESSAGE_BODY_SIZE];
+  AppActions commandCode;
+  DateTime newDateTime = {0};
   while (1)
   {
 	  // handle a calendar alarm event
@@ -159,9 +161,26 @@ int main(void)
 	  {
 		  activate_led(RED_LED);
 	  }
-	  else
+
+	  // get command if present
+	  if (getCommand(messageHeader, messageBody) == SESSION_OKAY)
 	  {
-		  deactivate_led(RED_LED);
+		  // execute command
+		  commandCode = code_to_appActions(messageHeader);
+
+		  if (commandCode == SET_CALENDAR_DATETIME)
+		  {
+			  parseDateTime(messageBody, &newDateTime);
+			  calendar_setDateTime(newDateTime);
+		  }
+
+		  else if (commandCode == GET_CALENDAR_DATETIME)
+		  {
+			  calendar_getDateTime(&newDateTime);
+			  formatDateTime(messageBody, &newDateTime);
+			  memcpy(messageHeader, "ECHO", UART_MESSAGE_HEADER_SIZE*sizeof(char));
+			  tell(messageHeader, messageBody);
+		  }
 	  }
 
 	  // simulate time delay from performing operations

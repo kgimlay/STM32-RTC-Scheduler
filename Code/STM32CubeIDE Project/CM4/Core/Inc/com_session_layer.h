@@ -70,7 +70,7 @@ SESSION_STATUS listen(char header[UART_MESSAGE_HEADER_SIZE], char body[UART_MESS
 /*
  *
  */
-
+SESSION_STATUS getCommand(char header[UART_MESSAGE_HEADER_SIZE], char body[UART_MESSAGE_BODY_SIZE]);
 
 
 #endif /* INC_COM_SESSION_LAYER_H_ */

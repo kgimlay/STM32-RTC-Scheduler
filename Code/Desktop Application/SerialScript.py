@@ -76,13 +76,25 @@ if __name__ == '__main__':
             # --------------------------------------
             # ---------- Application Loop ----------
             # --------------------------------------
+            # while True:
+            #     time.sleep(1)
+            #     for _ in range(10):
+            #         Stm32Session._outMessageQueue.put(('ECHO','Hello World! {}'.format(random.randrange(200))))
+            #     Stm32Session.update()
+            #     while not Stm32Session._inMessageQueue.empty():
+            #         print(Stm32Session._inMessageQueue.get()[1])
+
+            print("Setting date and time to start of century.")
+            Stm32Session._outMessageQueue.put(('STDT','00;01;01;00;00;00'))
+            Stm32Session.update()
             while True:
-                time.sleep(1)
-                for _ in range(10):
-                    Stm32Session._outMessageQueue.put(('ECHO','Hello World! {}'.format(random.randrange(200))))
+                print("Asking for date and time")
+                Stm32Session._outMessageQueue.put(('GTDT',''))
                 Stm32Session.update()
-                while not Stm32Session._inMessageQueue.empty():
-                    print(Stm32Session._inMessageQueue.get()[1])
+                while Stm32Session._inMessageQueue.empty():
+                    Stm32Session.update()
+                print(Stm32Session._inMessageQueue.get()[1])
+                time.sleep(1)
 
         # Handle when a keyboard interrupt occurs, to make things tidy.
         except KeyboardInterrupt as e:
