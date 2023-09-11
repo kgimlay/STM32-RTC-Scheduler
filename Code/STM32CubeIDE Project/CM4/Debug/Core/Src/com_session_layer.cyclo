@@ -6,4 +6,4 @@ com_session_layer.c:151:16:listen	5
 com_session_layer.c:193:16:_handshake	23
 com_session_layer.c:302:16:_session_cycle	5
 com_session_layer.c:350:16:_listen	6
-com_session_layer.c:398:16:getCommand	2
+com_session_layer.c:398:16:getCommand	3

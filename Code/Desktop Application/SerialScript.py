@@ -6,6 +6,7 @@ import os
 import re
 import time
 import random
+from datetime import datetime, timedelta
 
 
 def getPorts():
@@ -84,17 +85,35 @@ if __name__ == '__main__':
             #     while not Stm32Session._inMessageQueue.empty():
             #         print(Stm32Session._inMessageQueue.get()[1])
 
-            print("Setting date and time to start of century.")
-            Stm32Session._outMessageQueue.put(('STDT','00;01;01;00;00;00'))
-            Stm32Session.update()
-            while True:
-                print("Asking for date and time")
-                Stm32Session._outMessageQueue.put(('GTDT',''))
+            # set the date and time on the MCU
+            print('Setting MCU time...')
+            Stm32Session._outMessageQueue.put(('STDT', datetime.now().strftime('%y;%m;%d;%H;%M;%S')))
+            Stm32Session._outMessageQueue.put(('GTDT',''))
+            while Stm32Session._inMessageQueue.empty():
                 Stm32Session.update()
-                while Stm32Session._inMessageQueue.empty():
-                    Stm32Session.update()
-                print(Stm32Session._inMessageQueue.get()[1])
-                time.sleep(1)
+            mcuMessage = Stm32Session._inMessageQueue.get()
+            print('The MCU\'s time is now:  ' + mcuMessage[1])
+
+            # upload an event to the MCU
+            print('Uploading some events...')
+            now = datetime.now()
+            for i in range(5, 60, 5):
+                eventStart = now + timedelta(seconds=i)
+                eventEnd = eventStart + timedelta(seconds=2)
+                messageStr = eventStart.strftime('%y;%m;%d;%H;%M;%S') + ';' + eventEnd.strftime('%y;%m;%d;%H;%M;%S')
+                Stm32Session._outMessageQueue.put(('AEVT', messageStr))
+            Stm32Session._outMessageQueue.put(('SCAL', ''))
+            Stm32Session.update()
+
+            # while True:
+            #     Stm32Session._outMessageQueue.put(('GTDT',''))
+            #     Stm32Session.update()
+            #     while Stm32Session._inMessageQueue.empty():
+            #         Stm32Session.update()
+            #     desktopNow = datetime.now().strftime("%y;%m;%d;%H;%M;%S").strip('\0')
+            #     mcuNow = Stm32Session._inMessageQueue.get()[1]
+            #     print(desktopNow + '  :  ' + mcuNow)
+            #     time.sleep(1)
 
         # Handle when a keyboard interrupt occurs, to make things tidy.
         except KeyboardInterrupt as e:

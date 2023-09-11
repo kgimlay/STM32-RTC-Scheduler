@@ -1,5 +1,5 @@
 ../Core/Src/com_transport_layer.c:26:6:com_transport_init	16	static
 ../Core/Src/com_transport_layer.c:47:18:queue_tx	16	static
-../Core/Src/com_transport_layer.c:76:18:dequeue_rx	56	static
+../Core/Src/com_transport_layer.c:76:18:dequeue_rx	88	static
 ../Core/Src/com_transport_layer.c:110:18:tx	24	static
 ../Core/Src/com_transport_layer.c:155:18:rx	24	static

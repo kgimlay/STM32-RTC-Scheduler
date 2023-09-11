@@ -71,6 +71,16 @@ void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc)
 	calendar_AlarmA_ISR();
 }
 
+void event_start(void)
+{
+	activate_led(GPIO_PIN_15);
+}
+
+void event_end(void)
+{
+	deactivate_led(GPIO_PIN_15);
+}
+
 /* USER CODE END 0 */
 
 /**
@@ -131,9 +141,7 @@ int main(void)
   calendar_setDateTime(now);
 
   // start calendar
-  HAL_NVIC_SetPriority(RTC_Alarm_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(RTC_Alarm_IRQn);
-  calendar_start();
+//  calendar_start();
 
   // begin listening for messages from desktop
   if (start_session() == SESSION_OKAY)
@@ -150,7 +158,7 @@ int main(void)
 	  // handle a calendar alarm event
 	  calendar_handleAlarm();
 
-	  // try connection if not present
+	  // try to open connection if not present
 	  if (start_session() == SESSION_OKAY)
 	  {
 		  activate_led(GREEN_LED);
@@ -168,12 +176,14 @@ int main(void)
 		  // execute command
 		  commandCode = code_to_appActions(messageHeader);
 
+		  // set date/time
 		  if (commandCode == SET_CALENDAR_DATETIME)
 		  {
 			  parseDateTime(messageBody, &newDateTime);
 			  calendar_setDateTime(newDateTime);
 		  }
 
+		  // get date/time
 		  else if (commandCode == GET_CALENDAR_DATETIME)
 		  {
 			  calendar_getDateTime(&newDateTime);
@@ -181,6 +191,43 @@ int main(void)
 			  memcpy(messageHeader, "ECHO", UART_MESSAGE_HEADER_SIZE*sizeof(char));
 			  tell(messageHeader, messageBody);
 		  }
+
+		  // add event
+		  else if (commandCode == ADD_CALENDAR_EVENT)
+		  {
+			  CalendarEvent tempEvent = {0};
+			  parseEvent(messageBody, &tempEvent);
+			  tempEvent.start_callback = &(event_start);
+			  tempEvent.end_callback = &(event_end);
+			  calendar_addEvent(&tempEvent);
+		  }
+
+		  // get/view event
+		  else if (commandCode == GET_CALENDAR_EVENT)
+		  {
+
+		  }
+
+		  // remove event
+		  else if (commandCode == REMOVE_CALENDAR_EVENT)
+		  {
+
+		  }
+
+		  // clear all events
+		  else if (commandCode == CLEAR_CALENDAR_EVENTS)
+		  {
+
+		  }
+
+		  // start calendar
+		  else if (commandCode == START_CALENDAR)
+		  {
+			  calendar_start();
+		  }
+
+		  // Add more commands here.
+
 	  }
 
 	  // simulate time delay from performing operations

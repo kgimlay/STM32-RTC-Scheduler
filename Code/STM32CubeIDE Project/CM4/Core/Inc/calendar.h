@@ -44,7 +44,24 @@ typedef struct {
 /*
  *
  */
+typedef enum {
+	CALENDAR_OKAY = 0,
+	CALENDER_NOT_INIT,
+	CALENDAR_FULL,
+	CALENDAR_EMPTY
+} CalendarStatus;
+
+
+/*
+ *
+ */
 void calendar_init(RTC_HandleTypeDef* hrtc);
+
+
+/*
+ *
+ */
+void calendar_start(void);
 
 
 /*
@@ -62,13 +79,19 @@ void calendar_getDateTime(DateTime* dateTime);
 /*
  *
  */
-void calendar_setEvents(CalendarEvent events[MAX_NUM_EVENTS], unsigned int numEvents);
+CalendarStatus calendar_addEvent(CalendarEvent* event);
 
 
 /*
  *
  */
-void calendar_start(void);
+void calendar_getEvent(DateTime* dateTime);
+
+
+/*
+ *
+ */
+void calendar_removeEvent(unsigned int index);
 
 
 /*

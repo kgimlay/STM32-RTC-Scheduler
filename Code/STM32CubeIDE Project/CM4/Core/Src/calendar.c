@@ -13,64 +13,69 @@
 
 
 #define CURRENTLY_IN_EVENT (_currentEvent != -1)
+#define END_CALENDAR_LL (-1)
 
 
 int32_t compareDateTime(DateTime dateTime_1, DateTime dateTime_2);
 uint32_t dateTimeToSeconds(DateTime dateTime);
 bool getNextAlarm(DateTime* dateTime, int* nowEventIdx, bool* inEvent);
+bool _addEvent(CalendarEvent* event);
+void _copyEvent(CalendarEvent* to, CalendarEvent* from);
 
 
 /*
  *
  */
-static CalendarEvent _calendarEvents[MAX_NUM_EVENTS] = {0};
-static int _numberEvents = 0;
-static int _currentEvent = -1;
+typedef struct calendarNode{
+	CalendarEvent event;
+	int next;
+} CalendarLL;
+
+
+/*
+ *
+ */
+static bool _isInit = false;
 volatile static bool _alarmAFired = false;
 RTC_HandleTypeDef* _hrtc = NULL;
+CalendarLL _calendarEvents[MAX_NUM_EVENTS] = {0};
+static int _calendarHead = -1;
+static int _calendarFree = 0;
+static int _currentEvent = -1;
+
 
 
 /*
  *
  */
-void calendar_init(RTC_HandleTypeDef* hrtc) {
+void calendar_init(RTC_HandleTypeDef* hrtc)
+{
 	// store pointer to rtc structure
 	_hrtc = hrtc;
 
 	// pass pointer to alarm control
 	rtcAlarmControl_init(hrtc);
+
+	// initialize the calendar
+	_calendarHead = -1;
+	_calendarFree = 0;
+	_currentEvent = 1;
+	for (int idx = 0; idx < MAX_NUM_EVENTS - 1; idx++)
+	{
+		_calendarEvents[idx].next = idx + 1;
+	}
+	_calendarEvents[MAX_NUM_EVENTS - 1].next = -1;
+
+	// set init flag
+	_isInit = true;
 }
 
 
 /*
  *
  */
-void calendar_setDateTime(DateTime dateTime) {
-	setDateTime(dateTime.year, dateTime.month, dateTime.day, dateTime.hour, dateTime.minute, dateTime.second);
-}
-
-
-/*
- *
- */
-void calendar_getDateTime(DateTime* dateTime) {
-	getDateTime(&(dateTime->year), &(dateTime->month), &(dateTime->day), &(dateTime->hour), &(dateTime->minute), &(dateTime->second));
-}
-
-
-/*
- *
- */
-void calendar_setEvents(CalendarEvent events[MAX_NUM_EVENTS], unsigned int numEvents) {
-	memcpy(_calendarEvents, events, sizeof(CalendarEvent)*MAX_NUM_EVENTS);
-	_numberEvents = numEvents;
-}
-
-
-/*
- *
- */
-void calendar_start(void) {
+void calendar_start(void)
+{
 	DateTime nextAlarm;
 	int currentEventIdx;
 	bool withinEvent;
@@ -82,8 +87,8 @@ void calendar_start(void) {
 
 		// if starting within an event, run the start callback
 		if (withinEvent) {
-			if (_calendarEvents[currentEventIdx].start_callback != NULL)
-				(*_calendarEvents[currentEventIdx].start_callback)();
+			if (_calendarEvents[currentEventIdx].event.start_callback != NULL)
+				(*_calendarEvents[currentEventIdx].event.start_callback)();
 			_currentEvent = currentEventIdx;
 		}
 
@@ -101,7 +106,71 @@ void calendar_start(void) {
 /*
  *
  */
-void calendar_handleAlarm(void) {
+void calendar_setDateTime(DateTime dateTime)
+{
+	setDateTime(dateTime.year, dateTime.month, dateTime.day, dateTime.hour, dateTime.minute, dateTime.second);
+}
+
+
+/*
+ *
+ */
+void calendar_getDateTime(DateTime* dateTime)
+{
+	getDateTime(&(dateTime->year), &(dateTime->month), &(dateTime->day), &(dateTime->hour), &(dateTime->minute), &(dateTime->second));
+}
+
+
+/*
+ *
+ */
+CalendarStatus calendar_addEvent(CalendarEvent *event)
+{
+	// add only if the calendar has been initialized
+	if (_isInit)
+	{
+		if (_addEvent(event))
+		{
+			return CALENDAR_OKAY;
+		}
+
+		else
+		{
+			return CALENDAR_FULL;
+		}
+	}
+
+	// the calendar has not been initialized
+	else
+	{
+		return CALENDER_NOT_INIT;
+	}
+}
+
+
+/*
+ *
+ */
+void calendar_getEvent(DateTime* dateTime)
+{
+
+}
+
+
+/*
+ *
+ */
+void calendar_removeEvent(unsigned int index)
+{
+
+}
+
+
+/*
+ *
+ */
+void calendar_handleAlarm(void)
+{
 	DateTime nextAlarm;
 	int currentEventIdx;
 	bool withinEvent;
@@ -119,8 +188,8 @@ void calendar_handleAlarm(void) {
 			if (withinEvent && !CURRENTLY_IN_EVENT) {
 
 				// call start event callback
-				if (_calendarEvents[currentEventIdx].start_callback != NULL)
-					(*_calendarEvents[currentEventIdx].start_callback)();
+				if (_calendarEvents[currentEventIdx].event.start_callback != NULL)
+					(*_calendarEvents[currentEventIdx].event.start_callback)();
 
 				// update current event
 				_currentEvent = currentEventIdx;
@@ -129,12 +198,12 @@ void calendar_handleAlarm(void) {
 			// if entering an event from another event
 			else if (withinEvent && CURRENTLY_IN_EVENT) {
 				// call end event callback for event just left
-				if (_calendarEvents[_currentEvent].end_callback != NULL)
-					(*_calendarEvents[_currentEvent].end_callback)();
+				if (_calendarEvents[_currentEvent].event.end_callback != NULL)
+					(*_calendarEvents[_currentEvent].event.end_callback)();
 
 				// call start event callback for event just entered
-				if (_calendarEvents[currentEventIdx].start_callback != NULL)
-					(*_calendarEvents[currentEventIdx].start_callback)();
+				if (_calendarEvents[currentEventIdx].event.start_callback != NULL)
+					(*_calendarEvents[currentEventIdx].event.start_callback)();
 
 				// update current event
 				_currentEvent = currentEventIdx;
@@ -144,8 +213,8 @@ void calendar_handleAlarm(void) {
 			// if exiting an event into no event
 			else if (!withinEvent && CURRENTLY_IN_EVENT) {
 				// call end event callback for event just left
-				if (_calendarEvents[_currentEvent].end_callback != NULL)
-					(*_calendarEvents[_currentEvent].end_callback)();
+				if (_calendarEvents[_currentEvent].event.end_callback != NULL)
+					(*_calendarEvents[_currentEvent].event.end_callback)();
 
 				// update current event
 				_currentEvent = currentEventIdx;
@@ -162,8 +231,8 @@ void calendar_handleAlarm(void) {
 
 			if (CURRENTLY_IN_EVENT) {
 				// call end event callback for event just left
-				if (_calendarEvents[_currentEvent].end_callback != NULL)
-					(*_calendarEvents[_currentEvent].end_callback)();
+				if (_calendarEvents[_currentEvent].event.end_callback != NULL)
+					(*_calendarEvents[_currentEvent].event.end_callback)();
 			}
 		}
 
@@ -180,7 +249,8 @@ void calendar_handleAlarm(void) {
 /*
  *
  */
-void calendar_AlarmA_ISR(void) {
+void calendar_AlarmA_ISR(void)
+{
 	// set flag that an alarm fired
 	_alarmAFired = true;
 }
@@ -190,7 +260,8 @@ void calendar_AlarmA_ISR(void) {
  *
  * Note: Does not account for leap years.
  */
-int32_t compareDateTime(DateTime dateTime_1, DateTime dateTime_2) {
+int32_t compareDateTime(DateTime dateTime_1, DateTime dateTime_2)
+{
 	uint32_t dateTimeSeconds_1, dateTimeSeconds_2;
 
 	dateTimeSeconds_1 = dateTimeToSeconds(dateTime_1);
@@ -204,7 +275,8 @@ int32_t compareDateTime(DateTime dateTime_1, DateTime dateTime_2) {
 /*
  *
  */
-uint32_t dateTimeToSeconds(DateTime dateTime) {
+uint32_t dateTimeToSeconds(DateTime dateTime)
+{
 	// Convert to seconds. Note: assumes 30 days in a month and
 	// no leap years, it is not needed for the calculation because
 	// they are used for relative comparisons, not absolute values.
@@ -220,9 +292,9 @@ uint32_t dateTimeToSeconds(DateTime dateTime) {
 /*
  *
  */
-bool getNextAlarm(DateTime* dateTime, int* nowEventIdx, bool* inEvent) {
+bool getNextAlarm(DateTime* dateTime, int* nowEventIdx, bool* inEvent)
+{
 	int eventIdx = 0;
-	int currentIdx = 0;
 	bool nextAlarmFound = false;
 	DateTime now = {0};
 	DateTime nextAlarmDateTime = {0};
@@ -232,47 +304,48 @@ bool getNextAlarm(DateTime* dateTime, int* nowEventIdx, bool* inEvent) {
 
 	// Traverse over the events list and find where 'now' falls.  This can be before
 	// any all the events, within an event, between events, or after all the events.
-	eventIdx = 0;
-	currentIdx = eventIdx - 1;
+	eventIdx = _calendarHead;
 	nextAlarmFound = false;
-	while (eventIdx < _numberEvents && !nextAlarmFound) {
-		// test if before event
-		if (compareDateTime(now, _calendarEvents[eventIdx].start) < 0)
-		{
-			// then the next alarm is the beginning of this event
-			nextAlarmDateTime.year = _calendarEvents[eventIdx].start.year;
-			nextAlarmDateTime.month = _calendarEvents[eventIdx].start.month;
-			nextAlarmDateTime.day = _calendarEvents[eventIdx].start.day;
-			nextAlarmDateTime.hour = _calendarEvents[eventIdx].start.hour;
-			nextAlarmDateTime.minute = _calendarEvents[eventIdx].start.minute;
-			nextAlarmDateTime.second = _calendarEvents[eventIdx].start.second;
+	if (eventIdx != -1)
+	{
+		while (eventIdx != -1 && !nextAlarmFound) {
+			// test if before event
+			if (compareDateTime(now, _calendarEvents[eventIdx].event.start) < 0)
+			{
+				// then the next alarm is the beginning of this event
+				nextAlarmDateTime.year = _calendarEvents[eventIdx].event.start.year;
+				nextAlarmDateTime.month = _calendarEvents[eventIdx].event.start.month;
+				nextAlarmDateTime.day = _calendarEvents[eventIdx].event.start.day;
+				nextAlarmDateTime.hour = _calendarEvents[eventIdx].event.start.hour;
+				nextAlarmDateTime.minute = _calendarEvents[eventIdx].event.start.minute;
+				nextAlarmDateTime.second = _calendarEvents[eventIdx].event.start.second;
 
-			// set found
-			nextAlarmFound = true;
-			currentIdx = eventIdx - 1;
-			*inEvent = false;
-		}
+				// set found
+				nextAlarmFound = true;
+				*inEvent = false;
+			}
 
-		// test if within event
-		else if(compareDateTime(now, _calendarEvents[eventIdx].start) >= 0
-				&& compareDateTime(now, _calendarEvents[eventIdx].end) < 0) {
-			// then the next alarm is the end of this event
-			nextAlarmDateTime.year = _calendarEvents[eventIdx].end.year;
-			nextAlarmDateTime.month = _calendarEvents[eventIdx].end.month;
-			nextAlarmDateTime.day = _calendarEvents[eventIdx].end.day;
-			nextAlarmDateTime.hour = _calendarEvents[eventIdx].end.hour;
-			nextAlarmDateTime.minute = _calendarEvents[eventIdx].end.minute;
-			nextAlarmDateTime.second = _calendarEvents[eventIdx].end.second;
+			// test if within event
+			else if(compareDateTime(now, _calendarEvents[eventIdx].event.start) >= 0
+					&& compareDateTime(now, _calendarEvents[eventIdx].event.end) < 0)
+			{
+				// then the next alarm is the end of this event
+				nextAlarmDateTime.year = _calendarEvents[eventIdx].event.end.year;
+				nextAlarmDateTime.month = _calendarEvents[eventIdx].event.end.month;
+				nextAlarmDateTime.day = _calendarEvents[eventIdx].event.end.day;
+				nextAlarmDateTime.hour = _calendarEvents[eventIdx].event.end.hour;
+				nextAlarmDateTime.minute = _calendarEvents[eventIdx].event.end.minute;
+				nextAlarmDateTime.second = _calendarEvents[eventIdx].event.end.second;
 
-			// set found
-			nextAlarmFound = true;
-			currentIdx = eventIdx;
-			*inEvent = true;
-		}
+				// set found
+				nextAlarmFound = true;
+				*inEvent = true;
+			}
 
-		// traverse to next event
-		else {
-			eventIdx++;
+			// traverse to next event
+			else {
+				eventIdx = _calendarEvents[eventIdx].next;
+			}
 		}
 	}
 
@@ -286,7 +359,85 @@ bool getNextAlarm(DateTime* dateTime, int* nowEventIdx, bool* inEvent) {
 	// Return the next alarm found.
 	else {
 		*dateTime = nextAlarmDateTime;
-		*nowEventIdx = currentIdx;
+		*nowEventIdx = eventIdx;
 		return true;
 	}
+}
+
+
+/*
+ *
+ */
+bool _addEvent(CalendarEvent* event)
+{
+	int tempEndOfHead;
+
+	// if the calendar is full, return early
+	if (_calendarFree == -1)
+	{
+		return false;
+	}
+
+	// if the calendar is empty, insert at front
+	if (_calendarHead == -1)
+	{
+		// copy event into start of free linked list
+		_copyEvent(&(_calendarEvents[_calendarFree].event), event);
+
+		// set the head
+		_calendarHead = _calendarFree;
+
+		// set free to next free
+		_calendarFree = _calendarEvents[_calendarFree].next;
+
+		// set end of head list
+		_calendarEvents[_calendarHead].next = -1;
+	}
+
+	// if the calendar is not empty (or full), insert at end of list
+	else
+	{
+		// find end of head
+		tempEndOfHead = _calendarHead;
+		while(_calendarEvents[tempEndOfHead].next != -1)
+			tempEndOfHead = _calendarEvents[tempEndOfHead].next;
+
+		// copy events into start of free linked list
+		_copyEvent(&(_calendarEvents[_calendarFree].event), event);
+
+		// link into head list
+		_calendarEvents[tempEndOfHead].next = _calendarFree;
+		tempEndOfHead = _calendarFree;
+
+		// set free to next free
+			_calendarFree = _calendarEvents[_calendarFree].next;
+
+		// set end of head list
+		_calendarEvents[tempEndOfHead].next = -1;
+	}
+
+	// return okay
+	return true;
+}
+
+
+/*
+ *
+ */
+void _copyEvent(CalendarEvent* to, CalendarEvent* from)
+{
+	to->start.year = from->start.year;
+	to->start.month = from->start.month;
+	to->start.day = from->start.day;
+	to->start.hour = from->start.hour;
+	to->start.minute = from->start.minute;
+	to->start.second = from->start.second;
+	to->start_callback = from->start_callback;
+	to->end.year = from->end.year;
+	to->end.month = from->end.month;
+	to->end.day = from->end.day;
+	to->end.hour = from->end.hour;
+	to->end.minute = from->end.minute;
+	to->end.second = from->end.second;
+	to->end_callback = from->end_callback;
 }

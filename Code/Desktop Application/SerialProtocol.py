@@ -7,7 +7,7 @@ import serial
 
 # Defines message parameters
 HEADER_LENGTH = 4
-MESSAGE_LENGTH = 32
+MESSAGE_LENGTH = 64
 
 
 class SerialProtocol:
