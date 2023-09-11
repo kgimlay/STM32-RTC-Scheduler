@@ -6,9 +6,9 @@ calendar.c:127:16:calendar_addEvent	3
 calendar.c:154:6:calendar_getEvent	1
 calendar.c:163:6:calendar_removeEvent	1
 calendar.c:172:6:calendar_handleAlarm	15
-calendar.c:252:6:calendar_AlarmA_ISR	1
-calendar.c:263:9:compareDateTime	1
-calendar.c:278:10:dateTimeToSeconds	1
-calendar.c:295:6:getNextAlarm	8
-calendar.c:371:6:_addEvent	4
-calendar.c:427:6:_copyEvent	1
+calendar.c:242:6:calendar_AlarmA_ISR	1
+calendar.c:253:9:compareDateTime	1
+calendar.c:268:10:dateTimeToSeconds	1
+calendar.c:285:6:getNextAlarm	8
+calendar.c:361:6:_addEvent	4
+calendar.c:417:6:_copyEvent	1

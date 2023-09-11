@@ -6,9 +6,9 @@
 ../Core/Src/calendar.c:154:6:calendar_getEvent	16	static
 ../Core/Src/calendar.c:163:6:calendar_removeEvent	16	static
 ../Core/Src/calendar.c:172:6:calendar_handleAlarm	24	static
-../Core/Src/calendar.c:252:6:calendar_AlarmA_ISR	4	static
-../Core/Src/calendar.c:263:9:compareDateTime	40	static
-../Core/Src/calendar.c:278:10:dateTimeToSeconds	16	static
-../Core/Src/calendar.c:295:6:getNextAlarm	64	static
-../Core/Src/calendar.c:371:6:_addEvent	24	static
-../Core/Src/calendar.c:427:6:_copyEvent	16	static
+../Core/Src/calendar.c:242:6:calendar_AlarmA_ISR	4	static
+../Core/Src/calendar.c:253:9:compareDateTime	40	static
+../Core/Src/calendar.c:268:10:dateTimeToSeconds	16	static
+../Core/Src/calendar.c:285:6:getNextAlarm	64	static
+../Core/Src/calendar.c:361:6:_addEvent	24	static
+../Core/Src/calendar.c:417:6:_copyEvent	16	static

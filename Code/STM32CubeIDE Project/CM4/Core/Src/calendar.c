@@ -190,9 +190,6 @@ void calendar_handleAlarm(void)
 				// call start event callback
 				if (_calendarEvents[currentEventIdx].event.start_callback != NULL)
 					(*_calendarEvents[currentEventIdx].event.start_callback)();
-
-				// update current event
-				_currentEvent = currentEventIdx;
 			}
 
 			// if entering an event from another event
@@ -205,9 +202,6 @@ void calendar_handleAlarm(void)
 				if (_calendarEvents[currentEventIdx].event.start_callback != NULL)
 					(*_calendarEvents[currentEventIdx].event.start_callback)();
 
-				// update current event
-				_currentEvent = currentEventIdx;
-
 			}
 
 			// if exiting an event into no event
@@ -216,18 +210,18 @@ void calendar_handleAlarm(void)
 				if (_calendarEvents[_currentEvent].event.end_callback != NULL)
 					(*_calendarEvents[_currentEvent].event.end_callback)();
 
-				// update current event
-				_currentEvent = currentEventIdx;
-
 			}
 
 			// else, alarm is just being reset for next month/year
+
+			// update current event
+			_currentEvent = currentEventIdx;
 
 		}
 
 		// if there is no alarm to set, disable the alarm and exit any events
 		else {
-			diableAlarm_A();
+//			diableAlarm_A();
 
 			if (CURRENTLY_IN_EVENT) {
 				// call end event callback for event just left
@@ -238,10 +232,6 @@ void calendar_handleAlarm(void)
 
 		// reset alarm fired flag
 		_alarmAFired = false;
-	}
-
-	else {
-
 	}
 }
 

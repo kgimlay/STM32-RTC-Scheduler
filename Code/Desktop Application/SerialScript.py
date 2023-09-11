@@ -97,9 +97,9 @@ if __name__ == '__main__':
             # upload an event to the MCU
             print('Uploading some events...')
             now = datetime.now()
-            for i in range(5, 60, 5):
+            for i in range(10, 60*2+10, 2):
                 eventStart = now + timedelta(seconds=i)
-                eventEnd = eventStart + timedelta(seconds=2)
+                eventEnd = eventStart + timedelta(seconds=1)
                 messageStr = eventStart.strftime('%y;%m;%d;%H;%M;%S') + ';' + eventEnd.strftime('%y;%m;%d;%H;%M;%S')
                 Stm32Session._outMessageQueue.put(('AEVT', messageStr))
             Stm32Session._outMessageQueue.put(('SCAL', ''))

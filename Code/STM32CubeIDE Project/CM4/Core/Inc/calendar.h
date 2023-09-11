@@ -14,7 +14,7 @@
 #include "stm32wlxx_hal.h"
 
 
-#define MAX_NUM_EVENTS 10
+#define MAX_NUM_EVENTS 256
 
 
 /*
