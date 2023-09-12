@@ -76,6 +76,7 @@ void event_start(void)
 	activate_led(GPIO_PIN_15);
 	// note: it is not recommended to send over serial while in ISR!!
 	tell("MESG", "EVENT START\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
+	session_cycle();
 }
 
 void event_end(void)
@@ -83,6 +84,7 @@ void event_end(void)
 	deactivate_led(GPIO_PIN_15);
 	// note: it is not recommended to send over serial while in ISR!!
 	tell("MESG", "EVENT END\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
+	session_cycle();
 }
 
 /* USER CODE END 0 */

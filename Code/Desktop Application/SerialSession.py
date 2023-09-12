@@ -66,6 +66,7 @@ class STM32SerialCom:
 				else:
 					break
 			tempOutMessage = self._outMessageQueue.get()
+			print('  ::SENDING::  ' + tempOutMessage[0] + tempOutMessage[1])
 			self._connection.send(tempOutMessage[0], tempOutMessage[1])
 
 	def setMcuTime():

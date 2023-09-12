@@ -35,7 +35,9 @@ Core/Src/calendar.o: ../Core/Src/calendar.c ../Core/Inc/calendar.h \
  ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_uart.h \
  ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_uart_ex.h \
  ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_ll_system.h \
- ../Core/Inc/rtc_alarm_control.h
+ ../Core/Inc/rtc_alarm_control.h ../Core/Inc/com_session_layer.h \
+ ../Core/Inc/com_presentation_layer.h ../Core/Inc/calendar.h \
+ ../Core/Inc/com_transport_layer.h ../Core/Inc/com_datalink_layer.h
 ../Core/Inc/calendar.h:
 ../Core/Inc/com_datalink_layer.h:
 ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal.h:
@@ -74,3 +76,8 @@ Core/Src/calendar.o: ../Core/Src/calendar.c ../Core/Inc/calendar.h \
 ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_uart_ex.h:
 ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_ll_system.h:
 ../Core/Inc/rtc_alarm_control.h:
+../Core/Inc/com_session_layer.h:
+../Core/Inc/com_presentation_layer.h:
+../Core/Inc/calendar.h:
+../Core/Inc/com_transport_layer.h:
+../Core/Inc/com_datalink_layer.h:

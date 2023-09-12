@@ -11,8 +11,11 @@
 #include "stdbool.h"
 #include "string.h"
 
+#include "stdio.h"
+#include "com_session_layer.h"
 
-#define CURRENTLY_IN_EVENT (_currentEvent != -1)
+
+#define CURRENTLY_IN_EVENT (_isInEvent)
 #define END_CALENDAR_LL (-1)
 
 
@@ -42,6 +45,7 @@ CalendarLL _calendarEvents[MAX_NUM_EVENTS] = {0};
 static int _calendarHead = -1;
 static int _calendarFree = 0;
 static int _currentEvent = -1;
+static bool _isInEvent = false;
 
 
 
@@ -60,6 +64,7 @@ void calendar_init(RTC_HandleTypeDef* hrtc)
 	_calendarHead = -1;
 	_calendarFree = 0;
 	_currentEvent = -1;
+	_isInEvent = false;
 	for (int idx = 0; idx < MAX_NUM_EVENTS - 1; idx++)
 	{
 		_calendarEvents[idx].next = idx + 1;
@@ -90,6 +95,11 @@ void calendar_start(void)
 			if (_calendarEvents[currentEventIdx].event.start_callback != NULL)
 				(*_calendarEvents[currentEventIdx].event.start_callback)();
 			_currentEvent = currentEventIdx;
+			_isInEvent = true;
+		}
+		else
+		{
+			_isInEvent = false;
 		}
 
 		// make sure that alarm fired is cleared/reset
@@ -214,8 +224,27 @@ void calendar_handleAlarm(void)
 
 			// else, alarm is just being reset for next month/year
 
+
 			// update current event
 			_currentEvent = currentEventIdx;
+			if (withinEvent)
+			{
+				_isInEvent = true;
+				// for testing purposes
+				char body[UART_MESSAGE_BODY_SIZE] = {0};
+				snprintf(body, UART_MESSAGE_SIZE, "IN EVENT %d", _currentEvent+1);
+				tell("MESG", body);
+				session_cycle();
+			}
+			else
+			{
+				_isInEvent = false;
+				// for testing purposes
+				char body[UART_MESSAGE_BODY_SIZE] = {0};
+				snprintf(body, UART_MESSAGE_SIZE, "NOT IN EVENT");
+				tell("MESG", body);
+				session_cycle();
+			}
 
 		}
 
