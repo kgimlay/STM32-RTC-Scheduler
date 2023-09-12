@@ -7,6 +7,7 @@ import re
 import time
 import random
 from datetime import datetime, timedelta
+from IcsEvents import loadCalendar, parseCalendarFromICS
 
 
 def getPorts():
@@ -14,21 +15,30 @@ def getPorts():
 
     # get the OS that this code is running on
     operatingSystem = platform.system()
+    operatingSystemVersion = platform.version()
 
     # test that OS is Linux or OSX
     # I don't have Windows machien to test this code on...  so no Windows.
     # If you want Windows compatability, add implementation.
-    assert operatingSystem == 'Darwin', 'Only Darwin operating systems supported.'
+    assert operatingSystem == 'Darwin' or operatingSystem == 'Linux', \
+        'Only Darwin or Linus operating systems supported.'
 
     # list of serial ports to return
     serialPorts = None
 
-    # MAC OS
+    # MAC OS (only tested with Ventura 13.2.1)
     if operatingSystem == 'Darwin':
         # list all device ports
         devicePorts = ['/dev/' + port for port in os.listdir('/dev/')]
         # remove all device ports that are not tty or cu ports
         serialPorts = [port for port in devicePorts if re.search(r'tty\.usb', port)]
+
+    # Linux OS (Ubuntu) (only tested with Ubuntu Server 20.04.5 LTS 64-bit on Raspberry Pi 4)
+    elif operatingSystem == 'Linux' and 'Ubuntu' in operatingSystemVersion:
+        # list all device ports
+        devicePorts = ['/dev/' + port for port in os.listdir('/dev/')]
+        # remove all device ports that are not tty or cu ports
+        serialPorts = [port for port in devicePorts if re.search(r'ttyACM', port)]
 
     # return list of serial ports
     return serialPorts
@@ -42,7 +52,7 @@ if __name__ == '__main__':
     # get a list of the ports available on the machine
     testPorts = getPorts()
 
-    # test is there are no ports
+    # test if there are no ports
     if len(testPorts) == 0:
         print('There are no serial ports available on the machine.')
         exit(0)
@@ -94,26 +104,31 @@ if __name__ == '__main__':
             mcuMessage = Stm32Session._inMessageQueue.get()
             print('The MCU\'s time is now:  ' + mcuMessage[1])
 
-            # upload an event to the MCU
-            print('Uploading some events...')
+            # upload set of simple events
             now = datetime.now()
-            for i in range(10, 60*2+10, 2):
+            for i in range(10, 60*10+10, 20):
                 eventStart = now + timedelta(seconds=i)
-                eventEnd = eventStart + timedelta(seconds=1)
+                eventEnd = eventStart + timedelta(seconds=5)
                 messageStr = eventStart.strftime('%y;%m;%d;%H;%M;%S') + ';' + eventEnd.strftime('%y;%m;%d;%H;%M;%S')
                 Stm32Session._outMessageQueue.put(('AEVT', messageStr))
             Stm32Session._outMessageQueue.put(('SCAL', ''))
             Stm32Session.update()
 
-            # while True:
-            #     Stm32Session._outMessageQueue.put(('GTDT',''))
+            # # parse some events from an ics file
+            # print('Uploading from test.ics')
+            # fileData = loadCalendar('./test.ics')
+            # if fileData is not None:
+            #     event_list = parseCalendarFromICS(fileData)
+            #     uploadList = [event.export() for event in event_list]
+            #     for event in uploadList:
+            #         Stm32Session._outMessageQueue.put(('AEVT',event))
             #     Stm32Session.update()
-            #     while Stm32Session._inMessageQueue.empty():
-            #         Stm32Session.update()
-            #     desktopNow = datetime.now().strftime("%y;%m;%d;%H;%M;%S").strip('\0')
-            #     mcuNow = Stm32Session._inMessageQueue.get()[1]
-            #     print(desktopNow + '  :  ' + mcuNow)
-            #     time.sleep(1)
+
+            while True:
+                while Stm32Session._inMessageQueue.empty():
+                    Stm32Session.update()
+                    time.sleep(1)
+                print(' >> ' + Stm32Session._inMessageQueue.get()[1])
 
         # Handle when a keyboard interrupt occurs, to make things tidy.
         except KeyboardInterrupt as e:

@@ -59,7 +59,7 @@ void calendar_init(RTC_HandleTypeDef* hrtc)
 	// initialize the calendar
 	_calendarHead = -1;
 	_calendarFree = 0;
-	_currentEvent = 1;
+	_currentEvent = -1;
 	for (int idx = 0; idx < MAX_NUM_EVENTS - 1; idx++)
 	{
 		_calendarEvents[idx].next = idx + 1;

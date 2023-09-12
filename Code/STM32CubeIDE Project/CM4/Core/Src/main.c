@@ -74,11 +74,15 @@ void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc)
 void event_start(void)
 {
 	activate_led(GPIO_PIN_15);
+	// note: it is not recommended to send over serial while in ISR!!
+	tell("MESG", "EVENT START\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
 }
 
 void event_end(void)
 {
 	deactivate_led(GPIO_PIN_15);
+	// note: it is not recommended to send over serial while in ISR!!
+	tell("MESG", "EVENT END\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
 }
 
 /* USER CODE END 0 */
@@ -401,7 +405,7 @@ static void MX_USART2_UART_Init(void)
   huart2.Init.BaudRate = 9600;
   huart2.Init.WordLength = UART_WORDLENGTH_8B;
   huart2.Init.StopBits = UART_STOPBITS_2;
-  huart2.Init.Parity = UART_PARITY_ODD;
+  huart2.Init.Parity = UART_PARITY_NONE;
   huart2.Init.Mode = UART_MODE_TX_RX;
   huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
   huart2.Init.OverSampling = UART_OVERSAMPLING_16;

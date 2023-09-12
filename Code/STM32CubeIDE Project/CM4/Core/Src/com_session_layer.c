@@ -21,6 +21,7 @@ static bool _messageReady = false;
 SESSION_STATUS _handshake(unsigned int timeout_ms);
 SESSION_STATUS _session_cycle(void);
 SESSION_STATUS _listen(void);
+SESSION_STATUS _tell(void);
 
 
 /*
@@ -116,20 +117,20 @@ SESSION_STATUS tell(char header[UART_MESSAGE_HEADER_SIZE], char body[UART_MESSAG
 			}
 
 			// send message
-			transportStatus = tx(TX_TIMEOUT_MS);
-
-			if (transportStatus == TRANSPORT_OKAY)
-			{
-				return SESSION_OKAY;
-			}
-			else if (transportStatus == TRANSPORT_TIMEOUT)
-			{
-				return SESSION_TIMEOUT;
-			}
-			else // if (transportStatus == TRANSPORT_ERROR || transportStatus == TRANSPORT_BUSY)
-			{
-				return SESSION_ERROR;
-			}
+//			transportStatus = tx(TX_TIMEOUT_MS);
+//
+//			if (transportStatus == TRANSPORT_OKAY)
+//			{
+//				return SESSION_OKAY;
+//			}
+//			else if (transportStatus == TRANSPORT_TIMEOUT)
+//			{
+//				return SESSION_TIMEOUT;
+//			}
+//			else // if (transportStatus == TRANSPORT_ERROR || transportStatus == TRANSPORT_BUSY)
+//			{
+//				return SESSION_ERROR;
+//			}
 		}
 
 		else
@@ -305,6 +306,9 @@ SESSION_STATUS _session_cycle(void)
 	char messageBody[UART_MESSAGE_BODY_SIZE] = {0};
 	SESSION_STATUS status;
 
+	// Perform Tx message phase of session cycle.
+	status = _tell();
+
 	// Perform Rx message phase of session cycle.
 	status = _listen();
 	if (status == SESSION_ERROR)
@@ -389,6 +393,30 @@ SESSION_STATUS _listen(void)
 	}
 
 	return SESSION_OKAY;
+}
+
+
+/*
+ *
+ */
+SESSION_STATUS _tell(void)
+{
+	TRANSPORT_STATUS transportStatus;
+
+	transportStatus = tx(TX_TIMEOUT_MS);
+
+	if (transportStatus == TRANSPORT_OKAY)
+	{
+		return SESSION_OKAY;
+	}
+	else if (transportStatus == TRANSPORT_TIMEOUT)
+	{
+		return SESSION_TIMEOUT;
+	}
+	else // if (transportStatus == TRANSPORT_ERROR || transportStatus == TRANSPORT_BUSY)
+	{
+		return SESSION_ERROR;
+	}
 }
 
 

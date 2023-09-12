@@ -6,7 +6,7 @@ import serial
 # Defines communication parameters.  Same as what has been programmed to MCU.
 DEFAULT_BAUD = 9600
 DEFAULT_BYTESIZE = serial.SEVENBITS
-DEFAULT_PARITY = serial.PARITY_ODD
+DEFAULT_PARITY = serial.PARITY_NONE
 DEFAULT_STOPBITS = serial.STOPBITS_TWO
 DEFAULT_READ_TIMEOUT = 0.7
 DEFAULT_WRITE_TIMEOUT = 1.0
@@ -83,6 +83,7 @@ class SerialConnection:
 
         # Encode message and send message.  Ensure message is sent before 
         # continuing.
+        # print('  ::SENDING::  ' + message)
         self._connection.write(message.encode('ascii'))
         self._connection.flush()
 
@@ -98,4 +99,6 @@ class SerialConnection:
         if length < 1: raise ValueError
 
         # Read from the serial connection, decode, and return string.
-        return self._connection.read(length).decode('ascii')
+        received = self._connection.read(length).decode('ascii')
+        # print('  ::RECEIVING::  ' + received)
+        return received

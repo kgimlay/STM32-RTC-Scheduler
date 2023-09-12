@@ -2,10 +2,10 @@ stm32wlxx_ll_rcc.h:1257:22:LL_RCC_LSE_SetDriveCapability	1
 stm32wlxx_ll_bus.h:449:22:LL_AHB2_GRP1_EnableClock	1
 main.c:68:6:HAL_RTC_AlarmAEventCallback	1
 main.c:74:6:event_start	1
-main.c:79:6:event_end	1
-main.c:90:5:main	12
-main.c:251:6:SystemClock_Config	3
-main.c:304:13:MX_RTC_Init	5
-main.c:390:13:MX_USART2_UART_Init	5
-main.c:440:13:MX_GPIO_Init	1
-main.c:462:6:Error_Handler	1
+main.c:81:6:event_end	1
+main.c:94:5:main	12
+main.c:255:6:SystemClock_Config	3
+main.c:308:13:MX_RTC_Init	5
+main.c:394:13:MX_USART2_UART_Init	5
+main.c:444:13:MX_GPIO_Init	1
+main.c:466:6:Error_Handler	1

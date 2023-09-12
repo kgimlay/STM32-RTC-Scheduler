@@ -75,6 +75,7 @@ class SerialProtocol:
         if not isinstance(port, str): raise TypeError
 
         # Create new UART Connection on port.
+        # print('  ::CONNECTING::  Port ' + port)
         tempConnection = SerialConnection.SerialConnection()
 
         # Attempt to open port.  If opening is unsuccessful, a
@@ -104,6 +105,8 @@ class SerialProtocol:
 
         def _disconnect_handshake(connection):
             #
+
+            print('  ::DISCONNECTING::  Port ' + connection._connection.port)
 
             # Clear send and receive buffers before trying handshake.
             connection._connection.reset_input_buffer()
