@@ -8,6 +8,7 @@ import time
 import random
 from datetime import datetime, timedelta
 from IcsEvents import loadCalendar, parseCalendarFromICS
+import sys
 
 
 def getPorts():
@@ -103,6 +104,7 @@ if __name__ == '__main__':
                 Stm32Session.update()
             mcuMessage = Stm32Session._inMessageQueue.get()
             print('The MCU\'s time is now:  ' + mcuMessage[1])
+            sys.stdout.flush()
 
             # # upload set of simple events
             # now = datetime.now()
@@ -114,6 +116,7 @@ if __name__ == '__main__':
             # Stm32Session._outMessageQueue.put(('SCAL', ''))
             # Stm32Session.update()
 
+
             # parse some events from an ics file
             print('Uploading from test.ics')
             fileData = loadCalendar('./test.ics')
@@ -122,14 +125,17 @@ if __name__ == '__main__':
                 uploadList = [event.export() for event in event_list]
                 for event in uploadList:
                     Stm32Session._outMessageQueue.put(('AEVT',event))
+                Stm32Session._outMessageQueue.put(('SCAL', ''))
                 Stm32Session.update()
 
+            sys.stdout.flush()
             while True:
                 while Stm32Session._inMessageQueue.empty():
                     Stm32Session.update()
                     time.sleep(1)
                 now = datetime.now().strftime('%y/%m/%d %H:%M:%S')
                 print(now + ' >> ' + Stm32Session._inMessageQueue.get()[1])
+                sys.stdout.flush()
 
         # Handle when a keyboard interrupt occurs, to make things tidy.
         except KeyboardInterrupt as e:
