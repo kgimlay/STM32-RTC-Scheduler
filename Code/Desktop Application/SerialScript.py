@@ -118,8 +118,8 @@ if __name__ == '__main__':
 
 
             # parse some events from an ics file
-            print('Uploading from test.ics')
-            fileData = loadCalendar('./test.ics')
+            print('Uploading from test ics')
+            fileData = loadCalendar(sys.argv[1])
             if fileData is not None:
                 event_list = parseCalendarFromICS(fileData)
                 uploadList = [event.export() for event in event_list]
