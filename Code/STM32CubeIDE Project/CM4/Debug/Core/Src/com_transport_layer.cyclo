@@ -1,5 +1,0 @@
-com_transport_layer.c:26:6:com_transport_init	2
-com_transport_layer.c:47:18:queue_tx	3
-com_transport_layer.c:76:18:dequeue_rx	3
-com_transport_layer.c:110:18:tx	6
-com_transport_layer.c:155:18:rx	6

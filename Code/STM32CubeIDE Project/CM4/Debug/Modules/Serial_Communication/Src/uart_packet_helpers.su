@@ -1,0 +1,2 @@
+../Modules/Serial_Communication/Src/uart_packet_helpers.c:20:6:composePacket	24	static
+../Modules/Serial_Communication/Src/uart_packet_helpers.c:38:6:decomposePacket	24	static

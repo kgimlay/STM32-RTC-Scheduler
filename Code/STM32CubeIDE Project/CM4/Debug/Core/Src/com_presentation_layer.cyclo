@@ -1,5 +1,0 @@
-com_presentation_layer.c:19:12:code_to_appActions	8
-com_presentation_layer.c:58:7:appActions_to_code	1
-com_presentation_layer.c:97:6:parseDateTime	1
-com_presentation_layer.c:122:6:formatDateTime	1
-com_presentation_layer.c:133:6:parseEvent	1

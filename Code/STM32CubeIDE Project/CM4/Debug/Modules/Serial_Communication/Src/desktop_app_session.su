@@ -1,0 +1,10 @@
+../Modules/Serial_Communication/Src/desktop_app_session.c:31:6:desktopAppSession_init	16	static
+../Modules/Serial_Communication/Src/desktop_app_session.c:51:25:desktopAppSession_start	16	static
+../Modules/Serial_Communication/Src/desktop_app_session.c:81:25:desktopAppSession_pause	4	static
+../Modules/Serial_Communication/Src/desktop_app_session.c:90:25:desktopAppSession_update	8	static
+../Modules/Serial_Communication/Src/desktop_app_session.c:115:25:desktopAppSession_enqueueMessage	16	static
+../Modules/Serial_Communication/Src/desktop_app_session.c:146:25:_handshake	88	static
+../Modules/Serial_Communication/Src/desktop_app_session.c:255:25:_session_cycle	88	static
+../Modules/Serial_Communication/Src/desktop_app_session.c:306:25:_listen	72	static
+../Modules/Serial_Communication/Src/desktop_app_session.c:354:25:_tell	16	static
+../Modules/Serial_Communication/Src/desktop_app_session.c:378:25:desktopAppSession_dequeueMessage	32	static

@@ -1,0 +1,6 @@
+../Modules/Serial_Communication/Src/desktop_app_commands.c:19:12:code_to_appActions	16	static
+../Modules/Serial_Communication/Src/desktop_app_commands.c:58:13:appActions_to_code	16	static
+../Modules/Serial_Communication/Src/desktop_app_commands.c:97:6:parseDateTime	16	static
+../Modules/Serial_Communication/Src/desktop_app_commands.c:122:6:formatDateTime	48	static
+../Modules/Serial_Communication/Src/desktop_app_commands.c:133:6:parseEvent	16	static
+../Modules/Serial_Communication/Src/desktop_app_commands.c:176:6:formatEvent	16	static

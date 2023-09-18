@@ -1,0 +1,8 @@
+../Modules/Serial_Communication/Src/uart_transport_layer.c:49:6:uartTransport_init	16	static
+../Modules/Serial_Communication/Src/uart_transport_layer.c:72:6:uartTransport_reset	8	static
+../Modules/Serial_Communication/Src/uart_transport_layer.c:92:6:uartTransport_deinit	4	static
+../Modules/Serial_Communication/Src/uart_transport_layer.c:113:17:uartTransport_bufferTx	16	static
+../Modules/Serial_Communication/Src/uart_transport_layer.c:145:17:uartTransport_debufferRx	16	static
+../Modules/Serial_Communication/Src/uart_transport_layer.c:178:17:uartTransport_tx_polled	24	static
+../Modules/Serial_Communication/Src/uart_transport_layer.c:230:17:uartTransport_rx_polled	24	static
+../Modules/Serial_Communication/Src/uart_transport_layer.c:280:6:_transportLayer_reset	8	static

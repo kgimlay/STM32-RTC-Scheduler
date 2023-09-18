@@ -26,4 +26,7 @@ Common/System \
 Core/Src \
 Core/Startup \
 Drivers/STM32WLxx_HAL_Driver \
+Modules/Calendar/Src \
+Modules/LED_Debug/Src \
+Modules/Serial_Communication/Src \
 

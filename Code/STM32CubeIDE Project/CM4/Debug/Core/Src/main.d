@@ -1,4 +1,8 @@
-Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
+Core/Src/main.o: ../Core/Src/main.c \
+ ../Modules/Serial_Communication/Inc/desktop_app_session.h \
+ ../Modules/Serial_Communication/Inc/desktop_app_commands.h \
+ ../Modules/Calendar/Inc/calendar.h \
+ ../Modules/Serial_Communication/Inc/uart_packet_helpers.h \
  ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal.h \
  ../Core/Inc/stm32wlxx_hal_conf.h \
  ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_dma.h \
@@ -34,11 +38,12 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_uart.h \
  ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_uart_ex.h \
  ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_ll_system.h \
- ../Core/Inc/com_session_layer.h ../Core/Inc/com_presentation_layer.h \
- ../Core/Inc/calendar.h ../Core/Inc/com_datalink_layer.h \
- ../Core/Inc/com_transport_layer.h ../Core/Inc/com_datalink_layer.h \
- ../Core/Inc/calendar.h ../Core/Inc/led_debug.h
-../Core/Inc/main.h:
+ ../Modules/Serial_Communication/Inc/uart_transport_layer.h \
+ ../Core/Inc/main.h ../Modules/LED_Debug/Inc/led_debug.h
+../Modules/Serial_Communication/Inc/desktop_app_session.h:
+../Modules/Serial_Communication/Inc/desktop_app_commands.h:
+../Modules/Calendar/Inc/calendar.h:
+../Modules/Serial_Communication/Inc/uart_packet_helpers.h:
 ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal.h:
 ../Core/Inc/stm32wlxx_hal_conf.h:
 ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_dma.h:
@@ -74,11 +79,6 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_uart.h:
 ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_uart_ex.h:
 ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_ll_system.h:
-../Core/Inc/com_session_layer.h:
-../Core/Inc/com_presentation_layer.h:
-../Core/Inc/calendar.h:
-../Core/Inc/com_datalink_layer.h:
-../Core/Inc/com_transport_layer.h:
-../Core/Inc/com_datalink_layer.h:
-../Core/Inc/calendar.h:
-../Core/Inc/led_debug.h:
+../Modules/Serial_Communication/Inc/uart_transport_layer.h:
+../Core/Inc/main.h:
+../Modules/LED_Debug/Inc/led_debug.h:

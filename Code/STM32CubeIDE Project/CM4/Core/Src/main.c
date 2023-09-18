@@ -17,13 +17,13 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
+#include <desktop_app_session.h>
 #include "main.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "string.h"
 #include "stdio.h"
-#include "com_session_layer.h"
 #include "calendar.h"
 #include "led_debug.h"
 /* USER CODE END Includes */
@@ -36,7 +36,7 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 #define COUNTOF(__BUFFER__)   (sizeof(__BUFFER__) / sizeof(*(__BUFFER__)))
-#define RXBUFFERSIZE UART_MESSAGE_SIZE
+#define RXBUFFERSIZE UART_PACKET_SIZE
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -46,11 +46,10 @@
 
 /* Private variables ---------------------------------------------------------*/
 RTC_HandleTypeDef hrtc;
-
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-char rxBuffer[UART_MESSAGE_SIZE];
+char rxBuffer[UART_PACKET_SIZE];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -75,16 +74,16 @@ void event_start(void)
 {
 	activate_led(GPIO_PIN_15);
 	// note: it is not recommended to send over serial while in ISR!!
-	tell("MESG", "EVENT START\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
-	session_cycle();
+	desktopAppSession_enqueueMessage("MESG", "EVENT START\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
+	desktopAppSession_update();
 }
 
 void event_end(void)
 {
 	deactivate_led(GPIO_PIN_15);
 	// note: it is not recommended to send over serial while in ISR!!
-	tell("MESG", "EVENT END\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
-	session_cycle();
+	desktopAppSession_enqueueMessage("MESG", "EVENT END\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
+	desktopAppSession_update();
 }
 
 /* USER CODE END 0 */
@@ -130,13 +129,13 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 
   // initialize the desktop communication module (doesn't establish connection!)
-  com_session_init(&huart2);
+  desktopAppSession_init(&huart2);
 
   // initialize calendar
   calendar_init(&hrtc);
 
   // set calendar time
-  DateTime now = {
+  struct_DateTime now = {
 		  .year = 0,
 		  .month = 0,
 		  .day = 0,
@@ -150,34 +149,34 @@ int main(void)
 //  calendar_start();
 
   // begin listening for messages from desktop
-  if (start_session() == SESSION_OKAY)
+  if (desktopAppSession_start() == SESSION_OKAY)
   {
 	  activate_led(GREEN_LED);
   }
 
-  char messageHeader[UART_MESSAGE_HEADER_SIZE];
-  char messageBody[UART_MESSAGE_BODY_SIZE];
-  AppActions commandCode;
-  DateTime newDateTime = {0};
+  char messageHeader[UART_PACKET_HEADER_SIZE];
+  char messageBody[UART_PACKET_PAYLOAD_SIZE];
+  enum AppActions commandCode;
+  struct_DateTime newDateTime = {0};
   while (1)
   {
 	  // handle a calendar alarm event
-	  calendar_handleAlarm();
+	  calendar_update();
 
 	  // try to open connection if not present
-	  if (start_session() == SESSION_OKAY)
+	  if (desktopAppSession_start() == SESSION_OKAY)
 	  {
 		  activate_led(GREEN_LED);
 	  }
 
 	  // if message present, handle message
-	  if (session_cycle() != SESSION_OKAY)
+	  if (desktopAppSession_update() != SESSION_OKAY)
 	  {
 		  activate_led(RED_LED);
 	  }
 
 	  // get command if present
-	  if (getCommand(messageHeader, messageBody) == SESSION_OKAY)
+	  if (desktopAppSession_dequeueMessage(messageHeader, messageBody) == SESSION_OKAY)
 	  {
 		  // execute command
 		  commandCode = code_to_appActions(messageHeader);
@@ -185,7 +184,7 @@ int main(void)
 		  // set date/time
 		  if (commandCode == SET_CALENDAR_DATETIME)
 		  {
-			  parseDateTime(messageBody, &newDateTime);
+			  parseDateTime(&newDateTime, messageBody);
 			  calendar_setDateTime(newDateTime);
 		  }
 
@@ -194,15 +193,15 @@ int main(void)
 		  {
 			  calendar_getDateTime(&newDateTime);
 			  formatDateTime(messageBody, &newDateTime);
-			  memcpy(messageHeader, "ECHO", UART_MESSAGE_HEADER_SIZE*sizeof(char));
-			  tell(messageHeader, messageBody);
+			  memcpy(messageHeader, "ECHO", UART_PACKET_HEADER_SIZE*sizeof(char));
+			  desktopAppSession_enqueueMessage(messageHeader, messageBody);
 		  }
 
 		  // add event
 		  else if (commandCode == ADD_CALENDAR_EVENT)
 		  {
 			  CalendarEvent tempEvent = {0};
-			  parseEvent(messageBody, &tempEvent);
+			  parseEvent(&tempEvent, messageBody);
 			  tempEvent.start_callback = &(event_start);
 			  tempEvent.end_callback = &(event_end);
 			  calendar_addEvent(&tempEvent);
