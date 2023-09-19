@@ -135,7 +135,7 @@ int main(void)
   calendar_init(&hrtc);
 
   // set calendar time
-  struct_DateTime now = {
+  DateTime now = {
 		  .year = 0,
 		  .month = 0,
 		  .day = 0,
@@ -157,7 +157,7 @@ int main(void)
   char messageHeader[UART_PACKET_HEADER_SIZE];
   char messageBody[UART_PACKET_PAYLOAD_SIZE];
   enum AppActions commandCode;
-  struct_DateTime newDateTime = {0};
+  DateTime newDateTime = {0};
   while (1)
   {
 	  // handle a calendar alarm event

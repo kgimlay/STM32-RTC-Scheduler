@@ -10,29 +10,42 @@
 #include <stdint.h>
 
 
-static bool _sessionOpen = false;
-static bool _sessionInit = false;
-static char _messageCommand[UART_PACKET_HEADER_SIZE];
-static char _messageData[UART_PACKET_PAYLOAD_SIZE];
-static bool _messageReady = false;
-
-
+/*
+ * Private helper function prototypes for session manager.
+ */
 DesktopComSessionStatus _handshake(unsigned int timeout_ms);
-DesktopComSessionStatus _session_cycle(void);
+DesktopComSessionStatus _session_update(void);
 DesktopComSessionStatus _listen(void);
 DesktopComSessionStatus _tell(void);
 
 
 /*
+ * File-scope static variables for session manager functionality across
+ * function calls.  (Manager Operational Variables)
+ */
+static bool _sessionOpen = false;						// Flag to signal if a session is open
+static bool _sessionInit = false;						// Flag to signal if the manager is initialized
+static char _messageCommand[UART_PACKET_HEADER_SIZE];	// Rx buffer for header (used for processing in manager)
+static char _messageData[UART_PACKET_PAYLOAD_SIZE];		// Rx buffer for body (used for processing in manager)
+static bool _messageReady = false;						// Flag to signal if a message is in the Rx buffer
+
+
+/* desktopAppSession_init
  *
+ * Initializes the UART transport layer and resets operational variables for the manager.
+ * Only will initialize if the manager has not been initialized already.
  */
 bool desktopAppSession_init(UART_HandleTypeDef* huart)
 {
 	// initialize transport layer
-	if (uartTransport_init(huart))
+	if (!_sessionInit && uartTransport_init(huart))
 	{
 		_sessionOpen = false;
 		_sessionInit = true;
+		_messageReady = false;
+		memset(_messageCommand, 0, UART_PACKET_HEADER_SIZE * sizeof(char));
+		memset(_messageData, 0, UART_PACKET_PAYLOAD_SIZE * sizeof(char));
+
 		return true;
 	}
 
@@ -43,8 +56,11 @@ bool desktopAppSession_init(UART_HandleTypeDef* huart)
 }
 
 
-/*
+/* desktopAppSession_start
  *
+ * Attempts to handshake with the desktop application.  Wrapper for the handshake function.
+ * Will not attempt if the manager has not been initialized and will not attempt if a
+ * session is already open.
  */
 DesktopComSessionStatus desktopAppSession_start(void)
 {
@@ -73,17 +89,24 @@ DesktopComSessionStatus desktopAppSession_start(void)
 }
 
 
-/*
+/* desktopAppSession_stop
  *
+ * Force the end of a session by sending the end session confirmation code
+ * to the desktop application.  Only ends a session if the session manager
+ * has been initialized and a session is open.
+ *
+ * Note:  needs to be implemented.
  */
-DesktopComSessionStatus desktopAppSession_pause(void)
+DesktopComSessionStatus desktopAppSession_stop(void)
 {
 	return SESSION_OKAY;
 }
 
 
-/*
+/* desktopAppSession_update
  *
+ * Update the state of the session manager.  Wraps the _session_cycle() function,
+ * which performs the actual update, with checks for a session to be opened.
  */
 DesktopComSessionStatus desktopAppSession_update(void)
 {
@@ -91,7 +114,7 @@ DesktopComSessionStatus desktopAppSession_update(void)
 	{
 		if (_sessionOpen)
 		{
-			return _session_cycle();
+			return _session_update();
 		}
 
 		else
@@ -107,28 +130,25 @@ DesktopComSessionStatus desktopAppSession_update(void)
 }
 
 
-/*
+/* desktopAppSession_enqueueMessage
  *
+ * Buffers a single message into the transport layer tx buffer.
+ *
+ * todo: Need to add a queue in the session manager for this.
  */
 DesktopComSessionStatus desktopAppSession_enqueueMessage(char header[UART_PACKET_HEADER_SIZE],
 		char body[UART_PACKET_PAYLOAD_SIZE])
 {
-	TransportStatus transportStatus;
-
 	if (_sessionInit)
 	{
-		if (_sessionOpen)
+		// enqueue message
+		if (uartTransport_bufferTx((uint8_t*)header, (uint8_t*)body) != TRANSPORT_OKAY)
 		{
-			// enqueue message
-			if (uartTransport_bufferTx((uint8_t*)header, (uint8_t*)body) != TRANSPORT_OKAY)
-			{
-				return SESSION_BUSY;
-			}
+			return SESSION_ERROR;
 		}
-
 		else
 		{
-			return SESSION_NOT_OPEN;
+			return SESSION_OKAY;
 		}
 	}
 
@@ -139,8 +159,71 @@ DesktopComSessionStatus desktopAppSession_enqueueMessage(char header[UART_PACKET
 }
 
 
-/*
+/* desktopAppSession_dequeueMessage
  *
+ * Debuffers from the session manager's header and body buffer.  See note of this buffer
+ * above.
+ *
+ * todo: Need to add a queue in the session manager for this.
+ */
+DesktopComSessionStatus desktopAppSession_dequeueMessage(char header[UART_PACKET_HEADER_SIZE], char body[UART_PACKET_PAYLOAD_SIZE])
+{
+	if (_sessionInit)
+	{
+		if (_messageReady)
+		{
+			memcpy(header, _messageCommand, UART_PACKET_HEADER_SIZE*sizeof(char));
+			memcpy(body, _messageData, UART_PACKET_PAYLOAD_SIZE*sizeof(char));
+			_messageReady = false;
+
+			return SESSION_OKAY;
+		}
+
+		else
+		{
+			return SESSION_ERROR;
+		}
+	}
+
+	else
+	{
+		return SESSION_NOT_INIT;
+	}
+}
+
+
+/* _handshake
+ *
+ * Performs handshake with desktop application.  Listens for incomming request to
+ * open a session with the SESSION_START_TIMEOUT_MS value.  If a message is received
+ * with the HANDSHAKE_HEADER_SYNC header command, then handshaking begins.  A message
+ * is sent with the HANDSHAKE_HEADER_ACKN header command is sent and listening begins
+ * again with the RECEIVE_TIMEOUT_MS timeout value.  If the HANDSHAKE_HEADER_SYNACK
+ * header command is received, then a session is opened.
+ *
+ * This series of steps for the handshake confirms that timeout values on the MCU are
+ * not too short (as long as the Desktop is sufficiently fast enough at responding
+ * messages from the MCU).  Timeout values may need to be tweaked if handshaking
+ * consistently fails.
+ *
+ * A state machine approach is used for confirming each step in the handshaking process.
+ * These states are as follows:
+ * 	0)	Initial state/reset state.  Waiting for a message from the desktop application.
+ * 	1)	Dequeue the message received.
+ * 	2)	Check if the message is synchronization message.
+ * 	3)	Queue acknowledge message.
+ * 	4)	Transmit message to desktop application.
+ * 	5)	Wait for incoming message from the desktop application.
+ * 	6)	Dequeue the message received.
+ * 	7)	Check if the message is a synchronization acknowledge message.
+ * 	8)	Implicit.  Handshaking successful.
+ *
+ * 	The state machine is used simply as a list of steps that must be checked off in order.
+ * 	If any one step fails, handshaking fails.
+ *
+ * Note:  no software flow control is used for the first message.  Listening for the
+ * first message from the desktop may timeout and cause synchronization issues while
+ * attempting to handshake.
  */
 DesktopComSessionStatus _handshake(unsigned int timeout_ms)
 {
@@ -248,10 +331,16 @@ DesktopComSessionStatus _handshake(unsigned int timeout_ms)
 }
 
 
-/*
+/* _session_update
  *
+ * Performs update of session manager.  First transmits a queued message, then receives
+ * a message.  Checks if the message received is for the session manager (close session,
+ * echo).  If it is, then the session handles appropriately.
+ *
+ * Note:  If a response to the desktop is necessary, this response won't be sent until
+ * the next time the session is updated.
  */
-DesktopComSessionStatus _session_cycle(void)
+DesktopComSessionStatus _session_update(void)
 {
 	char messageHeader[UART_PACKET_HEADER_SIZE] = {0};
 	char messageBody[UART_PACKET_PAYLOAD_SIZE] = {0};
@@ -277,6 +366,7 @@ DesktopComSessionStatus _session_cycle(void)
 		// If so, set session open flag to false.
 		if (!strncmp(messageHeader, HANDSHAKE_HEADER_DISC, UART_PACKET_HEADER_SIZE))
 		{
+			desktopAppSession_enqueueMessage(HANDSHAKE_HEADER_DISC, "\0");
 			_sessionOpen = false;
 		}
 
@@ -299,8 +389,16 @@ DesktopComSessionStatus _session_cycle(void)
 }
 
 
-/*
+/* _listen
  *
+ * Wraps calls to the UART transmission layer.
+ * Listens for a message from the desktop application.  Performs software flow control.
+ *
+ * Listening is divided into two windows:  CTS and Message.  The CTS window acts as
+ * software flow control to let the desktop application that it is ready to receive a
+ * message.  A CTS message is transmitted.  The Message window listens for a message
+ * from the desktop application with the RECEIVE_TIMEOUT_MS value.  Error codes from
+ * the transport layer are aliased to session error codes.
  */
 DesktopComSessionStatus _listen(void)
 {
@@ -347,8 +445,11 @@ DesktopComSessionStatus _listen(void)
 }
 
 
-/*
+/* _tell
  *
+ * Wraps UART transmission layer calls.
+ * Transmits a buffered message to the desktop application.
+ * Aliases transport layer error codes to session error codes.
  */
 DesktopComSessionStatus _tell(void)
 {
@@ -365,27 +466,6 @@ DesktopComSessionStatus _tell(void)
 		return SESSION_TIMEOUT;
 	}
 	else // if (transportStatus == TRANSPORT_ERROR || transportStatus == TRANSPORT_BUSY)
-	{
-		return SESSION_ERROR;
-	}
-}
-
-
-/*
- *
- */
-DesktopComSessionStatus desktopAppSession_dequeueMessage(char header[UART_PACKET_HEADER_SIZE], char body[UART_PACKET_PAYLOAD_SIZE])
-{
-	if (_messageReady)
-	{
-		memcpy(header, _messageCommand, UART_PACKET_HEADER_SIZE*sizeof(char));
-		memcpy(body, _messageData, UART_PACKET_PAYLOAD_SIZE*sizeof(char));
-		_messageReady = false;
-
-		return SESSION_OKAY;
-	}
-
-	else
 	{
 		return SESSION_ERROR;
 	}

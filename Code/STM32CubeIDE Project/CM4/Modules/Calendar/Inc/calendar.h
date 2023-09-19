@@ -13,14 +13,15 @@
 #include <stdint.h>
 #include <uart_packet_helpers.h>
 #include "stm32wlxx_hal.h"
+#include <stdbool.h>
 
 /*
- *
+ * Size of the CalendarEvent queue.
  */
 #define MAX_NUM_EVENTS 256
 
 /*
- *
+ * Structure to hold a date and time.
  */
 typedef struct {
   uint8_t year;
@@ -29,20 +30,22 @@ typedef struct {
   uint8_t hour;
   uint8_t minute;
   uint8_t second;
-} struct_DateTime;
+} DateTime;
 
 /*
- *
+ * Structure to hold the start and end DateTime of an event
+ * along with callback function pointers to execute when an
+ * event starts and ends.
  */
 typedef struct {
-  struct_DateTime start;
+  DateTime start;
   void (*start_callback)(void);
-  struct_DateTime end;
+  DateTime end;
   void (*end_callback)(void);
 } CalendarEvent;
 
 /*
- *
+ * Return status codes for the calendar module.
  */
 typedef enum {
 	CALENDAR_OKAY = 0,
@@ -51,82 +54,86 @@ typedef enum {
 	CALENDAR_EMPTY
 } CalendarStatus;
 
-/*
+/* calendar_init
  *
  * Function:
- *
+ *	Initializes the calendar module.  Must be called before the module
+ *	can operate.
  *
  * Parameters:
- *
+ *	hrtc - pointer to RTC_HandleTypeDef (HAL) handle of the RTC peripheral
+ *			to be used.
  *
  * Return:
- *
+ *	bool - true if hrtc is not NULL and the rtc peripheral has been initialized
+ *			by the HAL, false otherwise.
  *
  * Note:
+ * 	Will not reinitialize if the module is already initialized.
  */
-void calendar_init(RTC_HandleTypeDef* hrtc);
+bool calendar_init(RTC_HandleTypeDef* hrtc);
 
-/*
+/* calendar_start
  *
  * Function:
- *
- *
- * Parameters:
- *
+ *	Starts execution of calendar events.  Will not start if the module has not
+ *	been initialized.
  *
  * Return:
- *
+ *	bool - true if the module has been initialized, false if not.
  *
  * Note:
+ * 	Starting the calendar is still successful if there are no events in the queue
+ * 	or if all events ended prior to the current RTC date and time.
  */
-void calendar_start(void);
+bool calendar_start(void);
 
-/*
+/* calendar_pause
  *
  * Function:
- *
- *
- * Parameters:
- *
+ *	Pauses execution of calendar events.  Will not start if the module has not
+ *	been initialized.
  *
  * Return:
- *
+ *	bool - true if the module has been initialized, false if not.
  *
  * Note:
+ * 	Pausing the calendar is still successful if there are no events in the queue
+ * 	or if the calendar is not within any events.  Pausing within an event will
+ * 	delay the end event callback function execution until the calendar is unpaused
+ * 	with calendar_start().
  */
-void calendar_pause(void);
+bool calendar_pause(void);
 
-/*
+/* calendar_setDateTime
  *
  * Function:
- *
+ *	Set the date and time of the RTC.
  *
  * Parameters:
- *
- *
- * Return:
- *
+ *	dateTime - the time and date to set the RTC to.
  *
  * Note:
+ * 	Only sets time and date if the module has been initialized.  Can set the time
+ * 	and date regardless of if the calendar is running or paused.
  */
-void calendar_setDateTime(struct_DateTime dateTime);
+void calendar_setDateTime(DateTime dateTime);
 
-/*
+/* calendar_getDateTime
  *
  * Function:
- *
+ *	Get the date and time of the RTC.
  *
  * Parameters:
- *
- *
- * Return:
- *
+ *	dateTime - pointer to a DateTime as a destination.
  *
  * Note:
+ * 	Only gets time and date if the module has been initialized.  Can get the time
+ * 	and date regardless of if the calendar is running or paused.
  */
-void calendar_getDateTime(struct_DateTime* dateTime);
+void calendar_getDateTime(DateTime* dateTime);
 
-/*
+/* calendar_addEvent
  *
  * Function:
  *
@@ -141,7 +148,7 @@ void calendar_getDateTime(struct_DateTime* dateTime);
  */
 CalendarStatus calendar_addEvent(CalendarEvent* event);
 
-/*
+/* calendar_peekEvent
  *
  * Function:
  *
@@ -156,7 +163,7 @@ CalendarStatus calendar_addEvent(CalendarEvent* event);
  */
 void calendar_peekEvent(unsigned int index);
 
-/*
+/* calendar_removeEvent
  *
  * Function:
  *
@@ -171,7 +178,7 @@ void calendar_peekEvent(unsigned int index);
  */
 void calendar_removeEvent(unsigned int index);
 
-/*
+/* calendar_update
  *
  * Function:
  *
@@ -186,7 +193,7 @@ void calendar_removeEvent(unsigned int index);
  */
 void calendar_update(void);
 
-/*
+/* calendar_AlarmA_ISR
  *
  * Function:
  *

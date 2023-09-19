@@ -21,9 +21,9 @@
 /*
  *
  */
-int32_t compareDateTime(struct_DateTime dateTime_1, struct_DateTime dateTime_2);
-uint32_t dateTimeToSeconds(struct_DateTime dateTime);
-bool getNextAlarm(struct_DateTime* dateTime, int* nowEventIdx, bool* inEvent);
+int32_t compareDateTime(DateTime dateTime_1, DateTime dateTime_2);
+uint32_t dateTimeToSeconds(DateTime dateTime);
+bool getNextAlarm(DateTime* dateTime, int* nowEventIdx, bool* inEvent);
 bool _addEvent(CalendarEvent* event);
 void _copyEvent(CalendarEvent* to, CalendarEvent* from);
 
@@ -41,6 +41,7 @@ typedef struct calendarNode{
  *
  */
 static bool _isInit = false;
+static bool _isRunning = false;
 static RTC_HandleTypeDef* _hrtc = NULL;
 static struct_CalendarLL _calendarEvents[MAX_NUM_EVENTS] = {0};
 static int _calendarHead = -1;
@@ -54,63 +55,80 @@ volatile static bool _alarmAFired = false;
 /*
  *
  */
-void calendar_init(RTC_HandleTypeDef* hrtc)
+bool calendar_init(RTC_HandleTypeDef* hrtc)
 {
-	// store pointer to rtc structure
-	_hrtc = hrtc;
-
-	// pass pointer to alarm control
-	rtcCalendarControl_init(hrtc);
-
-	// initialize the calendar
-	_calendarHead = -1;
-	_calendarFree = 0;
-	_currentEvent = -1;
-	_isInEvent = false;
-	for (int idx = 0; idx < MAX_NUM_EVENTS - 1; idx++)
+	if (!_isInit)
 	{
-		_calendarEvents[idx].next = idx + 1;
-	}
-	_calendarEvents[MAX_NUM_EVENTS - 1].next = -1;
+		// store pointer to rtc structure
+		_hrtc = hrtc;
 
-	// set init flag
-	_isInit = true;
+		// pass pointer to alarm control
+		rtcCalendarControl_init(hrtc);
+
+		// initialize the calendar
+		_calendarHead = -1;
+		_calendarFree = 0;
+		_currentEvent = -1;
+		_isInEvent = false;
+		for (int idx = 0; idx < MAX_NUM_EVENTS - 1; idx++)
+		{
+			_calendarEvents[idx].next = idx + 1;
+		}
+		_calendarEvents[MAX_NUM_EVENTS - 1].next = -1;
+
+		// set init flag
+		_isInit = true;
+		_isRunning = false;
+	}
 }
 
 
 /*
  *
  */
-void calendar_start(void)
+bool calendar_start(void)
 {
-	struct_DateTime nextAlarm;
+	DateTime nextAlarm;
 	int currentEventIdx;
 	bool withinEvent;
 
-	// get calendar alarm for next alarm in event list relative to now
-	if (getNextAlarm(&nextAlarm, &currentEventIdx, &withinEvent)) {
-		// set alarm for next event transition (start or end of event)
-		rtcCalendarControl_setAlarm_A(nextAlarm.day, nextAlarm.hour, nextAlarm.minute, nextAlarm.second);
+	if (_isInit && !_isRunning)
+	{
+		// get calendar alarm for next alarm in event list relative to now
+		if (getNextAlarm(&nextAlarm, &currentEventIdx, &withinEvent)) {
+			// set alarm for next event transition (start or end of event)
+			rtcCalendarControl_setAlarm_A(nextAlarm.day, nextAlarm.hour, nextAlarm.minute, nextAlarm.second);
 
-		// if starting within an event, run the start callback
-		if (withinEvent) {
-			if (_calendarEvents[currentEventIdx].event.start_callback != NULL)
-				(*_calendarEvents[currentEventIdx].event.start_callback)();
-			_currentEvent = currentEventIdx;
-			_isInEvent = true;
-		}
-		else
-		{
-			_isInEvent = false;
+			// if starting within an event, run the start callback
+			if (withinEvent) {
+				if (_calendarEvents[currentEventIdx].event.start_callback != NULL)
+					(*_calendarEvents[currentEventIdx].event.start_callback)();
+				_currentEvent = currentEventIdx;
+				_isInEvent = true;
+			}
+			else
+			{
+				_isInEvent = false;
+			}
+
+			// make sure that alarm fired is cleared/reset
+			_alarmAFired = false;
 		}
 
-		// make sure that alarm fired is cleared/reset
-		_alarmAFired = false;
+		// if there is no alarm to set, disable the alarm
+		else {
+			rtcCalendarControl_diableAlarm_A();
+		}
+
+		// set is running flag
+		_isRunning = true;
+
+		return true;
 	}
 
-	// if there is no alarm to set, disable the alarm
-	else {
-		rtcCalendarControl_diableAlarm_A();
+	else
+	{
+		return false;
 	}
 }
 
@@ -118,24 +136,39 @@ void calendar_start(void)
 /*
  *
  */
-void calendar_pause(void);
-
-
-/*
- *
- */
-void calendar_setDateTime(struct_DateTime dateTime)
+bool calendar_pause(void)
 {
-	rtcCalendarControl_setDateTime(dateTime.year, dateTime.month, dateTime.day, dateTime.hour, dateTime.minute, dateTime.second);
+	if (_isInit && _isRunning)
+	{
+		_isRunning = false;
+
+		return true;
+	}
+
+	else
+	{
+		return false;
+	}
 }
 
 
 /*
  *
  */
-void calendar_getDateTime(struct_DateTime* dateTime)
+void calendar_setDateTime(DateTime dateTime)
 {
-	rtcCalendarControl_getDateTime(&(dateTime->year), &(dateTime->month), &(dateTime->day), &(dateTime->hour), &(dateTime->minute), &(dateTime->second));
+	if (_isInit)
+		rtcCalendarControl_setDateTime(dateTime.year, dateTime.month, dateTime.day, dateTime.hour, dateTime.minute, dateTime.second);
+}
+
+
+/*
+ *
+ */
+void calendar_getDateTime(DateTime* dateTime)
+{
+	if (_isInit)
+		rtcCalendarControl_getDateTime(&(dateTime->year), &(dateTime->month), &(dateTime->day), &(dateTime->hour), &(dateTime->minute), &(dateTime->second));
 }
 
 
@@ -189,11 +222,11 @@ void calendar_removeEvent(unsigned int index)
  */
 void calendar_update(void)
 {
-	struct_DateTime nextAlarm;
+	DateTime nextAlarm;
 	int currentEventIdx;
 	bool withinEvent;
 
-	if (_alarmAFired) {
+	if (_isInit && _isRunning && _alarmAFired) {
 		// get calendar alarm for next alarm in event list relative to now
 		if (getNextAlarm(&nextAlarm, &currentEventIdx, &withinEvent)) {
 			// set alarm for next event transition (start or end of event)
@@ -287,7 +320,7 @@ void calendar_AlarmA_ISR(void)
  *
  * Note: Does not account for leap years.
  */
-int32_t compareDateTime(struct_DateTime dateTime_1, struct_DateTime dateTime_2)
+int32_t compareDateTime(DateTime dateTime_1, DateTime dateTime_2)
 {
 	uint32_t dateTimeSeconds_1, dateTimeSeconds_2;
 
@@ -302,7 +335,7 @@ int32_t compareDateTime(struct_DateTime dateTime_1, struct_DateTime dateTime_2)
 /*
  *
  */
-uint32_t dateTimeToSeconds(struct_DateTime dateTime)
+uint32_t dateTimeToSeconds(DateTime dateTime)
 {
 	// Convert to seconds. Note: assumes 30 days in a month and
 	// no leap years, it is not needed for the calculation because
@@ -319,12 +352,12 @@ uint32_t dateTimeToSeconds(struct_DateTime dateTime)
 /*
  *
  */
-bool getNextAlarm(struct_DateTime* dateTime, int* nowEventIdx, bool* inEvent)
+bool getNextAlarm(DateTime* dateTime, int* nowEventIdx, bool* inEvent)
 {
 	int eventIdx = 0;
 	bool nextAlarmFound = false;
-	struct_DateTime now = {0};
-	struct_DateTime nextAlarmDateTime = {0};
+	DateTime now = {0};
+	DateTime nextAlarmDateTime = {0};
 
 	// get the current date and time
 	rtcCalendarControl_getDateTime(&now.year, &now.month, &now.day, &now.hour, &now.minute, &now.second);

@@ -1,6 +1,6 @@
 ../Modules/Calendar/Src/rtc_calendar_control.c:21:6:rtcCalendarControl_init	16	static
-../Modules/Calendar/Src/rtc_calendar_control.c:29:6:rtcCalendarControl_setDateTime	48	static,ignoring_inline_asm
-../Modules/Calendar/Src/rtc_calendar_control.c:60:6:rtcCalendarControl_getDateTime	48	static,ignoring_inline_asm
-../Modules/Calendar/Src/rtc_calendar_control.c:89:6:rtcCalendarControl_setAlarm_A	72	static,ignoring_inline_asm
-../Modules/Calendar/Src/rtc_calendar_control.c:116:6:rtcCalendarControl_getAlarm_A	72	static,ignoring_inline_asm
-../Modules/Calendar/Src/rtc_calendar_control.c:139:6:rtcCalendarControl_diableAlarm_A	8	static,ignoring_inline_asm
+../Modules/Calendar/Src/rtc_calendar_control.c:38:6:rtcCalendarControl_setDateTime	48	static,ignoring_inline_asm
+../Modules/Calendar/Src/rtc_calendar_control.c:69:6:rtcCalendarControl_getDateTime	48	static,ignoring_inline_asm
+../Modules/Calendar/Src/rtc_calendar_control.c:98:6:rtcCalendarControl_setAlarm_A	72	static,ignoring_inline_asm
+../Modules/Calendar/Src/rtc_calendar_control.c:125:6:rtcCalendarControl_getAlarm_A	72	static,ignoring_inline_asm
+../Modules/Calendar/Src/rtc_calendar_control.c:148:6:rtcCalendarControl_diableAlarm_A	8	static,ignoring_inline_asm

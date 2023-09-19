@@ -13,10 +13,12 @@
 #include <uart_packet_helpers.h>
 
 
-/*
+/* code_to_appActions
  *
+ * Map char array command code to numerical code.  If no match is found,
+ * NO_ACTION is returned.
  */
-AppActions code_to_appActions(char* code)
+AppActions code_to_appActions(const char* code)
 {
 	// set calendar date/time
 	if (!strncmp(code, SET_CALENDAR_DATETIME_CODE, UART_PACKET_HEADER_SIZE))
@@ -52,8 +54,10 @@ AppActions code_to_appActions(char* code)
 }
 
 
-/*
+/* appActions_to_code
  *
+ * Map numerical code to char array command code.  If no valid numerical
+ * code is passed, NO_CODE is returned.
  */
 const char* appActions_to_code(AppActions action)
 {
@@ -91,89 +95,130 @@ const char* appActions_to_code(AppActions action)
 }
 
 
-/*
+/* parseDateTime
  *
+ * Parse a DateTime from a formatted string.  String formatting is:
+ * "yy;mm;dd;hh;mm;ss".  No error checking is performed.
  */
-void parseDateTime(struct_DateTime* dateTime, char data[UART_PACKET_PAYLOAD_SIZE])
+bool parseDateTime(DateTime* dateTime, char data[UART_PACKET_PAYLOAD_SIZE])
 {
-	// parse year
-	dateTime->year = atoi(strtok(data, ";"));
+	int formatCount;
 
-	// parse month
-	dateTime->month = atoi(strtok(NULL, ";"));
+	// parse values from string
+	formatCount = sscanf(data, "%02d;%02d;%02d;%02d;%02d;%02d",
+			(int*)&(dateTime->year),
+			(int*)&(dateTime->month),
+			(int*)&(dateTime->day),
+			(int*)&(dateTime->hour),
+			(int*)&(dateTime->minute),
+			(int*)&(dateTime->second));
 
-	// parse date
-	dateTime->day = atoi(strtok(NULL, ";"));
+	// if the correct number of values were parsed, return true
+	if (formatCount == 6)
+		return true;
 
-	// parse hour
-	dateTime->hour = atoi(strtok(NULL, ";"));
-
-	// parse minute
-	dateTime->minute = atoi(strtok(NULL, ";"));
-
-	// parse second
-	dateTime->second = atoi(strtok(NULL, ";"));
+	// else, there was an error, return false
+	else
+		return false;
 }
 
 
-/*
+/* formatDateTime
  *
+ * Format a string from a DateTime.  String formatting is:
+ * "yy;mm;dd;hh;mm;ss".  No error checking is performed.
  */
-void formatDateTime(char data[UART_PACKET_PAYLOAD_SIZE], struct_DateTime* dateTime)
+bool formatDateTime(char data[UART_PACKET_PAYLOAD_SIZE], const DateTime* dateTime)
 {
+	int formatCount;
+
+	// format values into string
 	memset(data, 0, UART_PACKET_PAYLOAD_SIZE*sizeof(char));
-	snprintf(data, UART_PACKET_PAYLOAD_SIZE, "%d;%d;%d;%d;%d;%d", dateTime->year, dateTime->month, dateTime->day,
-			dateTime->hour, dateTime->minute, dateTime->second);
+	formatCount = snprintf(data, UART_PACKET_PAYLOAD_SIZE, "%02d;%02d;%02d;%02d;%02d;%02d",
+			(int)(dateTime->year),
+			(int)(dateTime->month),
+			(int)(dateTime->day),
+			(int)(dateTime->hour),
+			(int)(dateTime->minute),
+			(int)(dateTime->second));
+
+	// if the resulting string is not longer than the packet payload size and there was no
+	// error formatting, return true
+	if (formatCount >= 0 && formatCount <= UART_PACKET_PAYLOAD_SIZE)
+		return true;
+
+	// else, return false
+	else
+		return false;
 }
 
 
-/*
+/* parseEvent
  *
+ * Parse a CalendarEvent from a formatted string.  String formatting is:
+ * "yy;mm;dd;hh;mm;ss;yy;mm;dd;hh;mm;ss".  No error checking is performed.
  */
-void parseEvent(CalendarEvent* event, char data[UART_PACKET_PAYLOAD_SIZE])
+bool parseEvent(CalendarEvent* event, char data[UART_PACKET_PAYLOAD_SIZE])
 {
-	// parse start year
-	event->start.year = atoi(strtok(data, ";"));
+	int formatCount;
 
-	// parse start month
-	event->start.month = atoi(strtok(NULL, ";"));
+	// parse string
+	formatCount = sscanf(data, "%02d;%02d;%02d;%02d;%02d;%02d;%02d;%02d;%02d;%02d;%02d;%02d",
+			(int*)&(event->start.year),
+			(int*)&(event->start.month),
+			(int*)&(event->start.day),
+			(int*)&(event->start.hour),
+			(int*)&(event->start.minute),
+			(int*)&(event->start.second),
+			(int*)&(event->end.year),
+			(int*)&(event->end.month),
+			(int*)&(event->end.day),
+			(int*)&(event->end.hour),
+			(int*)&(event->end.minute),
+			(int*)&(event->end.second));
 
-	// parse start date
-	event->start.day = atoi(strtok(NULL, ";"));
+	// if the correct number of values were parsed, return true
+	if (formatCount == 12)
+		return true;
 
-	// parse start hour
-	event->start.hour = atoi(strtok(NULL, ";"));
-
-	// parse start minute
-	event->start.minute = atoi(strtok(NULL, ";"));
-
-	// parse start second
-	event->start.second = atoi(strtok(NULL, ";"));
-
-	// parse end year
-	event->end.year = atoi(strtok(NULL, ";"));
-
-	// parse end month
-	event->end.month = atoi(strtok(NULL, ";"));
-
-	// parse end date
-	event->end.day = atoi(strtok(NULL, ";"));
-
-	// parse end hour
-	event->end.hour = atoi(strtok(NULL, ";"));
-
-	// parse end minute
-	event->end.minute = atoi(strtok(NULL, ";"));
-
-	// parse end second
-	event->end.second = atoi(strtok(NULL, ";"));
+	// else, there was an error, return false
+	else
+		return false;
 }
 
 
-/*
+/* formatEvent
  *
+ * Format a string from a CalenderEvent.  String formatting is:
+ * "yy;mm;dd;hh;mm;ss;yy;mm;dd;hh;mm;ss".  No error checking is performed.
  */
-void formatEvent(char data[UART_PACKET_PAYLOAD_SIZE], CalendarEvent* event)
+bool formatEvent(char data[UART_PACKET_PAYLOAD_SIZE], const CalendarEvent* event)
 {
+	int formatCount;
 
+	// format values into string
+	memset(data, 0, UART_PACKET_PAYLOAD_SIZE*sizeof(char));
+	formatCount = snprintf(data, UART_PACKET_PAYLOAD_SIZE,
+			"%02d;%02d;%02d;%02d;%02d;%02d;%02d;%02d;%02d;%02d;%02d;%02d",
+			(int)(event->start.year),
+			(int)(event->start.month),
+			(int)(event->start.day),
+			(int)(event->start.hour),
+			(int)(event->start.minute),
+			(int)(event->start.second),
+			(int)(event->end.year),
+			(int)(event->end.month),
+			(int)(event->end.day),
+			(int)(event->end.hour),
+			(int)(event->end.minute),
+			(int)(event->end.second));
+
+	// if the resulting string is not longer than the packet payload size and there was no
+	// error formatting, return true
+	if (formatCount >= 0 && formatCount <= UART_PACKET_PAYLOAD_SIZE)
+		return true;
+
+	// else, return false
+	else
+		return false;
 }

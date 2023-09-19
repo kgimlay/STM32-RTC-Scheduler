@@ -19,7 +19,16 @@ RTC_HandleTypeDef* _rtc_handle;
  *
  */
 void rtcCalendarControl_init(RTC_HandleTypeDef* hrtc) {
-	_rtc_handle = hrtc;
+	if (hrtc != NULL && hrtc->Instance != NULL)
+	{
+		_rtc_handle = hrtc;
+		return true;
+	}
+
+	else
+	{
+		return false;
+	}
 }
 
 

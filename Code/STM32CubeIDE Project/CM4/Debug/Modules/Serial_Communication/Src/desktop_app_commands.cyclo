@@ -1,6 +1,6 @@
-desktop_app_commands.c:19:12:code_to_appActions	8
-desktop_app_commands.c:58:13:appActions_to_code	1
-desktop_app_commands.c:97:6:parseDateTime	1
-desktop_app_commands.c:122:6:formatDateTime	1
-desktop_app_commands.c:133:6:parseEvent	1
-desktop_app_commands.c:176:6:formatEvent	1
+desktop_app_commands.c:21:12:code_to_appActions	8
+desktop_app_commands.c:62:13:appActions_to_code	1
+desktop_app_commands.c:103:6:parseDateTime	2
+desktop_app_commands.c:131:6:formatDateTime	3
+desktop_app_commands.c:161:6:parseEvent	2
+desktop_app_commands.c:195:6:formatEvent	3
