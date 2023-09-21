@@ -6,14 +6,17 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../Modules/Calendar/Src/calendar.c \
+../Modules/Calendar/Src/event_sll.c \
 ../Modules/Calendar/Src/rtc_calendar_control.c 
 
 OBJS += \
 ./Modules/Calendar/Src/calendar.o \
+./Modules/Calendar/Src/event_sll.o \
 ./Modules/Calendar/Src/rtc_calendar_control.o 
 
 C_DEPS += \
 ./Modules/Calendar/Src/calendar.d \
+./Modules/Calendar/Src/event_sll.d \
 ./Modules/Calendar/Src/rtc_calendar_control.d 
 
 
@@ -24,7 +27,7 @@ Modules/Calendar/Src/%.o Modules/Calendar/Src/%.su Modules/Calendar/Src/%.cyclo:
 clean: clean-Modules-2f-Calendar-2f-Src
 
 clean-Modules-2f-Calendar-2f-Src:
-	-$(RM) ./Modules/Calendar/Src/calendar.cyclo ./Modules/Calendar/Src/calendar.d ./Modules/Calendar/Src/calendar.o ./Modules/Calendar/Src/calendar.su ./Modules/Calendar/Src/rtc_calendar_control.cyclo ./Modules/Calendar/Src/rtc_calendar_control.d ./Modules/Calendar/Src/rtc_calendar_control.o ./Modules/Calendar/Src/rtc_calendar_control.su
+	-$(RM) ./Modules/Calendar/Src/calendar.cyclo ./Modules/Calendar/Src/calendar.d ./Modules/Calendar/Src/calendar.o ./Modules/Calendar/Src/calendar.su ./Modules/Calendar/Src/event_sll.cyclo ./Modules/Calendar/Src/event_sll.d ./Modules/Calendar/Src/event_sll.o ./Modules/Calendar/Src/event_sll.su ./Modules/Calendar/Src/rtc_calendar_control.cyclo ./Modules/Calendar/Src/rtc_calendar_control.d ./Modules/Calendar/Src/rtc_calendar_control.o ./Modules/Calendar/Src/rtc_calendar_control.su
 
 .PHONY: clean-Modules-2f-Calendar-2f-Src
 

@@ -29,35 +29,7 @@
 #include <uart_packet_helpers.h>
 #include "stm32wlxx_hal.h"
 #include <stdbool.h>
-
-/*
- * Size of the CalendarEvent queue.
- */
-#define MAX_NUM_EVENTS 256
-
-/*
- * Structure to hold a date and time.
- */
-typedef struct {
-  uint8_t year;
-  uint8_t month;
-  uint8_t day;
-  uint8_t hour;
-  uint8_t minute;
-  uint8_t second;
-} DateTime;
-
-/*
- * Structure to hold the start and end DateTime of an event
- * along with callback function pointers to execute when an
- * event starts and ends.
- */
-typedef struct {
-  DateTime start;
-  void (*start_callback)(void);
-  DateTime end;
-  void (*end_callback)(void);
-} CalendarEvent;
+#include <event_sll.h>
 
 /*
  * Return status codes for the calendar module.
@@ -204,7 +176,7 @@ CalendarStatus calendar_getDateTime(DateTime* const dateTime);
  * 	or that only events past the current time are added.  These can be points
  * 	of future development.
  */
-CalendarStatus calendar_addEvent(const CalendarEvent* const event);
+CalendarStatus calendar_addEvent(const struct CalendarEvent* const event);
 
 /* calendar_peekEvent
  *

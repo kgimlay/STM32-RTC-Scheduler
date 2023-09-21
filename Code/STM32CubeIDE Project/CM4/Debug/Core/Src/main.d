@@ -38,6 +38,7 @@ Core/Src/main.o: ../Core/Src/main.c \
  ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_uart.h \
  ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_uart_ex.h \
  ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_ll_system.h \
+ ../Modules/Calendar/Inc/event_sll.h \
  ../Modules/Serial_Communication/Inc/uart_transport_layer.h \
  ../Core/Inc/main.h ../Modules/LED_Debug/Inc/led_debug.h
 ../Modules/Serial_Communication/Inc/desktop_app_session.h:
@@ -79,6 +80,7 @@ Core/Src/main.o: ../Core/Src/main.c \
 ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_uart.h:
 ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_uart_ex.h:
 ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_ll_system.h:
+../Modules/Calendar/Inc/event_sll.h:
 ../Modules/Serial_Communication/Inc/uart_transport_layer.h:
 ../Core/Inc/main.h:
 ../Modules/LED_Debug/Inc/led_debug.h:

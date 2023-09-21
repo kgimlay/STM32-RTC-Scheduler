@@ -21,12 +21,6 @@
 
 
 /*
- * Static linked-list index for end of list.
- */
-#define END_CALENDAR_SLL (-1)
-
-
-/*
  * Private function prototypes.
  */
 int32_t _compareDateTime(DateTime dateTime_1, DateTime dateTime_2);

@@ -39,6 +39,7 @@ Modules/Serial_Communication/Src/desktop_app_session.o: \
  ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_uart.h \
  ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_uart_ex.h \
  ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_ll_system.h \
+ ../Modules/Calendar/Inc/event_sll.h \
  ../Modules/Serial_Communication/Inc/uart_transport_layer.h
 ../Modules/Serial_Communication/Inc/desktop_app_session.h:
 ../Modules/Serial_Communication/Inc/desktop_app_commands.h:
@@ -79,4 +80,5 @@ Modules/Serial_Communication/Src/desktop_app_session.o: \
 ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_uart.h:
 ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_uart_ex.h:
 ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_ll_system.h:
+../Modules/Calendar/Inc/event_sll.h:
 ../Modules/Serial_Communication/Inc/uart_transport_layer.h:

@@ -24,6 +24,7 @@
 "./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_uart.o"
 "./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_uart_ex.o"
 "./Modules/Calendar/Src/calendar.o"
+"./Modules/Calendar/Src/event_sll.o"
 "./Modules/Calendar/Src/rtc_calendar_control.o"
 "./Modules/LED_Debug/Src/led_debug.o"
 "./Modules/Serial_Communication/Src/desktop_app_commands.o"
