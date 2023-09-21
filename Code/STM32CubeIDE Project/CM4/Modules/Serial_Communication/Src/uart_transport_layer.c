@@ -46,13 +46,15 @@ static bool _rxBuffer_full = false;					// reception buffer full flag
  */
 bool uartTransport_init(UART_HandleTypeDef* huart)
 {
+	// if module not already initialized and the uart handle passed is initialized
 	if (!IS_UART_HANDLE_INIT(_uartHandle) && IS_UART_HANDLE_INIT(huart))
 	{
-		_uartHandle = huart;
-		_transportLayer_reset();
-		return true;
+		_uartHandle = huart;		// store handle pointer
+		_transportLayer_reset();	// reset the module's operational variables
+		return true;				// return success
 	}
 
+	// module already initializes or handle passed is not initialized
 	else
 	{
 		return false;
@@ -69,12 +71,14 @@ bool uartTransport_init(UART_HandleTypeDef* huart)
  */
 bool uartTransport_reset(void)
 {
+	// if module initialized
 	if (IS_UART_HANDLE_INIT(_uartHandle))
 	{
-		_transportLayer_reset();
-		return true;
+		_transportLayer_reset();	// reset operational variables
+		return true;				// return success
 	}
 
+	// if module not initialized
 	else
 	{
 		return false;
@@ -89,12 +93,14 @@ bool uartTransport_reset(void)
  */
 bool uartTransport_deinit(void)
 {
+	// if module initialized
 	if (IS_UART_HANDLE_INIT(_uartHandle))
 	{
-		_uartHandle = NULL;
-		return true;
+		_uartHandle = NULL;		// clear pointer to uart handle
+		return true;			// return success
 	}
 
+	// if module not initialized
 	else
 	{
 		return false;
@@ -110,13 +116,17 @@ bool uartTransport_deinit(void)
  */
 TransportStatus uartTransport_bufferTx(uint8_t header[UART_PACKET_HEADER_SIZE], uint8_t body[UART_PACKET_PAYLOAD_SIZE])
 {
+	// if module initialized
 	if (IS_UART_HANDLE_INIT(_uartHandle))
 	{
+		// if the transmit buffer is in use (program has queued a packet but
+		// has not yet sent it)
 		if (_txBuffer_full)
 		{
 			return TRANSPORT_TX_FULL;
 		}
 
+		// the buffer is empty and ready to receive a new packet
 		else
 		{
 			// Compose header and body into one message
@@ -127,6 +137,7 @@ TransportStatus uartTransport_bufferTx(uint8_t header[UART_PACKET_HEADER_SIZE], 
 		}
 	}
 
+	// the module has not been initialized
 	else
 	{
 		return TRANSPORT_NOT_INIT;
@@ -142,13 +153,16 @@ TransportStatus uartTransport_bufferTx(uint8_t header[UART_PACKET_HEADER_SIZE], 
  */
 TransportStatus uartTransport_debufferRx(uint8_t header[UART_PACKET_HEADER_SIZE], uint8_t body[UART_PACKET_PAYLOAD_SIZE])
 {
+	// if the module has been initialized
 	if (IS_UART_HANDLE_INIT(_uartHandle))
 	{
+		// if no packet has been received
 		if (!_rxBuffer_full)
 		{
 			return TRANSPORT_RX_EMPTY;
 		}
 
+		// packet received and ready
 		else
 		{
 			// retrieve message from buffer
@@ -160,6 +174,7 @@ TransportStatus uartTransport_debufferRx(uint8_t header[UART_PACKET_HEADER_SIZE]
 		}
 	}
 
+	// the module has not been initialized
 	else
 	{
 		return TRANSPORT_NOT_INIT;
@@ -177,6 +192,7 @@ TransportStatus uartTransport_tx_polled(uint32_t timeout_ms)
 {
 	HAL_StatusTypeDef hal_status;
 
+	// if the module has been initalized
 	if (IS_UART_HANDLE_INIT(_uartHandle))
 	{
 		// only transmit if a message has been queued
@@ -207,11 +223,13 @@ TransportStatus uartTransport_tx_polled(uint32_t timeout_ms)
 		}
 		else
 		{
+			// transmission successful
 			_txBuffer_full = false;
 			return TRANSPORT_OKAY;
 		}
 	}
 
+	// the module has not been initialized
 	else
 	{
 		return TRANSPORT_NOT_INIT;
@@ -229,6 +247,7 @@ TransportStatus uartTransport_rx_polled(uint32_t timeout_ms)
 {
 	HAL_StatusTypeDef hal_status;
 
+	// if the module has been initialized
 	if (IS_UART_HANDLE_INIT(_uartHandle))
 	{
 		// only receive if the buffer is empty
@@ -259,11 +278,13 @@ TransportStatus uartTransport_rx_polled(uint32_t timeout_ms)
 		}
 		else
 		{
+			// reception was successful and a packet was received
 			_rxBuffer_full = true;
 			return TRANSPORT_OKAY;
 		}
 	}
 
+	// the module is not initialized
 	else
 	{
 		return TRANSPORT_NOT_INIT;
@@ -277,6 +298,7 @@ TransportStatus uartTransport_rx_polled(uint32_t timeout_ms)
  */
 void _transportLayer_reset(void)
 {
+	// clear buffers and flags
 	memset(_txBuffer, 0, UART_PACKET_SIZE * sizeof(uint8_t));
 	memset(_rxBuffer, 0, UART_PACKET_SIZE * sizeof(uint8_t));
 	_txBuffer_full = false;

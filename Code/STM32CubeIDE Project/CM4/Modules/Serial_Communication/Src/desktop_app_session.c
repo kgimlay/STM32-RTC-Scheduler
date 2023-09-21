@@ -40,6 +40,7 @@ bool desktopAppSession_init(UART_HandleTypeDef* huart)
 	// initialize transport layer
 	if (!_sessionInit && uartTransport_init(huart))
 	{
+		// reset operational variables
 		_sessionOpen = false;
 		_sessionInit = true;
 		_messageReady = false;
@@ -49,6 +50,7 @@ bool desktopAppSession_init(UART_HandleTypeDef* huart)
 		return true;
 	}
 
+	// an uninitialized uart handle was passed.
 	else
 	{
 		return false;
@@ -66,22 +68,27 @@ DesktopComSessionStatus desktopAppSession_start(void)
 {
 	DesktopComSessionStatus handshakeStatus;
 
+	// if the module has been initialized
 	if (_sessionInit)
 	{
+		// only attempt to handshake if a session is not already open
 		if (!_sessionOpen)
 		{
+			// perform handshake and return result
 			handshakeStatus = _handshake(SESSION_START_TIMEOUT_MS);
 			if (handshakeStatus == SESSION_OKAY)
 				_sessionOpen = true;
 			return handshakeStatus;
 		}
 
+		// if session is closed
 		else
 		{
-			return SESSION_OKAY;
+			return SESSION_NOT_OPEN;
 		}
 	}
 
+	// module not initialized
 	else
 	{
 		return SESSION_NOT_INIT;
@@ -110,19 +117,23 @@ DesktopComSessionStatus desktopAppSession_stop(void)
  */
 DesktopComSessionStatus desktopAppSession_update(void)
 {
+	// if the module has been initialized
 	if (_sessionInit)
 	{
+		// only run _update() if a session is opened
 		if (_sessionOpen)
 		{
 			return _session_update();
 		}
 
+		// a session has not been opened
 		else
 		{
 			return SESSION_NOT_OPEN;
 		}
 	}
 
+	// the module has not been initialized
 	else
 	{
 		return SESSION_NOT_INIT;
@@ -139,9 +150,10 @@ DesktopComSessionStatus desktopAppSession_update(void)
 DesktopComSessionStatus desktopAppSession_enqueueMessage(char header[UART_PACKET_HEADER_SIZE],
 		char body[UART_PACKET_PAYLOAD_SIZE])
 {
+	// if the module has been initialized
 	if (_sessionInit)
 	{
-		// enqueue message
+		// try to enqueue message and return if successful
 		if (uartTransport_bufferTx((uint8_t*)header, (uint8_t*)body) != TRANSPORT_OKAY)
 		{
 			return SESSION_ERROR;
@@ -152,6 +164,7 @@ DesktopComSessionStatus desktopAppSession_enqueueMessage(char header[UART_PACKET
 		}
 	}
 
+	// module has not been initialized
 	else
 	{
 		return SESSION_NOT_INIT;
@@ -168,8 +181,10 @@ DesktopComSessionStatus desktopAppSession_enqueueMessage(char header[UART_PACKET
  */
 DesktopComSessionStatus desktopAppSession_dequeueMessage(char header[UART_PACKET_HEADER_SIZE], char body[UART_PACKET_PAYLOAD_SIZE])
 {
+	// if the module has been initialized
 	if (_sessionInit)
 	{
+		// if a message is present in the received queue, copy to output
 		if (_messageReady)
 		{
 			memcpy(header, _messageCommand, UART_PACKET_HEADER_SIZE*sizeof(char));
@@ -179,12 +194,14 @@ DesktopComSessionStatus desktopAppSession_dequeueMessage(char header[UART_PACKET
 			return SESSION_OKAY;
 		}
 
+		// no message is ready
 		else
 		{
 			return SESSION_ERROR;
 		}
 	}
 
+	// the module has not been initialized
 	else
 	{
 		return SESSION_NOT_INIT;
@@ -234,6 +251,7 @@ DesktopComSessionStatus _handshake(unsigned int timeout_ms)
 	char messageHeader[UART_PACKET_HEADER_SIZE] = {0};
 	char messageBody[UART_PACKET_PAYLOAD_SIZE] = {0};
 
+	// while the handshake follows proper steps and UART communication does not error
 	while (!success && !error)
 	{
 		// state 0:  receive message
@@ -283,7 +301,6 @@ DesktopComSessionStatus _handshake(unsigned int timeout_ms)
 				error = true;
 			}
 		}
-
 
 		// catch status codes and move through state machine
 		if (transportStatus == TRANSPORT_OKAY)
@@ -455,8 +472,10 @@ DesktopComSessionStatus _tell(void)
 {
 	TransportStatus transportStatus;
 
+	// attempt to transmit packet
 	transportStatus = uartTransport_tx_polled(SEND_TIMEOUT_MS);
 
+	// report status of transmission
 	if (transportStatus == TRANSPORT_OKAY)
 	{
 		return SESSION_OKAY;

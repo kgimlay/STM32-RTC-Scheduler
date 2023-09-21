@@ -26,13 +26,16 @@ RTC_HandleTypeDef* _rtc_handle;
  *
  * Note: will not reinitialize if already initialized.
  */
-RtcUtilsStatus rtcCalendarControl_init(RTC_HandleTypeDef* const hrtc) {
+RtcUtilsStatus rtcCalendarControl_init(RTC_HandleTypeDef* const hrtc)
+{
+	// if an initialized RTC handle has been passed
 	if (!IS_RTC_INIT(_rtc_handle))
 	{
-		_rtc_handle = hrtc;
+		_rtc_handle = hrtc;		// store handle pointer
 		return RTC_CALENDAR_CONTROL_OKAY;
 	}
 
+	// an invalid handle or uninitialized handle passed
 	else
 	{
 		return RTC_CALENDAR_CONTROL_NOT_INIT;
@@ -53,8 +56,10 @@ RtcUtilsStatus rtcCalendarControl_setDateTime(const uint8_t year, const uint8_t 
 	RTC_DateTypeDef date;
 	RTC_TimeTypeDef time;
 
+	// if module has been initialized
 	if (IS_RTC_INIT(_rtc_handle))
 	{
+		// convert from decimal to BCD
 		date.Year = ((year/10) << 4) | (year % 10);
 		date.Month = ((month/10) << 4) | (month % 10);
 		date.Date = ((day/10) << 4) | (day % 10);
@@ -78,6 +83,7 @@ RtcUtilsStatus rtcCalendarControl_setDateTime(const uint8_t year, const uint8_t 
 		return RTC_CALENDAR_CONTROL_OKAY;
 	}
 
+	// the module has not been initialized
 	else
 	{
 		return RTC_CALENDAR_CONTROL_NOT_INIT;
@@ -96,6 +102,7 @@ RtcUtilsStatus rtcCalendarControl_getDateTime(uint8_t* const year, uint8_t* cons
 	RTC_TimeTypeDef time = {0};
 	RTC_DateTypeDef date = {0};
 
+	// if the module has been initialized
 	if (IS_RTC_INIT(_rtc_handle))
 	{
 		// Get the time and the date.
@@ -113,6 +120,7 @@ RtcUtilsStatus rtcCalendarControl_getDateTime(uint8_t* const year, uint8_t* cons
 		return RTC_CALENDAR_CONTROL_OKAY;
 	}
 
+	// the module has not been initialized
 	else
 	{
 		return RTC_CALENDAR_CONTROL_NOT_INIT;
@@ -131,12 +139,16 @@ RtcUtilsStatus rtcCalendarControl_setAlarm_A(const uint8_t day, const uint8_t ho
 {
   RTC_AlarmTypeDef alarm = {0};
 
+  // if the module has been initialized
   if (IS_RTC_INIT(_rtc_handle))
   {
+	  // settings for alarm
+	  // convert decimal to BCD
 	  alarm.AlarmDateWeekDay = ((day/10) << 4) | (day % 10);
 	  alarm.AlarmTime.Hours = ((hour/10) << 4) | (hour % 10);
 	  alarm.AlarmTime.Minutes = ((minute/10) << 4) | (minute % 10);
 	  alarm.AlarmTime.Seconds = ((second/10) << 4) | (second % 10);
+	  // other settings for setting alarm
 	  alarm.AlarmTime.SubSeconds = 0x0;
 	  alarm.AlarmTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
 	  alarm.AlarmTime.StoreOperation = RTC_STOREOPERATION_RESET;
@@ -145,11 +157,13 @@ RtcUtilsStatus rtcCalendarControl_setAlarm_A(const uint8_t day, const uint8_t ho
 	  alarm.AlarmDateWeekDaySel = RTC_ALARMDATEWEEKDAYSEL_DATE;
 	  alarm.Alarm = RTC_ALARM_A;
 
+	  // set the alarm and enable an interrupt to fire
 	  HAL_RTC_SetAlarm_IT(_rtc_handle, &alarm, RTC_FORMAT_BCD);
 
 	  return RTC_CALENDAR_CONTROL_OKAY;
   }
 
+  // the module has not been initialized
   else
   {
 	  return RTC_CALENDAR_CONTROL_NOT_INIT;
@@ -169,6 +183,7 @@ RtcUtilsStatus rtcCalendarControl_getAlarm_A(uint8_t* const year, uint8_t* const
 {
 	RTC_AlarmTypeDef alarm = {0};
 
+	// if the module has been initialized
 	if (IS_RTC_INIT(_rtc_handle))
 	{
 		// Get the alarm information.
@@ -185,6 +200,7 @@ RtcUtilsStatus rtcCalendarControl_getAlarm_A(uint8_t* const year, uint8_t* const
 		return RTC_CALENDAR_CONTROL_OKAY;
 	}
 
+	// the module has not been initialized
 	else
 	{
 		return RTC_CALENDAR_CONTROL_NOT_INIT;
@@ -198,6 +214,7 @@ RtcUtilsStatus rtcCalendarControl_getAlarm_A(uint8_t* const year, uint8_t* const
  */
 RtcUtilsStatus rtcCalendarControl_diableAlarm_A(void)
 {
+	// if the module has been initlaized
 	if (IS_RTC_INIT(_rtc_handle))
 	{
 		HAL_RTC_DeactivateAlarm(_rtc_handle, RTC_ALARM_A);
@@ -205,6 +222,7 @@ RtcUtilsStatus rtcCalendarControl_diableAlarm_A(void)
 		return RTC_CALENDAR_CONTROL_OKAY;
 	}
 
+	// the module has not been initialized
 	else
 	{
 		return RTC_CALENDAR_CONTROL_NOT_INIT;

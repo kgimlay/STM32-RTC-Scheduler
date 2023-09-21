@@ -75,8 +75,10 @@ static int _currentEvent = -1;		// index to the current event in the linked list
  */
 CalendarStatus calendar_init(RTC_HandleTypeDef* hrtc)
 {
+	// check for pointer to initialized RTC handle
 	if (hrtc != NULL && hrtc->Instance != NULL)
 	{
+		// initialize only if not already initialized
 		if (!_isInit)
 		{
 			// pass pointer to alarm control
@@ -92,6 +94,7 @@ CalendarStatus calendar_init(RTC_HandleTypeDef* hrtc)
 		return CALENDAR_OKAY;
 	}
 
+	// module already initialized
 	else
 	{
 		return CALENDAR_ERROR;
@@ -105,13 +108,15 @@ CalendarStatus calendar_init(RTC_HandleTypeDef* hrtc)
  */
 CalendarStatus calendar_resetEvents(void)
 {
+	// if the module is initialized
 	if (_isInit)
 	{
-		_resetEvents();
+		_resetEvents();		// reset events list
 
 		return CALENDAR_OKAY;
 	}
 
+	// module has not been initialized
 	else
 	{
 		return CALENDAR_NOT_INIT;
@@ -132,8 +137,10 @@ CalendarStatus calendar_start(void)
 	int currentEventIdx;
 	bool withinEvent;
 
+	// if the module has been initialized
 	if (_isInit)
 	{
+		// only start if the calendar has been paused
 		if (!_isRunning)
 		{
 			// get calendar alarm for next alarm in event list relative to now
@@ -168,12 +175,14 @@ CalendarStatus calendar_start(void)
 			return CALENDAR_OKAY;
 		}
 
+		// report that the calendar is already running
 		else
 		{
 			return CALENDAR_RUNNING;
 		}
 	}
 
+	// module is not initialized
 	else
 	{
 		return CALENDAR_NOT_INIT;
@@ -189,8 +198,10 @@ CalendarStatus calendar_start(void)
  */
 CalendarStatus calendar_pause(void)
 {
+	// if module has been initialized
 	if (_isInit)
 	{
+		// only pause if module is running
 		if (_isRunning)
 		{
 			_isRunning = false;
@@ -198,12 +209,14 @@ CalendarStatus calendar_pause(void)
 			return CALENDAR_OKAY;
 		}
 
+		// report that the calendar is already paused
 		else
 		{
 			return CALENDAR_PAUSED;
 		}
 	}
 
+	// module is not initialized
 	else
 	{
 		return CALENDAR_NOT_INIT;
@@ -217,14 +230,17 @@ CalendarStatus calendar_pause(void)
  */
 CalendarStatus calendar_setDateTime(const DateTime dateTime)
 {
+	// if the module has been initialized
 	if (_isInit)
 	{
+		// set the date and time in the RTC
 		rtcCalendarControl_setDateTime(dateTime.year, dateTime.month, dateTime.day,
 				dateTime.hour, dateTime.minute, dateTime.second);
 
 		return CALENDAR_OKAY;
 	}
 
+	// if the module has not been initialized
 	else
 	{
 		return CALENDAR_NOT_INIT;
@@ -238,8 +254,10 @@ CalendarStatus calendar_setDateTime(const DateTime dateTime)
  */
 CalendarStatus calendar_getDateTime(DateTime* const dateTime)
 {
+	// if the module is initialized
 	if (_isInit)
 	{
+		// get the date and time in the RTC
 		rtcCalendarControl_getDateTime(&(dateTime->year), &(dateTime->month),
 				&(dateTime->day), &(dateTime->hour), &(dateTime->minute),
 				&(dateTime->second));
@@ -247,6 +265,7 @@ CalendarStatus calendar_getDateTime(DateTime* const dateTime)
 		return CALENDAR_OKAY;
 	}
 
+	// the module has not been initialized
 	else
 	{
 		return CALENDAR_NOT_INIT;
@@ -266,11 +285,11 @@ CalendarStatus calendar_addEvent(const CalendarEvent* const event)
 	// add only if the calendar has been initialized
 	if (_isInit)
 	{
+		// attempt to add event and report success/failure
 		if (_addEvent(event))
 		{
 			return CALENDAR_OKAY;
 		}
-
 		else
 		{
 			return CALENDAR_FULL;
@@ -292,6 +311,7 @@ CalendarStatus calendar_addEvent(const CalendarEvent* const event)
  */
 CalendarStatus calendar_peekEvent(unsigned int index)
 {
+	// if the calendar module has been initialized
 	if (_isInit)
 	{
 		// todo: implement
@@ -299,6 +319,7 @@ CalendarStatus calendar_peekEvent(unsigned int index)
 		return CALENDAR_ERROR;
 	}
 
+	// the module is not initialized
 	else
 	{
 		return CALENDAR_NOT_INIT;
@@ -313,6 +334,7 @@ CalendarStatus calendar_peekEvent(unsigned int index)
  */
 CalendarStatus calendar_removeEvent(unsigned int index)
 {
+	// if the calendar module has been initialized
 	if (_isInit)
 	{
 		// todo: implement
@@ -340,10 +362,13 @@ CalendarStatus calendar_removeEvent(unsigned int index)
  */
 CalendarStatus calendar_update(void)
 {
+	// if the calendar module has been initialized
 	if (_isInit)
 	{
+		// only update if the calendar is running
 		if (_isRunning)
 		{
+			// only update if an alarm has fired
 			if (_alarmAFired) {
 				_update();
 			}
@@ -351,12 +376,14 @@ CalendarStatus calendar_update(void)
 			return CALENDAR_OKAY;
 		}
 
+		// report that the calendar is paused
 		else
 		{
 			return CALENDAR_PAUSED;
 		}
 	}
 
+	// the module is not initialized
 	else
 	{
 		return CALENDAR_NOT_INIT;
@@ -672,8 +699,10 @@ void _update(void)
  */
 void _resetEvents(void)
 {
+	// disable the alarm in case that it has been set
 	rtcCalendarControl_diableAlarm_A();
 
+	// reset/clear operational variables
 	_calendarHead = -1;
 	_calendarFree = 0;
 	_currentEvent = -1;
@@ -683,6 +712,5 @@ void _resetEvents(void)
 		_calendarEvents[idx].next = idx + 1;
 	}
 	_calendarEvents[MAX_NUM_EVENTS - 1].next = -1;
-
 	_isRunning = false;
 }

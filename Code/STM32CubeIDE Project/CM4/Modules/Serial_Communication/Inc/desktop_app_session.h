@@ -108,6 +108,7 @@ bool desktopAppSession_deinit(void);
  *		SESSION_ERROR - if an error occurred during UART communication
  *		SESSION_TIMEOUT - if the desktop application did not attempt to start
  *				a session.
+ * 		SESSION_OPEN - a session is already open
  *
  * Note:
  * 	Software flow control is not used while listening for first step of
@@ -120,6 +121,9 @@ DesktopComSessionStatus desktopAppSession_start(void);
  *
  * Function:
  *	Force-closes a session with the desktop application if a session is open.
+ *
+ * Return:
+ * 	DesktopComSessionStatus
  *
  * Note:
  * 	Undefined - this function's implementation is a point for future development.
