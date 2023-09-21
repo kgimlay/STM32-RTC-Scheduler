@@ -3,7 +3,9 @@
  * Date:  September, 2023
  *
  * Purpose:
- *		A
+ *		RTC Calendar Control provides functions to the calendar module for setting
+ *	and getting RTC features.  This includes the RTC's date and time, and the RTC's
+ *	alarms.
  */
 
 
@@ -12,62 +14,139 @@
 
 
 #include "stm32wlxx_hal.h"
-
-
-/* Status returns for RTC.
- *
- */
-typedef enum {
-  RTC_OKAY = 0,
-  RTC_TIMEOUT
-} RtcUtilsStatus;
-
+#include <stdbool.h>
 
 /*
- *
+ * Status returns for RTC.
  */
-void rtcCalendarControl_init(RTC_HandleTypeDef* hrtc);
+typedef enum {
+  RTC_CALENDAR_CONTROL_OKAY = 0,
+  RTC_CALENDAR_CONTROL_NOT_INIT,
+  RTC_CALENDAR_CONTROL_TIMEOUT,
+  RTC_CALENDAR_CONTROL_ERROR
+} RtcUtilsStatus;
 
-
-/* Set Date Time
+/* rtcCalendarControl_init
  *
- * Sets the date and time of the RTC.
+ * Function:
+ *	Initializes the module.
+ *
+ * Parameters:
+ *	hrtc - a RTC_HandleTypeDef pointer to a HAL RTC handle
+ *
+ * Return:
+ *	RtcUtilsStatus
+ *		RTC_CALENDAR_CONTROL_OKAY - if successful
+ *		RTC_CALENDAR_CONTROL_NOT_INIT - if a NULL pointer or an uninitialized
+ *				handle was passed.
  */
-void rtcCalendarControl_setDateTime(uint8_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second);
+RtcUtilsStatus rtcCalendarControl_init(RTC_HandleTypeDef* const hrtc);
 
-
-/* Get Date Time
+/* rtcCalendarControl_setDateTime
  *
- * Returns the current date and time of the RTC.
+ * Function:
+ *	Set the date and time of the RTC.
+ *
+ * Parameters:
+ *	year - two digit 21st century year 		(0 - 99)
+ *	month - two digit month 				(1 - 12)
+ *	day - two digit day of month 			(1 - 28/29/30/31)
+ *	hour - two digit hour in 24 hour format (0 - 23)
+ *	minute - two digit minute 				(0 - 59)
+ *	second - two digit second 				(0 - 59)
+ *
+ * Return:
+ *	RtcUtilsStatus
+ *		RTC_CALENDAR_CONTROL_NOT_INIT - if module has not been initialized
+ *		RTC_CALENDAR_CONTROL_TIMEOUT - if the RTC is unresponsive
+ *		RTC_CALENDAR_CONTROL_OKAY - otherwise
+ *
+ * Note:
+ *	There is no error checking for inputs outside of valid range and behavior
+ *	undefined if so.
  */
-void rtcCalendarControl_getDateTime(uint8_t* year, uint8_t* month, uint8_t* day, uint8_t* hour, uint8_t* minute, uint8_t* second);
+RtcUtilsStatus rtcCalendarControl_setDateTime(const uint8_t year, const uint8_t month,
+		const uint8_t day, const uint8_t hour, const uint8_t minute,
+		const uint8_t second);
 
-
-/* Set Alarm
+/* rtcCalendarControl_getDateTime
  *
- * Sets the date and time in the RTC alarm specified.
+ * Function:
+ *	Get the date and time of the RTC.
  *
- * Note: RTC alarms do not support the month and year! to use this
- *  additional software support is needed (provided in calendar.c).
+ * Parameters:
+ *	Pointers to store copy of date and time.  Will set values to:
+ *	year - two digit 21st century year 		(0 - 99)
+ *	month - two digit month 				(1 - 12)
+ *	day - two digit day of month 			(1 - 28/29/30/31)
+ *	hour - two digit hour in 24 hour format (0 - 23)
+ *	minute - two digit minute 				(0 - 59)
+ *	second - two digit second 				(0 - 59)
+ *
+ * Return:
+ *	RtcUtilsStatus
+ *		RTC_CALENDAR_CONTROL_NOT_INIT - if module has not been initialized
+ *		RTC_CALENDAR_CONTROL_OKAY - otherwise
  */
-void rtcCalendarControl_setAlarm_A(uint8_t day, uint8_t hour, uint8_t minute, uint8_t second);
+RtcUtilsStatus rtcCalendarControl_getDateTime(uint8_t* const year, uint8_t* const month,
+		uint8_t* const day, uint8_t* const hour, uint8_t* const minute,
+		uint8_t* const second);
 
-
-/* Get Alarm
+/* rtcCalendarControl_setAlarm_A
  *
- * Returns the date and time stored in the specified alarm.
+ * Function:
+ *	Set the time and day of the month for Alarm A to fire.
  *
- * Note: RTC alarms do not support the month and year! Zero will be
- *  filled in for the month and year.
+ * Parameters:
+ *	day - two digit day of month 			(1 - 28/29/30/31)
+ *	hour - two digit hour in 24 hour format (0 - 23)
+ *	minute - two digit minute 				(0 - 59)
+ *	second - two digit second 				(0 - 59)
+ *
+ * Return:
+ *	RtcUtilsStatus
+ *		RTC_CALENDAR_CONTROL_NOT_INIT - if module has not been initialized
+ *		RTC_CALENDAR_CONTROL_OKAY - otherwise
  */
-void rtcCalendarControl_getAlarm_A(uint8_t* year, uint8_t* month, uint8_t* day, uint8_t* hour, uint8_t* minute, uint8_t* second);
+RtcUtilsStatus rtcCalendarControl_setAlarm_A(const uint8_t day, const uint8_t hour,
+		const uint8_t minute, const uint8_t second);
 
-
-/* Disable Alarm
+/* rtcCalendarControl_getAlarm_A
  *
+ * Function:
+ *	Get the current alarm values from Alarm A.
  *
+ * Parameters:
+ *	Pointers to store copy of date and time.  Will set values to:
+ *	day - two digit day of month 			(1 - 28/29/30/31)
+ *	hour - two digit hour in 24 hour format (0 - 23)
+ *	minute - two digit minute 				(0 - 59)
+ *	second - two digit second 				(0 - 59)
+ *
+ * Return:
+ *	RtcUtilsStatus
+ *		RTC_CALENDAR_CONTROL_NOT_INIT - if module has not been initialized
+ *		RTC_CALENDAR_CONTROL_OKAY - otherwise
+ *
+ * Note:
+ *	Getting the alarm A date/time does not distinguish if the alarm is enabled
+ *	or disabled.
  */
-void rtcCalendarControl_diableAlarm_A(void);
+RtcUtilsStatus rtcCalendarControl_getAlarm_A(uint8_t* const year, uint8_t* const month,
+		uint8_t* const day, uint8_t* const hour, uint8_t* const minute,
+		uint8_t* const second);
+
+/* rtcCalendarControl_diableAlarm_A
+ *
+ * Function:
+ *	Disables Alarm A.
+ *
+ * Return:
+ *	RtcUtilsStatus
+ *		RTC_CALENDAR_CONTROL_NOT_INIT - if module has not been initialized
+ *		RTC_CALENDAR_CONTROL_OKAY - otherwise
+ */
+RtcUtilsStatus rtcCalendarControl_diableAlarm_A(void);
 
 
 #endif

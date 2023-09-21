@@ -106,27 +106,27 @@ if __name__ == '__main__':
             print('The MCU\'s time is now:  ' + mcuMessage[1])
             sys.stdout.flush()
 
-            # # upload set of simple events
-            # now = datetime.now()
-            # for i in range(10, 60*10+10, 20):
-            #     eventStart = now + timedelta(seconds=i)
-            #     eventEnd = eventStart + timedelta(seconds=5)
-            #     messageStr = eventStart.strftime('%y;%m;%d;%H;%M;%S') + ';' + eventEnd.strftime('%y;%m;%d;%H;%M;%S')
-            #     Stm32Session._outMessageQueue.put(('AEVT', messageStr))
-            # Stm32Session._outMessageQueue.put(('SCAL', ''))
-            # Stm32Session.update()
+            # upload set of simple events
+            now = datetime.now()
+            for i in range(10, 60*10+10, 20):
+                eventStart = now + timedelta(seconds=i)
+                eventEnd = eventStart + timedelta(seconds=5)
+                messageStr = eventStart.strftime('%y;%m;%d;%H;%M;%S') + ';' + eventEnd.strftime('%y;%m;%d;%H;%M;%S')
+                Stm32Session._outMessageQueue.put(('AEVT', messageStr))
+            Stm32Session._outMessageQueue.put(('SCAL', ''))
+            Stm32Session.update()
 
 
-            # parse some events from an ics file
-            print('Uploading from test ics')
-            fileData = loadCalendar(sys.argv[1])
-            if fileData is not None:
-                event_list = parseCalendarFromICS(fileData)
-                uploadList = [event.export() for event in event_list]
-                for event in uploadList:
-                    Stm32Session._outMessageQueue.put(('AEVT',event))
-                Stm32Session._outMessageQueue.put(('SCAL', ''))
-                Stm32Session.update()
+            # # parse some events from an ics file
+            # print('Uploading from test ics')
+            # fileData = loadCalendar(sys.argv[1])
+            # if fileData is not None:
+            #     event_list = parseCalendarFromICS(fileData)
+            #     uploadList = [event.export() for event in event_list]
+            #     for event in uploadList:
+            #         Stm32Session._outMessageQueue.put(('AEVT',event))
+            #     Stm32Session._outMessageQueue.put(('SCAL', ''))
+            #     Stm32Session.update()
 
             sys.stdout.flush()
             while True:

@@ -1,6 +1,6 @@
-rtc_calendar_control.c:21:6:rtcCalendarControl_init	3
-rtc_calendar_control.c:38:6:rtcCalendarControl_setDateTime	3
-rtc_calendar_control.c:69:6:rtcCalendarControl_getDateTime	3
-rtc_calendar_control.c:98:6:rtcCalendarControl_setAlarm_A	2
-rtc_calendar_control.c:125:6:rtcCalendarControl_getAlarm_A	2
-rtc_calendar_control.c:148:6:rtcCalendarControl_diableAlarm_A	2
+rtc_calendar_control.c:24:16:rtcCalendarControl_init	3
+rtc_calendar_control.c:41:16:rtcCalendarControl_setDateTime	5
+rtc_calendar_control.c:83:16:rtcCalendarControl_getDateTime	3
+rtc_calendar_control.c:117:16:rtcCalendarControl_setAlarm_A	3
+rtc_calendar_control.c:151:16:rtcCalendarControl_getAlarm_A	3
+rtc_calendar_control.c:183:16:rtcCalendarControl_diableAlarm_A	3
