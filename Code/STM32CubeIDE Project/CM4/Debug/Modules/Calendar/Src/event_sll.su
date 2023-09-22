@@ -1,8 +1,9 @@
-../Modules/Calendar/Src/event_sll.c:27:6:eventSLL_reset	24	static
-../Modules/Calendar/Src/event_sll.c:51:6:eventSLL_insert	32	static
-../Modules/Calendar/Src/event_sll.c:126:6:eventSLL_remove	32	static
-../Modules/Calendar/Src/event_sll.c:183:22:eventSLL_peekIdx	56	static
-../Modules/Calendar/Src/event_sll.c:196:6:eventSLL_updateNow	24	static
-../Modules/Calendar/Src/event_sll.c:205:6:eventSLL_nextAlarm	16	static
-../Modules/Calendar/Src/event_sll.c:215:6:_copyEvent2	16	static
-../Modules/Calendar/Src/event_sll.c:240:9:_compareDateTime2	40	static
+../Modules/Calendar/Src/event_sll.c:23:6:eventSLL_reset	24	static
+../Modules/Calendar/Src/event_sll.c:47:6:eventSLL_insert	32	static
+../Modules/Calendar/Src/event_sll.c:122:6:eventSLL_remove	32	static
+../Modules/Calendar/Src/event_sll.c:179:6:eventSLL_peekIdx	48	static
+../Modules/Calendar/Src/event_sll.c:192:6:eventSLL_updateNow	32	static
+../Modules/Calendar/Src/event_sll.c:240:6:_copyEvent2	16	static
+../Modules/Calendar/Src/event_sll.c:262:6:_copyDateTime	16	static
+../Modules/Calendar/Src/event_sll.c:279:9:_compareDateTime	40	static
+../Modules/Calendar/Src/event_sll.c:299:10:_dateTimeToSeconds	16	static

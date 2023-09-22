@@ -200,11 +200,11 @@ int main(void)
 		  // add event
 		  else if (commandCode == ADD_CALENDAR_EVENT)
 		  {
-			  CalendarEvent tempEvent = {0};
+			  struct CalendarEvent tempEvent = {0};
 			  parseEvent(&tempEvent, messageBody);
 			  tempEvent.start_callback = &(event_start);
 			  tempEvent.end_callback = &(event_end);
-			  calendar_addEvent(&tempEvent);
+			  calendar_addEvent(tempEvent);
 		  }
 
 		  // get/view event

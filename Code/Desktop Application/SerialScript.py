@@ -108,9 +108,9 @@ if __name__ == '__main__':
 
             # upload set of simple events
             now = datetime.now()
-            for i in range(10, 60*10+10, 20):
+            for i in range(10, 60, 2):
                 eventStart = now + timedelta(seconds=i)
-                eventEnd = eventStart + timedelta(seconds=5)
+                eventEnd = eventStart + timedelta(seconds=1)
                 messageStr = eventStart.strftime('%y;%m;%d;%H;%M;%S') + ';' + eventEnd.strftime('%y;%m;%d;%H;%M;%S')
                 Stm32Session._outMessageQueue.put(('AEVT', messageStr))
             Stm32Session._outMessageQueue.put(('SCAL', ''))

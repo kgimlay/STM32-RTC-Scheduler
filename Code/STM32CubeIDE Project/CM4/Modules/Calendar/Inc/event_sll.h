@@ -16,6 +16,11 @@
 #define MAX_NUM_EVENTS 256
 
 /*
+ * Static linked-list index for end of list.
+ */
+#define EVENTS_SLL_NO_EVENT (-1)
+
+/*
  * Structure to hold a date and time.
  */
 typedef struct {
@@ -46,6 +51,7 @@ struct EventSLL_Node {
 	struct CalendarEvent event;
 	unsigned int id;
 	int next;
+	bool past;
 };
 
 /*
@@ -78,17 +84,12 @@ bool eventSLL_remove(Event_SLL* const sll, const int id);
 /* eventSLL_peekIdx
  *
  */
-struct CalendarEvent eventSLL_peekIdx(Event_SLL* const sll, const int index);
+bool eventSLL_peekIdx(Event_SLL* const sll, const int id, struct CalendarEvent* const event);
 
 /* eventSLL_updateNow
  *
  */
-bool eventSLL_updateNow(Event_SLL* const sll, const DateTime now);
-
-/* eventSLL_nextAlarm
- *
- */
-bool eventSLL_nextAlarm(Event_SLL* const sll);
+bool eventSLL_updateNow(Event_SLL* const sll, const DateTime now, DateTime* const alarm);
 
 
 #endif /* CALENDAR_INC_EVENT_SLL_H_ */

@@ -9,19 +9,15 @@
 
 
 /*
- * Static linked-list index for end of list.
- */
-#define EVENTS_SLL_NO_EVENT (-1)
-
-
-/*
  *
  */
 void _copyEvent2(struct CalendarEvent* const to, const struct CalendarEvent* const from);
-int32_t _compareDateTime2(DateTime dateTime_1, DateTime dateTime_2);
+void _copyDateTime(DateTime* const to, DateTime* const from);
+int32_t _compareDateTime(DateTime dateTime_1, DateTime dateTime_2);
+uint32_t _dateTimeToSeconds(DateTime dateTime);
 
 
-/*
+/* eventSLL_reset
  *
  */
 bool eventSLL_reset(Event_SLL* const sll)
@@ -45,7 +41,7 @@ bool eventSLL_reset(Event_SLL* const sll)
 }
 
 
-/*
+/* eventSLL_insert
  *
  */
 bool eventSLL_insert(Event_SLL* const sll, const struct CalendarEvent event)
@@ -72,7 +68,7 @@ bool eventSLL_insert(Event_SLL* const sll, const struct CalendarEvent event)
 		else if (sll->count < MAX_NUM_EVENTS)
 		{
 			// if inserting at start
-			if (_compareDateTime2(event.start, sll->events[sll->usedHead].event.start) < 0)
+			if (_compareDateTime(event.start, sll->events[sll->usedHead].event.start) < 0)
 			{
 				// take from head of free nodes and move to start of used nodes
 				tempIdx = sll->usedHead;							// store head of used in temp
@@ -91,7 +87,7 @@ bool eventSLL_insert(Event_SLL* const sll, const struct CalendarEvent event)
 				// already in the list, iterate list
 				// if the start times are equal, then inserting after the current iteration
 				// does not care about end times of events
-				while (_compareDateTime2(event.start, sll->events[prevToInsertIdx].event.start) < 0)
+				while (_compareDateTime(event.start, sll->events[prevToInsertIdx].event.start) < 0)
 					prevToInsertIdx = sll->events[prevToInsertIdx].next;
 
 				// perform insert
@@ -120,7 +116,7 @@ bool eventSLL_insert(Event_SLL* const sll, const struct CalendarEvent event)
 }
 
 
-/*
+/* eventSLL_remove
  *
  */
 bool eventSLL_remove(Event_SLL* const sll, const int id)
@@ -177,34 +173,63 @@ bool eventSLL_remove(Event_SLL* const sll, const int id)
 }
 
 
-/*
+/* eventSLL_peekIdx
  *
  */
-struct CalendarEvent eventSLL_peekIdx(Event_SLL* const sll, const int index)
+bool eventSLL_peekIdx(Event_SLL* const sll, const int id, struct CalendarEvent* const event)
 {
 	struct CalendarEvent returnEvent;
 
-	_copyEvent2(&returnEvent, &(sll->events[index].event));
+	// todo:
 
-	return returnEvent;
+	return false;
 }
 
 
-/*
+/* eventSLL_updateNow
  *
  */
-bool eventSLL_updateNow(Event_SLL* const sll, const DateTime now)
+bool eventSLL_updateNow(Event_SLL* const sll, const DateTime now, DateTime* const alarm)
 {
+	int idx;
 
-}
+	for (idx = 0; idx < sll->count; idx++)
+	{
+		// skip over events already marked as past
+		if (!(sll->events[idx].past))
+		{
+			// if the current iteration's end time has past
+			// mark as past
+			if (_compareDateTime(now, sll->events[idx].event.end) >= 0)
+			{
+				// mark event node as past for later removal
+				sll->events[idx].past = true;
+			}
 
+			// now is within event
+			// return alarm for end of event
+			else if (_compareDateTime(now, sll->events[idx].event.start) >= 0)
+			{
+				// set sll inProgress pointer to this event and exit
+				sll->inProgress = idx;
+				_copyDateTime(alarm, &(sll->events[idx].event.end));
+				return true;
+			}
 
-/*
- *
- */
-bool eventSLL_nextAlarm(Event_SLL* const sll)
-{
+			// event is in the future (next)
+			// return alarm for start of event
+			else
+			{
+				sll->inProgress = EVENTS_SLL_NO_EVENT;
+				_copyDateTime(alarm, &(sll->events[idx].event.start));
+				return true;
+			}
+		}
+	}
 
+	// no alarms to set
+	sll->inProgress = EVENTS_SLL_NO_EVENT;
+	return false;
 }
 
 
@@ -231,13 +256,27 @@ void _copyEvent2(struct CalendarEvent* const to, const struct CalendarEvent* con
 }
 
 
+/* _copyDateTime
+ *
+ */
+void _copyDateTime(DateTime* const to, DateTime* const from)
+{
+	to->year = from->year;
+	to->month = from->month;
+	to->day = from->day;
+	to->hour = from->hour;
+	to->minute = from->minute;
+	to->second = from->second;
+}
+
+
 /* _compareDateTime
  *
  * Find the time difference in seconds of dateTime1 and dateTime2.
  *
  * Note: Does not account for leap years.
  */
-int32_t _compareDateTime2(DateTime dateTime_1, DateTime dateTime_2)
+int32_t _compareDateTime(DateTime dateTime_1, DateTime dateTime_2)
 {
 	uint32_t dateTimeSeconds_1, dateTimeSeconds_2;
 
@@ -246,4 +285,24 @@ int32_t _compareDateTime2(DateTime dateTime_1, DateTime dateTime_2)
 
 	// return net comparison (date time 1 - date time 2)
 	return dateTimeSeconds_1 - dateTimeSeconds_2;
+}
+
+
+/* _dateTimeToSeconds
+ *
+ * Converts a date and time to seconds since the start of the century.  Use only
+ * for for comparing date/time in seconds, not for absolute date/time in seconds.
+ *
+ * Note: assumes 30 days in a month and no leap years, it is not needed for the
+ * calculation because they are used for relative comparisons, not absolute values.
+ */
+uint32_t _dateTimeToSeconds(DateTime dateTime)
+{
+	// Convert to seconds
+	return (dateTime.second
+			+ (dateTime.minute * 60)
+			+ (dateTime.hour * 3600)
+			+ ((dateTime.day - 1) * 86400)
+			+ ((dateTime.month - 1) * 2592000)
+			+ (dateTime.year * 31104000));
 }

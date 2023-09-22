@@ -176,7 +176,7 @@ CalendarStatus calendar_getDateTime(DateTime* const dateTime);
  * 	or that only events past the current time are added.  These can be points
  * 	of future development.
  */
-CalendarStatus calendar_addEvent(const struct CalendarEvent* const event);
+CalendarStatus calendar_addEvent(const struct CalendarEvent event);
 
 /* calendar_peekEvent
  *

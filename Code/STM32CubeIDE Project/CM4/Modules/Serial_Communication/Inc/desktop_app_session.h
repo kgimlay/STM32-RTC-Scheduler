@@ -41,7 +41,7 @@
 /*
  * Timeout values, in milliseconds, for operations performed by the session manager.
  */
-#define RECEIVE_TIMEOUT_MS 250
+#define RECEIVE_TIMEOUT_MS 100
 #define SEND_TIMEOUT_MS 100
 #define SESSION_START_TIMEOUT_MS 1000
 
