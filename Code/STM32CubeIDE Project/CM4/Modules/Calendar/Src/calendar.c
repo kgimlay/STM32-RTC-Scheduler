@@ -21,15 +21,6 @@ void _update(void);
 
 
 /*
- * Static Linked List node typedef.
- */
-typedef struct calendarNode{
-	CalendarEvent event;
-	int next;
-} struct_CalendarLL;
-
-
-/*
  * Static operational variables used across function calls within this
  * module.
  */
@@ -254,14 +245,20 @@ CalendarStatus calendar_addEvent(const struct CalendarEvent event)
  * Gets info on the event at the provided index within the linked list.
  * Index from iterating across linkages, not index of array.
  */
-CalendarStatus calendar_peekEvent(unsigned int index)
+CalendarStatus calendar_peekEvent(unsigned int id, CalendarEvent* const event)
 {
 	// if the calendar module has been initialized
 	if (_isInit)
 	{
-		// todo
+		if (eventSLL_peekIdx(&_eventQueue, id, event))
+		{
+			return CALENDAR_OKAY;
+		}
 
-		return CALENDAR_ERROR;
+		else
+		{
+			return CALENDAR_ERROR;
+		}
 	}
 
 	// the module is not initialized
@@ -277,7 +274,7 @@ CalendarStatus calendar_peekEvent(unsigned int index)
  * Removes the event at the provided index within the linked list.
  * Index from iterating across linkages, not index of array.
  */
-CalendarStatus calendar_removeEvent(unsigned int index)
+CalendarStatus calendar_removeEvent(unsigned int id)
 {
 	// if the calendar module has been initialized
 	if (_isInit)

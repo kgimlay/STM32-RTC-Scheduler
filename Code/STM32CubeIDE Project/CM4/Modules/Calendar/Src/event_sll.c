@@ -11,7 +11,7 @@
 /*
  *
  */
-void _copyEvent2(struct CalendarEvent* const to, const struct CalendarEvent* const from);
+void _copyEvent(struct CalendarEvent* const to, const struct CalendarEvent* const from);
 void _copyDateTime(DateTime* const to, DateTime* const from);
 int32_t _compareDateTime(DateTime dateTime_1, DateTime dateTime_2);
 uint32_t _dateTimeToSeconds(DateTime dateTime);
@@ -32,7 +32,7 @@ bool eventSLL_reset(Event_SLL* const sll)
 	memset(sll->events, 0, sizeof(struct EventSLL_Node) * MAX_NUM_EVENTS);
 	for (idx = 0; idx < MAX_NUM_EVENTS - 1; idx++)
 	{
-		sll->events[idx].id = idx;
+		sll->events[idx].id = EVENTS_SLL_NO_EVENT;
 		sll->events[idx].next = idx + 1;
 	}
 	sll->events[idx].next = EVENTS_SLL_NO_EVENT;
@@ -87,7 +87,8 @@ bool eventSLL_insert(Event_SLL* const sll, const struct CalendarEvent event)
 				// already in the list, iterate list
 				// if the start times are equal, then inserting after the current iteration
 				// does not care about end times of events
-				while (_compareDateTime(event.start, sll->events[prevToInsertIdx].event.start) < 0)
+				while (_compareDateTime(event.start, sll->events[prevToInsertIdx].event.start) >= 0
+						&& sll->events[prevToInsertIdx].next != EVENTS_SLL_NO_EVENT)
 					prevToInsertIdx = sll->events[prevToInsertIdx].next;
 
 				// perform insert
@@ -100,7 +101,10 @@ bool eventSLL_insert(Event_SLL* const sll, const struct CalendarEvent event)
 		}
 
 		// copy event into new node
-		_copyEvent2(&(sll->events[toInsertIdx].event), &event);
+		_copyEvent(&(sll->events[toInsertIdx].event), &event);
+
+		// set ID
+		sll->events[toInsertIdx].id = toInsertIdx;
 
 		// increment count
 		(sll->count)++;
@@ -125,47 +129,60 @@ bool eventSLL_remove(Event_SLL* const sll, const int id)
 	int toRemoveIdx;
 	int tempIdx;
 
-	// if list is not empty
-	if (sll->count < MAX_NUM_EVENTS)
+	// if node with id exists (is used)
+	if (sll->events[id].id != EVENTS_SLL_NO_EVENT)
 	{
-		// if removing from beginning
-		if (id == sll->usedHead)
+		// if list is not empty
+		if (sll->count < MAX_NUM_EVENTS)
 		{
-			// move from front of used to front of free
-			tempIdx = sll->events[sll->usedHead].next;			// store next to first used in temp
-			sll->events[sll->usedHead].next = sll->freeHead;	// point fist used to first of free
-			sll->freeHead = sll->usedHead;						// point head of free to first used
-			sll->usedHead = tempIdx;							// point head of used to temp
-		}
-
-		// if removing from end or middle
-		else
-		{
-			// find the previous to where to remove
-			prevToRemoveIdx = sll->usedHead;
-			toRemoveIdx = sll->events[prevToRemoveIdx].next;
-			// iterate until found
-			while (sll->events[toRemoveIdx].id != id)
+			// if removing from beginning
+			if (id == sll->usedHead)
 			{
-				prevToRemoveIdx = toRemoveIdx;
-				toRemoveIdx = sll->events[prevToRemoveIdx].next;
+				// move from front of used to front of free
+				tempIdx = sll->events[sll->usedHead].next;			// store next to first used in temp
+				sll->events[sll->usedHead].next = sll->freeHead;	// point fist used to first of free
+				sll->freeHead = sll->usedHead;						// point head of free to first used
+				sll->usedHead = tempIdx;							// point head of used to temp
 			}
 
-			// perform removal
-			tempIdx = sll->freeHead;									// store first free in temp
-			sll->freeHead = toRemoveIdx;								// point free head to remove
-			sll->events[prevToRemoveIdx].next = EVENTS_SLL_NO_EVENT;	// point previous to remove to none
-			sll->events[toRemoveIdx].next = tempIdx;					// point remove next to temp
+			// if removing from end or middle
+			else
+			{
+				// find the previous to where to remove
+				prevToRemoveIdx = sll->usedHead;
+				toRemoveIdx = sll->events[prevToRemoveIdx].next;
+				// iterate until found
+				while (sll->events[toRemoveIdx].id != id)
+				{
+					prevToRemoveIdx = toRemoveIdx;
+					toRemoveIdx = sll->events[prevToRemoveIdx].next;
+				}
 
+				// perform removal
+				tempIdx = sll->freeHead;									// store first free in temp
+				sll->freeHead = toRemoveIdx;								// point free head to remove
+				sll->events[prevToRemoveIdx].next = EVENTS_SLL_NO_EVENT;	// point previous to remove to none
+				sll->events[toRemoveIdx].next = tempIdx;					// point remove next to temp
+
+			}
+
+			// remove ID
+			sll->events[toRemoveIdx].id = EVENTS_SLL_NO_EVENT;
+
+			// decrement count
+			(sll->count)--;
+
+			return true;
 		}
 
-		// decrement count
-		(sll->count)--;
-
-		return true;
+		// if list is empty
+		else
+		{
+			return false;
+		}
 	}
 
-	// if list is empty
+	// node is not used, return failure
 	else
 	{
 		return false;
@@ -178,11 +195,18 @@ bool eventSLL_remove(Event_SLL* const sll, const int id)
  */
 bool eventSLL_peekIdx(Event_SLL* const sll, const int id, struct CalendarEvent* const event)
 {
-	struct CalendarEvent returnEvent;
+	// if node with id exists (is used)
+	if (sll->events[id].id != EVENTS_SLL_NO_EVENT)
+	{
+		_copyEvent(event, &(sll->events[id].event));
+		return true;
+	}
 
-	// todo:
-
-	return false;
+	// node is not used, return failure
+	else
+	{
+		return false;
+	}
 }
 
 
@@ -193,14 +217,15 @@ bool eventSLL_updateNow(Event_SLL* const sll, const DateTime now, DateTime* cons
 {
 	int idx;
 
-	for (idx = 0; idx < sll->count; idx++)
+	idx = sll->usedHead;
+	while (idx != EVENTS_SLL_NO_EVENT)
 	{
 		// if the current iteration's end time has past
 		// mark as past
 		if (_compareDateTime(now, sll->events[idx].event.end) >= 0)
 		{
-			// skip to next event
-			continue;
+			// go to next event
+			idx = sll->events[idx].next;
 		}
 
 		// now is within event
@@ -233,7 +258,7 @@ bool eventSLL_updateNow(Event_SLL* const sll, const DateTime now, DateTime* cons
  *
  * Copy the contents of one CalenderEvent into another.
  */
-void _copyEvent2(struct CalendarEvent* const to, const struct CalendarEvent* const from)
+void _copyEvent(struct CalendarEvent* const to, const struct CalendarEvent* const from)
 {
 	to->start.year = from->start.year;
 	to->start.month = from->start.month;

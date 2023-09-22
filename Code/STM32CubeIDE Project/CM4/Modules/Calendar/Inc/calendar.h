@@ -184,7 +184,8 @@ CalendarStatus calendar_addEvent(const struct CalendarEvent event);
  *	Get the contents of a calendar event from the calendar.
  *
  * Parameters:
- *	index - the index of the calendar event to look at.
+ *	id - the index of the calendar event to look at.
+ *	event - todo
  *
  * Return:
  *	CALENDAR_NOT_INITIALIZED - if the module has not been initialized
@@ -195,7 +196,7 @@ CalendarStatus calendar_addEvent(const struct CalendarEvent event);
  * Note:
  * 	Point for future development.
  */
-CalendarStatus calendar_peekEvent(unsigned int index);
+CalendarStatus calendar_peekEvent(unsigned int id, CalendarEvent* const event);
 
 /* calendar_removeEvent
  *
@@ -203,7 +204,7 @@ CalendarStatus calendar_peekEvent(unsigned int index);
  *	Remove a calendar event from the calendar.
  *
  * Parameters:
- *	index - the index of the calendar event to remove at.
+ *	id - the index of the calendar event to remove at.
  *
  * Return:
  *	CALENDAR_NOT_INITIALIZED - if the module has not been initialized
@@ -214,7 +215,7 @@ CalendarStatus calendar_peekEvent(unsigned int index);
  * Note:
  * 	Point for future development.
  */
-CalendarStatus calendar_removeEvent(unsigned int index);
+CalendarStatus calendar_removeEvent(unsigned int id);
 
 /* calendar_update
  *

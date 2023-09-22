@@ -119,7 +119,7 @@ int main(void)
   MX_USART2_UART_Init();
   MX_RTC_Init();
   /* USER CODE BEGIN 2 */
-
+  __HAL_DBGMCU_FREEZE_RTC();	// freezes RTC during debugging pause
   /* USER CODE END 2 */
 
   /* Boot CPU2 */

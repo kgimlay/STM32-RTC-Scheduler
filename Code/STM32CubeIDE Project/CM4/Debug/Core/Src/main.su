@@ -1,5 +1,6 @@
 ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_ll_rcc.h:1257:22:LL_RCC_LSE_SetDriveCapability	16	static
 ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_ll_bus.h:449:22:LL_AHB2_GRP1_EnableClock	24	static
+../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_ll_system.h:1255:22:LL_DBGMCU_APB1_GRP1_FreezePeriph	16	static
 ../Core/Src/main.c:67:6:HAL_RTC_AlarmAEventCallback	16	static
 ../Core/Src/main.c:73:6:event_start	8	static
 ../Core/Src/main.c:81:6:event_end	8	static

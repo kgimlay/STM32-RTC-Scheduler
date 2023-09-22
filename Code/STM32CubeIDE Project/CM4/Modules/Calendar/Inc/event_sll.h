@@ -13,7 +13,7 @@
 /*
  * Size of the CalendarEvent queue.
  */
-#define MAX_NUM_EVENTS 256
+#define MAX_NUM_EVENTS 32
 
 /*
  * Static linked-list index for end of list.
@@ -49,7 +49,7 @@ typedef struct CalendarEvent {
  */
 struct EventSLL_Node {
 	struct CalendarEvent event;
-	unsigned int id;
+	int id;
 	int next;
 };
 
@@ -58,9 +58,9 @@ struct EventSLL_Node {
  */
 typedef struct {
 	struct EventSLL_Node events[MAX_NUM_EVENTS];		// array to hold statically-allocated nodes
-	int usedHead;	// index to first node that is "in use"
-	int freeHead;	// index to first node that is "not in use"
-	int inProgress;	// index to the event currently in progress or CALENDAR_SLL_NO_EVENT
+	int usedHead;			// index to first node that is "in use"
+	int freeHead;			// index to first node that is "not in use"
+	int inProgress;			// index to the event currently in progress or CALENDAR_SLL_NO_EVENT
 	unsigned int count;		// counter to keep track of how many events nodes are used;
 } Event_SLL;
 
@@ -72,11 +72,17 @@ bool eventSLL_reset(Event_SLL* const sll);
 
 /* eventSLL_insert
  *
+ *
+ *
+ * Note:  it is recommended to run eventSLL_updateNow() after inserting events.
+ *  this can be done after a bulk of insert operations.
  */
 bool eventSLL_insert(Event_SLL* const sll, const struct CalendarEvent event);
 
 /* eventSLL_remove
  *
+ * Note:  it is recommended to run eventSLL_updateNow() after removing events.
+ *  this can be done after a bulk of remove operations.
  */
 bool eventSLL_remove(Event_SLL* const sll, const int id);
 
