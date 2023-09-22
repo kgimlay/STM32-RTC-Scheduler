@@ -2,8 +2,8 @@ event_sll.c:23:6:eventSLL_reset	2
 event_sll.c:47:6:eventSLL_insert	6
 event_sll.c:122:6:eventSLL_remove	4
 event_sll.c:179:6:eventSLL_peekIdx	1
-event_sll.c:192:6:eventSLL_updateNow	5
-event_sll.c:240:6:_copyEvent2	1
-event_sll.c:262:6:_copyDateTime	1
-event_sll.c:279:9:_compareDateTime	1
-event_sll.c:299:10:_dateTimeToSeconds	1
+event_sll.c:192:6:eventSLL_updateNow	4
+event_sll.c:236:6:_copyEvent2	1
+event_sll.c:258:6:_copyDateTime	1
+event_sll.c:275:9:_compareDateTime	1
+event_sll.c:295:10:_dateTimeToSeconds	1

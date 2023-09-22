@@ -51,7 +51,6 @@ struct EventSLL_Node {
 	struct CalendarEvent event;
 	unsigned int id;
 	int next;
-	bool past;
 };
 
 /*

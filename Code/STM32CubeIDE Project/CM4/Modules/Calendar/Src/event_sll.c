@@ -195,35 +195,31 @@ bool eventSLL_updateNow(Event_SLL* const sll, const DateTime now, DateTime* cons
 
 	for (idx = 0; idx < sll->count; idx++)
 	{
-		// skip over events already marked as past
-		if (!(sll->events[idx].past))
+		// if the current iteration's end time has past
+		// mark as past
+		if (_compareDateTime(now, sll->events[idx].event.end) >= 0)
 		{
-			// if the current iteration's end time has past
-			// mark as past
-			if (_compareDateTime(now, sll->events[idx].event.end) >= 0)
-			{
-				// mark event node as past for later removal
-				sll->events[idx].past = true;
-			}
+			// skip to next event
+			continue;
+		}
 
-			// now is within event
-			// return alarm for end of event
-			else if (_compareDateTime(now, sll->events[idx].event.start) >= 0)
-			{
-				// set sll inProgress pointer to this event and exit
-				sll->inProgress = idx;
-				_copyDateTime(alarm, &(sll->events[idx].event.end));
-				return true;
-			}
+		// now is within event
+		// return alarm for end of event
+		else if (_compareDateTime(now, sll->events[idx].event.start) >= 0)
+		{
+			// set sll inProgress pointer to this event and exit
+			sll->inProgress = idx;
+			_copyDateTime(alarm, &(sll->events[idx].event.end));
+			return true;
+		}
 
-			// event is in the future (next)
-			// return alarm for start of event
-			else
-			{
-				sll->inProgress = EVENTS_SLL_NO_EVENT;
-				_copyDateTime(alarm, &(sll->events[idx].event.start));
-				return true;
-			}
+		// event is in the future (next)
+		// return alarm for start of event
+		else
+		{
+			sll->inProgress = EVENTS_SLL_NO_EVENT;
+			_copyDateTime(alarm, &(sll->events[idx].event.start));
+			return true;
 		}
 	}
 
