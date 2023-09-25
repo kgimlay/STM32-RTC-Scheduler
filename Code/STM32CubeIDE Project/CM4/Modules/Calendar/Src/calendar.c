@@ -279,9 +279,15 @@ CalendarStatus calendar_removeEvent(unsigned int id)
 	// if the calendar module has been initialized
 	if (_isInit)
 	{
-		// todo: implement
+		if (eventSLL_remove(&_eventQueue, id))
+		{
+			return CALENDAR_OKAY;
+		}
 
+		else
+		{
 		return CALENDAR_ERROR;
+		}
 	}
 
 	else
@@ -372,7 +378,7 @@ void _update(void)
 	prevInProgress = _eventQueue.inProgress;
 
 	// if there is an alarm to set upon updating the events queue
-	if (eventSLL_updateNow(&_eventQueue, now, &nextAlarm))
+	if (eventSLL_getNextAlarm(&_eventQueue, now, &nextAlarm))
 	{
 		// set Alarm A
 		rtcCalendarControl_setAlarm_A(nextAlarm.day, nextAlarm.hour,

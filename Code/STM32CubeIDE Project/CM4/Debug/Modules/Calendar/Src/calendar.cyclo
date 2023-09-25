@@ -6,7 +6,7 @@ calendar.c:167:16:calendar_setDateTime	2
 calendar.c:191:16:calendar_getDateTime	2
 calendar.c:219:16:calendar_addEvent	3
 calendar.c:248:16:calendar_peekEvent	3
-calendar.c:277:16:calendar_removeEvent	2
-calendar.c:305:16:calendar_update	4
-calendar.c:345:6:calendar_AlarmA_ISR	1
-calendar.c:360:6:_update	8
+calendar.c:277:16:calendar_removeEvent	3
+calendar.c:311:16:calendar_update	4
+calendar.c:351:6:calendar_AlarmA_ISR	1
+calendar.c:366:6:_update	8

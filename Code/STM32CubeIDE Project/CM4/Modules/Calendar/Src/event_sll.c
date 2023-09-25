@@ -19,30 +19,40 @@ uint32_t _dateTimeToSeconds(DateTime dateTime);
 
 /* eventSLL_reset
  *
+ * Resets operation variables and clears events storage.
  */
 bool eventSLL_reset(Event_SLL* const sll)
 {
-	int idx;
-
-	sll->inProgress = EVENTS_SLL_NO_EVENT;
-	sll->freeHead = 0;
-	sll->usedHead = EVENTS_SLL_NO_EVENT;
-	sll->count = 0;
-
-	memset(sll->events, 0, sizeof(struct EventSLL_Node) * MAX_NUM_EVENTS);
-	for (idx = 0; idx < MAX_NUM_EVENTS - 1; idx++)
+	if (sll != NULL)
 	{
-		sll->events[idx].id = EVENTS_SLL_NO_EVENT;
-		sll->events[idx].next = idx + 1;
-	}
-	sll->events[idx].next = EVENTS_SLL_NO_EVENT;
+		int idx;
 
-	return true;
+		sll->inProgress = EVENTS_SLL_NO_EVENT;
+		sll->freeHead = 0;
+		sll->usedHead = EVENTS_SLL_NO_EVENT;
+		sll->count = 0;
+
+		memset(sll->events, 0, sizeof(struct EventSLL_Node) * MAX_NUM_EVENTS);
+		for (idx = 0; idx < MAX_NUM_EVENTS - 1; idx++)
+		{
+			sll->events[idx].id = EVENTS_SLL_NO_EVENT;
+			sll->events[idx].next = idx + 1;
+		}
+		sll->events[idx].next = EVENTS_SLL_NO_EVENT;
+
+		return true;
+	}
+
+	else
+	{
+		return false;
+	}
 }
 
 
 /* eventSLL_insert
  *
+ * Inserts an event while maintaining monotonic ordering on event start times.
  */
 bool eventSLL_insert(Event_SLL* const sll, const struct CalendarEvent event)
 {
@@ -122,8 +132,9 @@ bool eventSLL_insert(Event_SLL* const sll, const struct CalendarEvent event)
 
 /* eventSLL_remove
  *
+ * Removes an event.
  */
-bool eventSLL_remove(Event_SLL* const sll, const int id)
+bool eventSLL_remove(Event_SLL* const sll, const unsigned int id)
 {
 	int prevToRemoveIdx;
 	int toRemoveIdx;
@@ -192,8 +203,9 @@ bool eventSLL_remove(Event_SLL* const sll, const int id)
 
 /* eventSLL_peekIdx
  *
+ * Gets an event for the given ID.
  */
-bool eventSLL_peekIdx(Event_SLL* const sll, const int id, struct CalendarEvent* const event)
+bool eventSLL_peekIdx(Event_SLL* const sll, const unsigned int id, struct CalendarEvent* const event)
 {
 	// if node with id exists (is used)
 	if (sll->events[id].id != EVENTS_SLL_NO_EVENT)
@@ -212,8 +224,10 @@ bool eventSLL_peekIdx(Event_SLL* const sll, const int id, struct CalendarEvent* 
 
 /* eventSLL_updateNow
  *
+ * Finds the next alarm to set to a given DateTime.  This will be either the start
+ * or end alarm for an event.
  */
-bool eventSLL_updateNow(Event_SLL* const sll, const DateTime now, DateTime* const alarm)
+bool eventSLL_getNextAlarm(Event_SLL* const sll, const DateTime dateTime, DateTime* const alarm)
 {
 	int idx;
 
@@ -222,7 +236,7 @@ bool eventSLL_updateNow(Event_SLL* const sll, const DateTime now, DateTime* cons
 	{
 		// if the current iteration's end time has past
 		// mark as past
-		if (_compareDateTime(now, sll->events[idx].event.end) >= 0)
+		if (_compareDateTime(dateTime, sll->events[idx].event.end) >= 0)
 		{
 			// go to next event
 			idx = sll->events[idx].next;
@@ -230,7 +244,7 @@ bool eventSLL_updateNow(Event_SLL* const sll, const DateTime now, DateTime* cons
 
 		// now is within event
 		// return alarm for end of event
-		else if (_compareDateTime(now, sll->events[idx].event.start) >= 0)
+		else if (_compareDateTime(dateTime, sll->events[idx].event.start) >= 0)
 		{
 			// set sll inProgress pointer to this event and exit
 			sll->inProgress = idx;
@@ -279,6 +293,7 @@ void _copyEvent(struct CalendarEvent* const to, const struct CalendarEvent* cons
 
 /* _copyDateTime
  *
+ * Copy the contents of one DateTime into another.
  */
 void _copyDateTime(DateTime* const to, DateTime* const from)
 {
