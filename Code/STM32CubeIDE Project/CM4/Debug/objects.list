@@ -13,6 +13,7 @@
 "./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_flash.o"
 "./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_flash_ex.o"
 "./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_gpio.o"
+"./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_lptim.o"
 "./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_pwr.o"
 "./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_pwr_ex.o"
 "./Drivers/STM32WLxx_HAL_Driver/stm32wlxx_hal_rcc.o"

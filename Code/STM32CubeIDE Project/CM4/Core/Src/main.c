@@ -45,6 +45,8 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+LPTIM_HandleTypeDef hlptim1;
+
 RTC_HandleTypeDef hrtc;
 
 UART_HandleTypeDef huart2;
@@ -58,6 +60,7 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_RTC_Init(void);
+static void MX_LPTIM1_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -69,6 +72,18 @@ void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc)
 {
 	// call ISR for handling calendar events
 	calendar_AlarmA_ISR();
+}
+
+void HAL_LPTIM_CompareMatchCallback(LPTIM_HandleTypeDef *hlptim)
+{
+	if (hlptim->Instance == LPTIM1)
+		modeTimer_CompareMatch_IRQ();
+}
+
+void HAL_LPTIM_AutoReloadMatchCallback(LPTIM_HandleTypeDef *hlptim)
+{
+	if (hlptim->Instance == LPTIM1)
+		modeTimer_AutoReload_IRQ();
 }
 
 void event_start(void)
@@ -113,6 +128,7 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   MX_RTC_Init();
+  MX_LPTIM1_Init();
   /* USER CODE BEGIN 2 */
   __HAL_DBGMCU_FREEZE_RTC();	// freezes RTC during debugging pause
   /* USER CODE END 2 */
@@ -129,18 +145,15 @@ int main(void)
   // initialize calendar
   calendar_init(&hrtc);
 
+  // initialize the mode timer
+  modeTimer_init(&hlptim1);
+  modeTimer_configure(256, 256/2, &(event_start), &(event_end));
+
   // begin listening for messages from desktop
   if (desktopAppSession_start() == SESSION_OKAY)
   {
 	  activate_led(GREEN_LED);
   }
-
-
-  /*
-   * Debugging: test clock PWM with IRQs
-   */
-//  HAL_LPTIM_PWM_Start_IT(hlptim1, 65535, 65535/2);
-
 
   // initialize main loop variables
   char messageHeader[UART_PACKET_HEADER_SIZE];
@@ -191,8 +204,8 @@ int main(void)
 
 				  case ADD_CALENDAR_EVENT:
 					  parseEvent(&tempEvent, messageBody);
-					  tempEvent.start_callback = &(event_start);
-					  tempEvent.end_callback = &(event_end);
+					  tempEvent.start_callback = (void*)&(modeTimer_start);
+					  tempEvent.end_callback = (void*)&(modeTimer_stop);
 					  calendar_addEvent(tempEvent);
 					  break;
 
@@ -273,6 +286,40 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+}
+
+/**
+  * @brief LPTIM1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_LPTIM1_Init(void)
+{
+
+  /* USER CODE BEGIN LPTIM1_Init 0 */
+
+  /* USER CODE END LPTIM1_Init 0 */
+
+  /* USER CODE BEGIN LPTIM1_Init 1 */
+
+  /* USER CODE END LPTIM1_Init 1 */
+  hlptim1.Instance = LPTIM1;
+  hlptim1.Init.Clock.Source = LPTIM_CLOCKSOURCE_APBCLOCK_LPOSC;
+  hlptim1.Init.Clock.Prescaler = LPTIM_PRESCALER_DIV128;
+  hlptim1.Init.Trigger.Source = LPTIM_TRIGSOURCE_SOFTWARE;
+  hlptim1.Init.OutputPolarity = LPTIM_OUTPUTPOLARITY_HIGH;
+  hlptim1.Init.UpdateMode = LPTIM_UPDATE_IMMEDIATE;
+  hlptim1.Init.CounterSource = LPTIM_COUNTERSOURCE_INTERNAL;
+  hlptim1.Init.Input1Source = LPTIM_INPUT1SOURCE_GPIO;
+  hlptim1.Init.Input2Source = LPTIM_INPUT2SOURCE_GPIO;
+  if (HAL_LPTIM_Init(&hlptim1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN LPTIM1_Init 2 */
+
+  /* USER CODE END LPTIM1_Init 2 */
+
 }
 
 /**

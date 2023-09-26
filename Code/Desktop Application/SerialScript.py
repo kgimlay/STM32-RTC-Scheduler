@@ -108,9 +108,9 @@ if __name__ == '__main__':
 
             # upload set of simple events
             now = datetime.now()
-            for i in range(10, 60, 2):
+            for i in range(10, 60, 8):
                 eventStart = now + timedelta(seconds=i)
-                eventEnd = eventStart + timedelta(seconds=1)
+                eventEnd = eventStart + timedelta(seconds=4)
                 messageStr = eventStart.strftime('%y;%m;%d;%H;%M;%S') + ';' + eventEnd.strftime('%y;%m;%d;%H;%M;%S')
                 Stm32Session._outMessageQueue.put(('AEVT', messageStr))
             Stm32Session._outMessageQueue.put(('SCAL', ''))
@@ -129,13 +129,13 @@ if __name__ == '__main__':
             #     Stm32Session.update()
 
             sys.stdout.flush()
-            while True:
-                while Stm32Session._inMessageQueue.empty():
-                    Stm32Session.update()
-                    time.sleep(1)
-                now = datetime.now().strftime('%y/%m/%d %H:%M:%S')
-                print(now + ' >> ' + Stm32Session._inMessageQueue.get()[1])
-                sys.stdout.flush()
+            # while True:
+            #     while Stm32Session._inMessageQueue.empty():
+            #         Stm32Session.update()
+            #         time.sleep(1)
+            #     now = datetime.now().strftime('%y/%m/%d %H:%M:%S')
+            #     print(now + ' >> ' + Stm32Session._inMessageQueue.get()[1])
+            #     sys.stdout.flush()
 
         # Handle when a keyboard interrupt occurs, to make things tidy.
         except KeyboardInterrupt as e:

@@ -25,6 +25,7 @@ Modules/Serial_Communication/Src/desktop_app_commands.o: \
  ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_flash_ex.h \
  ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_gpio.h \
  ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_gpio_ex.h \
+ ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_lptim.h \
  ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_pwr.h \
  ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_ll_pwr.h \
  ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_pwr_ex.h \
@@ -64,6 +65,7 @@ Modules/Serial_Communication/Src/desktop_app_commands.o: \
 ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_flash_ex.h:
 ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_gpio.h:
 ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_gpio_ex.h:
+../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_lptim.h:
 ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_pwr.h:
 ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_ll_pwr.h:
 ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_pwr_ex.h:
