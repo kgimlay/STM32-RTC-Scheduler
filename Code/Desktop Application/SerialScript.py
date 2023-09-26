@@ -106,36 +106,32 @@ if __name__ == '__main__':
             print('The MCU\'s time is now:  ' + mcuMessage[1])
             sys.stdout.flush()
 
-            # upload set of simple events
-            now = datetime.now()
-            for i in range(10, 60, 8):
-                eventStart = now + timedelta(seconds=i)
-                eventEnd = eventStart + timedelta(seconds=4)
-                messageStr = eventStart.strftime('%y;%m;%d;%H;%M;%S') + ';' + eventEnd.strftime('%y;%m;%d;%H;%M;%S')
-                Stm32Session._outMessageQueue.put(('AEVT', messageStr))
-            Stm32Session._outMessageQueue.put(('SCAL', ''))
-            Stm32Session.update()
+            # if user does not specify an ics file
+            if len(sys.argv) == 1:
+                # upload set of simple events
+                now = datetime.now()
+                for i in range(10, 60, 8):
+                    eventStart = now + timedelta(seconds=i)
+                    eventEnd = eventStart + timedelta(seconds=4)
+                    messageStr = eventStart.strftime('%y;%m;%d;%H;%M;%S') + ';' + eventEnd.strftime('%y;%m;%d;%H;%M;%S')
+                    Stm32Session._outMessageQueue.put(('AEVT', messageStr))
+                Stm32Session._outMessageQueue.put(('SCAL', ''))
+                Stm32Session.update()
 
-
-            # # parse some events from an ics file
-            # print('Uploading from test ics')
-            # fileData = loadCalendar(sys.argv[1])
-            # if fileData is not None:
-            #     event_list = parseCalendarFromICS(fileData)
-            #     uploadList = [event.export() for event in event_list]
-            #     for event in uploadList:
-            #         Stm32Session._outMessageQueue.put(('AEVT',event))
-            #     Stm32Session._outMessageQueue.put(('SCAL', ''))
-            #     Stm32Session.update()
+            # if the user specified an ics file
+            elif len(sys.argv) == 2:
+                # parse some events from an ics file
+                print('Uploading from test ics')
+                fileData = loadCalendar(sys.argv[1])
+                if fileData is not None:
+                    event_list = parseCalendarFromICS(fileData)
+                    uploadList = [event.export() for event in event_list]
+                    for event in uploadList:
+                        Stm32Session._outMessageQueue.put(('AEVT',event))
+                    Stm32Session._outMessageQueue.put(('SCAL', ''))
+                    Stm32Session.update()
 
             sys.stdout.flush()
-            # while True:
-            #     while Stm32Session._inMessageQueue.empty():
-            #         Stm32Session.update()
-            #         time.sleep(1)
-            #     now = datetime.now().strftime('%y/%m/%d %H:%M:%S')
-            #     print(now + ' >> ' + Stm32Session._inMessageQueue.get()[1])
-            #     sys.stdout.flush()
 
         # Handle when a keyboard interrupt occurs, to make things tidy.
         except KeyboardInterrupt as e:
