@@ -203,7 +203,7 @@ def _parseICS(fileStr):
             pass
 
         # add event to calendar
-        events.append(AirAlarmEvent(event=temp_event, startDateTime=temp_startDateTime, endDateTime=temp_endDateTime))
+        events.append(AirAlarmEvent(event=temp_event, name=name, startDateTime=temp_startDateTime, endDateTime=temp_endDateTime))
 
     # return calendar object
     return events
@@ -224,10 +224,11 @@ class AirAlarmEvent:
     #   2. Event end date and time
     #   3.
 
-    def __init__(self, event, startDateTime, endDateTime):
+    def __init__(self, event, name, startDateTime, endDateTime):
         self.event = event
         self.start = startDateTime
         self.end = endDateTime
+        self.name = name
 
 
     def export(self):
