@@ -27,6 +27,7 @@
 "./Modules/Calendar/Src/event_sll.o"
 "./Modules/Calendar/Src/rtc_calendar_control.o"
 "./Modules/LED_Debug/Src/led_debug.o"
+"./Modules/Mode_Timer/Src/mode_timer.o"
 "./Modules/Serial_Communication/Src/desktop_app_commands.o"
 "./Modules/Serial_Communication/Src/desktop_app_session.o"
 "./Modules/Serial_Communication/Src/uart_packet_helpers.o"

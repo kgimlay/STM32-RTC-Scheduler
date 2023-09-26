@@ -17,7 +17,6 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
-#include <desktop_app_session.h>
 #include "main.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -26,6 +25,8 @@
 #include "stdio.h"
 #include "calendar.h"
 #include "led_debug.h"
+#include "desktop_app_session.h"
+#include "mode_timer.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -35,8 +36,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define COUNTOF(__BUFFER__)   (sizeof(__BUFFER__) / sizeof(*(__BUFFER__)))
-#define RXBUFFERSIZE UART_PACKET_SIZE
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -46,10 +46,11 @@
 
 /* Private variables ---------------------------------------------------------*/
 RTC_HandleTypeDef hrtc;
+
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-char rxBuffer[UART_PACKET_SIZE];
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -72,18 +73,12 @@ void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc)
 
 void event_start(void)
 {
-	activate_led(GPIO_PIN_15);
-	// note: it is not recommended to send over serial while in ISR!!
-	desktopAppSession_enqueueMessage("MESG", "EVENT START\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
-	desktopAppSession_update();
+	activate_led(BLUE_LED);
 }
 
 void event_end(void)
 {
-	deactivate_led(GPIO_PIN_15);
-	// note: it is not recommended to send over serial while in ISR!!
-	desktopAppSession_enqueueMessage("MESG", "EVENT END\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
-	desktopAppSession_update();
+	deactivate_led(BLUE_LED);
 }
 
 /* USER CODE END 0 */
@@ -134,112 +129,91 @@ int main(void)
   // initialize calendar
   calendar_init(&hrtc);
 
-  // set calendar time
-  DateTime now = {
-		  .year = 0,
-		  .month = 0,
-		  .day = 0,
-		  .hour = 0,
-		  .minute = 0,
-		  .second = 0
-  };
-  calendar_setDateTime(now);
-
-  // start calendar
-//  calendar_start();
-
   // begin listening for messages from desktop
   if (desktopAppSession_start() == SESSION_OKAY)
   {
 	  activate_led(GREEN_LED);
   }
 
+
+  /*
+   * Debugging: test clock PWM with IRQs
+   */
+//  HAL_LPTIM_PWM_Start_IT(hlptim1, 65535, 65535/2);
+
+
+  // initialize main loop variables
   char messageHeader[UART_PACKET_HEADER_SIZE];
   char messageBody[UART_PACKET_PAYLOAD_SIZE];
   enum AppActions commandCode;
   DateTime newDateTime = {0};
+  struct CalendarEvent tempEvent = {0};
+
+  // main loop
   while (1)
   {
 	  // handle a calendar alarm event
 	  calendar_update();
 
 	  // try to open connection if not present
-	  if (desktopAppSession_start() == SESSION_OKAY)
-	  {
+	  desktopAppSession_start();
+
+	  // led debug for if a communication is in session
+	  if (sessionOpen())
 		  activate_led(GREEN_LED);
-	  }
+	  else
+		  deactivate_led(GREEN_LED);
 
-	  // if message present, handle message
-	  if (desktopAppSession_update() != SESSION_OKAY)
+	  // if a session is open, listen and execute messages/commands
+	  if (sessionOpen())
 	  {
-		  activate_led(RED_LED);
+		  // if message present, handle message
+		  desktopAppSession_update();
+
+		  // get command if present
+		  if (desktopAppSession_dequeueMessage(messageHeader, messageBody) == SESSION_OKAY)
+		  {
+			  // execute command
+			  commandCode = code_to_appActions(messageHeader);
+
+			  switch (commandCode) {
+				  case SET_CALENDAR_DATETIME:
+					  parseDateTime(&newDateTime, messageBody);
+					  calendar_setDateTime(newDateTime);
+					  break;
+
+				  case GET_CALENDAR_DATETIME:
+					  calendar_getDateTime(&newDateTime);
+					  formatDateTime(messageBody, &newDateTime);
+					  memcpy(messageHeader, "ECHO", UART_PACKET_HEADER_SIZE*sizeof(char));
+					  desktopAppSession_enqueueMessage(messageHeader, messageBody);
+					  break;
+
+				  case ADD_CALENDAR_EVENT:
+					  parseEvent(&tempEvent, messageBody);
+					  tempEvent.start_callback = &(event_start);
+					  tempEvent.end_callback = &(event_end);
+					  calendar_addEvent(tempEvent);
+					  break;
+
+				  case GET_CALENDAR_EVENT:
+					  break;
+
+				  case REMOVE_CALENDAR_EVENT:
+					  break;
+
+				  case CLEAR_CALENDAR_EVENTS:
+					  break;
+
+				  case START_CALENDAR:
+					  calendar_start();
+					  break;
+
+				  default:
+					  break;
+			  }
+		  }
 	  }
-
-	  // get command if present
-	  if (desktopAppSession_dequeueMessage(messageHeader, messageBody) == SESSION_OKAY)
-	  {
-		  // execute command
-		  commandCode = code_to_appActions(messageHeader);
-
-		  // set date/time
-		  if (commandCode == SET_CALENDAR_DATETIME)
-		  {
-			  parseDateTime(&newDateTime, messageBody);
-			  calendar_setDateTime(newDateTime);
-		  }
-
-		  // get date/time
-		  else if (commandCode == GET_CALENDAR_DATETIME)
-		  {
-			  calendar_getDateTime(&newDateTime);
-			  formatDateTime(messageBody, &newDateTime);
-			  memcpy(messageHeader, "ECHO", UART_PACKET_HEADER_SIZE*sizeof(char));
-			  desktopAppSession_enqueueMessage(messageHeader, messageBody);
-		  }
-
-		  // add event
-		  else if (commandCode == ADD_CALENDAR_EVENT)
-		  {
-			  struct CalendarEvent tempEvent = {0};
-			  parseEvent(&tempEvent, messageBody);
-			  tempEvent.start_callback = &(event_start);
-			  tempEvent.end_callback = &(event_end);
-			  calendar_addEvent(tempEvent);
-		  }
-
-		  // get/view event
-		  else if (commandCode == GET_CALENDAR_EVENT)
-		  {
-
-		  }
-
-		  // remove event
-		  else if (commandCode == REMOVE_CALENDAR_EVENT)
-		  {
-
-		  }
-
-		  // clear all events
-		  else if (commandCode == CLEAR_CALENDAR_EVENTS)
-		  {
-
-		  }
-
-		  // start calendar
-		  else if (commandCode == START_CALENDAR)
-		  {
-			  calendar_start();
-		  }
-
-		  // Add more commands here.
-
-	  }
-
-	  // simulate time delay from performing operations
-	  // (and slows things down a bit to make them human readable
-//	  long int i = 0;
-//	  while (i < 65535*4)
-//		  i++;
 
     /* USER CODE END WHILE */
 

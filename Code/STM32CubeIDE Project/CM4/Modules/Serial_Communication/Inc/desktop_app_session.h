@@ -65,7 +65,8 @@ typedef enum {
 	SESSION_ERROR,
 	SESSION_NOT_INIT,
 	SESSION_NOT_OPEN,
-	SESSION_BUSY
+	SESSION_BUSY,
+	SESSION_CLOSED
 } DesktopComSessionStatus;
 
 
@@ -85,6 +86,19 @@ typedef enum {
  * 	Dependency on uartTransport_init()
  */
 bool desktopAppSession_init(UART_HandleTypeDef* huart);
+
+/* sessionOpen
+ *
+ * Function:
+ * 	Returns if a session is open.
+ *
+ * Return:
+ * 	bool - true if a session is open, false otherwise.
+ *
+ * Note:
+ * 	will always return false if the session module has not been initialized.
+ */
+bool sessionOpen(void);
 
 /* desktopAppSession_deinit
  *

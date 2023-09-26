@@ -1,8 +1,4 @@
-Core/Src/main.o: ../Core/Src/main.c \
- ../Modules/Serial_Communication/Inc/desktop_app_session.h \
- ../Modules/Serial_Communication/Inc/desktop_app_commands.h \
- ../Modules/Calendar/Inc/calendar.h \
- ../Modules/Serial_Communication/Inc/uart_packet_helpers.h \
+Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal.h \
  ../Core/Inc/stm32wlxx_hal_conf.h \
  ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_dma.h \
@@ -38,13 +34,14 @@ Core/Src/main.o: ../Core/Src/main.c \
  ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_uart.h \
  ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_uart_ex.h \
  ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_ll_system.h \
- ../Modules/Calendar/Inc/event_sll.h \
+ ../Modules/Calendar/Inc/calendar.h \
+ ../Modules/Serial_Communication/Inc/uart_packet_helpers.h \
+ ../Modules/Calendar/Inc/event_sll.h ../Modules/LED_Debug/Inc/led_debug.h \
+ ../Modules/Serial_Communication/Inc/desktop_app_session.h \
+ ../Modules/Serial_Communication/Inc/desktop_app_commands.h \
  ../Modules/Serial_Communication/Inc/uart_transport_layer.h \
- ../Core/Inc/main.h ../Modules/LED_Debug/Inc/led_debug.h
-../Modules/Serial_Communication/Inc/desktop_app_session.h:
-../Modules/Serial_Communication/Inc/desktop_app_commands.h:
-../Modules/Calendar/Inc/calendar.h:
-../Modules/Serial_Communication/Inc/uart_packet_helpers.h:
+ ../Modules/Mode_Timer/Inc/mode_timer.h
+../Core/Inc/main.h:
 ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal.h:
 ../Core/Inc/stm32wlxx_hal_conf.h:
 ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_dma.h:
@@ -80,7 +77,11 @@ Core/Src/main.o: ../Core/Src/main.c \
 ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_uart.h:
 ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_hal_uart_ex.h:
 ../../Drivers/STM32WLxx_HAL_Driver/Inc/stm32wlxx_ll_system.h:
+../Modules/Calendar/Inc/calendar.h:
+../Modules/Serial_Communication/Inc/uart_packet_helpers.h:
 ../Modules/Calendar/Inc/event_sll.h:
-../Modules/Serial_Communication/Inc/uart_transport_layer.h:
-../Core/Inc/main.h:
 ../Modules/LED_Debug/Inc/led_debug.h:
+../Modules/Serial_Communication/Inc/desktop_app_session.h:
+../Modules/Serial_Communication/Inc/desktop_app_commands.h:
+../Modules/Serial_Communication/Inc/uart_transport_layer.h:
+../Modules/Mode_Timer/Inc/mode_timer.h:

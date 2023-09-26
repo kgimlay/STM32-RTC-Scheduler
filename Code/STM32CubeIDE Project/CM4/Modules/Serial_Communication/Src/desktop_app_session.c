@@ -58,6 +58,16 @@ bool desktopAppSession_init(UART_HandleTypeDef* huart)
 }
 
 
+/* sessionOpen
+ *
+ * Return if the session is initialized and open.
+ */
+bool sessionOpen(void)
+{
+	return _sessionInit && _sessionOpen;
+}
+
+
 /* desktopAppSession_start
  *
  * Attempts to handshake with the desktop application.  Wrapper for the handshake function.
@@ -385,6 +395,7 @@ DesktopComSessionStatus _session_update(void)
 		{
 			desktopAppSession_enqueueMessage(HANDSHAKE_HEADER_DISC, "\0");
 			_sessionOpen = false;
+			status = SESSION_CLOSED;
 		}
 
 		// Check if echo command.
@@ -402,7 +413,7 @@ DesktopComSessionStatus _session_update(void)
 		}
 	}
 
-	return SESSION_OKAY;
+	return status;
 }
 
 
