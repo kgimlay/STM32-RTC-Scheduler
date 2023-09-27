@@ -16,116 +16,117 @@ Finally, the scheduler brings the RTC and the software calendar together.  The s
 
 ## API
 
-### Types/Structures
+### Return Codes
 
-1. *CalendarStatus* - Status code returns from API function calls to signal if the call was successful or why the call was unsuccessful:
-    - *CALENDAR_OKAY*  - API function call was successfully completed.
-    - *CALENDAR_PARAMETER_ERROR* - API function call was given an invalid parameter.
-    - *CALENDAR_NOT_INIT* - The Calendar module has not been initialized before API call.
-    - *CALENDAR_FULL* - The calendar is full and cannot accept any more events.
-    - *CALENDAR_PAUSED* - The calendar is paused.
-    - *CALENDAR_RUNNING* - The calendar is running.
+1 . **CalendarStatus** - Status code returns from API function calls to signal if the call was successful or why the call was unsuccessful:
+>     - **CALENDAR_OKAY**  - API function call was successfully completed.
+>     - **CALENDAR_PARAMETER_ERROR** - API function call was given an invalid parameter.
+>     - **CALENDAR_NOT_INIT** - The Calendar module has not been initialized before API call.
+>     - **CALENDAR_FULL** - The calendar is full and cannot accept any more events.
+>     - **CALENDAR_PAUSED** - The calendar is paused.
+>     - **CALENDAR_RUNNING** - The calendar is running.
 
-2. *DateTime* - Structure to hold the date and time:
-    - *year* - two digit 21st century year (0 - 99).
-    - *month* - two digit month (1 - 12).
-    - *day* - two digit day of month (1 - 28/29/30/31).
-    - *hour* - two digit hour in 24 hour format (0 - 23).
-    - *minute* - two digit minute (0 - 59).
-    - *second* - two digit second (0 - 59).
+### Structures
 
-3. *CalendarEvent* - Structure to hold the start and end DateTime and callback functions:
-    - *start* - start DateTime of event.
-    - *end* - end DateTime of event.
-    - *start_callback* - callback function pointer for start of event.
-    - *end_callback* - callback function pointer for end of event.
+1. **DateTime** - Structure to hold the date and time:
+    - **year** - two digit 21st century year (0 - 99).
+    - **month** - two digit month (1 - 12).
+    - **day** - two digit day of month (1 - 28/29/30/31).
+    - **hour** - two digit hour in 24 hour format (0 - 23).
+    - **minute** - two digit minute (0 - 59).
+    - **second** - two digit second (0 - 59).
+
+3. **CalendarEvent** - Structure to hold the start and end DateTime and callback functions:
+    - **start** - start DateTime of event.
+    - **end** - end DateTime of event.
+    - **start_callback** - callback function pointer for start of event.
+    - **end_callback** - callback function pointer for end of event.
 
 ### Functions
 
-1. *CalendarStatus calendar_init(RTC_HandleTypeDef\* hrtc)*  -  Initializes the calendar module.  Must be called before the module can operate.
+1. **CalendarStatus calendar_init(RTC_HandleTypeDef\* hrtc)**  -  Initializes the calendar module.  Must be called before the module can operate.
     - Parameters:
-        - hrtc - pointer to RTC_HandleTypeDef (HAL) handle of the RTC peripheral to be used.
+        - **hrtc** - pointer to RTC_HandleTypeDef (HAL) handle of the RTC peripheral to be used.
     - Return:
-        - CALENDAR_OKAY - if a pointer to an initialized HAL RTC handle was passed
-        - CALENDAR_PARAMETER_ERROR - otherwise
+        - **CALENDAR_OKAY** - if a pointer to an initialized HAL RTC handle was passed
+        - **CALENDAR_PARAMETER_ERROR** - otherwise
     - Note:
         - Will not reinitialize if the module is already initialized.
-2. *CalendarStatus calendar_resetEvents(void)* - Resets the event queue, clearing all events and stopping the calendar if running.
+2. **CalendarStatus calendar_resetEvents(void)** - Resets the event queue, clearing all events and stopping the calendar if running.
     - Return:
-        - CALENDAR_NOT_INIT - if the calendar module has not been initialized
-        - CALENDAR_OKAY - if successful
+        - **CALENDAR_NOT_INIT** - if the calendar module has not been initialized
+        - **CALENDAR_OKAY** - if successful
     - Note:
         - Will not reinitialize if the module is already initialized.
-2. *CalendarStatus calendar_startScheduler(void)* - Starts execution of calendar events.  Will not start if the module has not been initialized.
+2. **CalendarStatus calendar_startScheduler(void)** - Starts execution of calendar events.  Will not start if the module has not been initialized.
     - Return:
-        - CALENDAR_NOT_INIT - if the calendar module hasn't been initialized
-        - CALENDAR_RUNNING - if the calendar is already running (not an error)
-        - CALENDAR_OKAY - if the calendar was started
+        - **CALENDAR_NOT_INIT** - if the calendar module hasn't been initialized
+        - **CALENDAR_RUNNING** - if the calendar is already running (not an error)
+        - **CALENDAR_OKAY** - if the calendar was started
     - Note:
         - Starting the calendar is still successful if there are no events in the queue or if all events ended prior to the current RTC date and time.
-4. *CalendarStatus calendar_pauseScheduler(void)* - Pauses execution of calendar events.  Will not start if the module has not been initialized.
+4. **CalendarStatus calendar_pauseScheduler(void)** - Pauses execution of calendar events.  Will not start if the module has not been initialized.
     - Return:
-        - CALENDAR_NOT_INIT - if the calendar module hasn't been initialized
-        - CALENDAR_PAUSED - if the calendar is already paused (not an error)
-        - CALENDAR_OKAY - if the calendar was paused
+        - **CALENDAR_NOT_INIT** - if the calendar module hasn't been initialized
+        - **CALENDAR_PAUSED** - if the calendar is already paused (not an error)
+        - **CALENDAR_OKAY** - if the calendar was paused
     - Note:
         - Pausing the calendar is still successful if there are no events in the queue or if the calendar is not within any events.  Pausing within an event will delay the end event callback function execution until the calendar is unpaused with calendar_start().  Events that would have started and completed while paused are skipped entirely.
-5. *CalendarStatus calendar_setDateTime(const DateTime dateTime)* - Set the date and time of the RTC.
+5. **CalendarStatus calendar_setDateTime(const DateTime dateTime)** - Set the date and time of the RTC.
     - Parameters:
-        - dateTime - the time and date to set the RTC to.
+        - **dateTime** - the time and date to set the RTC to.
     - Return:
-        - CALENDAR_NOT_INIT - if the calendar module hasn't been initialized
-        - CALENDAR_RUNNING - if the calendar is not paused
-        - CALENDAR_OKAY - if the calendar's date and time were set
+        - **CALENDAR_NOT_INIT** - if the calendar module hasn't been initialized
+        - **CALENDAR_RUNNING** - if the calendar is not paused
+        - **CALENDAR_OKAY** - if the calendar's date and time were set
     - Note:
         - Only sets time and date if the module has been initialized and has been paused.
-6. *CalendarStatus calendar_getDateTime(DateTime\* const dateTime)* - Get the date and time of the RTC.
+6. **CalendarStatus calendar_getDateTime(DateTime\* const dateTime)** - Get the date and time of the RTC.
     - Parameters:
-        - dateTime - pointer to a DateTime as a destination.
+        - **dateTime** - pointer to a DateTime as a destination.
     - Return:
-        - CALENDAR_NOT_INIT - if the calendar module hasn't been initialized
-        - CALENDAR_OKAY - if the calendar's date and time were read
+        - **CALENDAR_NOT_INIT** - if the calendar module hasn't been initialized
+        - **CALENDAR_OKAY** - if the calendar's date and time were read
     - Note:
         - Only gets time and date if the module has been initialized.  Can get the time and date regardless of if the calendar is running or paused.
-7. *CalendarStatus calendar_addEvent(const struct CalendarEvent event)* - Add a calendar event to the calendar.
+7. **CalendarStatus calendar_addEvent(const struct CalendarEvent event)** - Add a calendar event to the calendar.
     - Parameters:
-        - event - pointer to CalendarEvent to copy event details from.
+        - **event** - pointer to CalendarEvent to copy event details from.
     - Return:
-        - CALENDAR_NOT_INIT - if the calendar module hasn't been initialized
-        - CALENDAR_FULL - if the calendar's queue is full
-        - CALENDAR_RUNNING - if the calendar is not paused
-        - CALENDAR_OKAY - if the event was successfully added
-8. *CalendarStatus calendar_peekEvent(unsigned int id, CalendarEvent\* const event)* - Get the contents of a calendar event from the calendar.
+        - **CALENDAR_NOT_INIT** - if the calendar module hasn't been initialized
+        - **CALENDAR_FULL** - if the calendar's queue is full
+        - **CALENDAR_RUNNING** - if the calendar is not paused
+        - **CALENDAR_OKAY** - if the event was successfully added
+8. **CalendarStatus calendar_peekEvent(unsigned int id, CalendarEvent\* const event)** - Get the contents of a calendar event from the calendar.
     - Parameters:
-        - id - the index of the calendar event to look at.
-        - event - todo
+        - **id** - the index of the calendar event to look at.
+        - **event** - todo
     - Return:
-        - CALENDAR_NOT_INITIALIZED - if the module has not been initialized
-        - CALENDAR_PARAMETER_ERROR - if the index goes beyond the end of the occupied list of
-        -   events, or if the index is greater than the max number of events allowed
-        - CALENDAR_OKAY - if successful
+        - **CALENDAR_NOT_INITIALIZED** - if the module has not been initialized
+        - **CALENDAR_PARAMETER_ERROR** - if the index goes beyond the end of the occupied list of events, or if the index is greater than the max number of events allowed
+        - **CALENDAR_OKAY** - if successful
     - Note:
         - Point for future development.
-9. *CalendarStatus calendar_removeEvent(unsigned int id)* - Remove a calendar event from the calendar.
+9. **CalendarStatus calendar_removeEvent(unsigned int id)** - Remove a calendar event from the calendar.
     - Parameters:
-        - id - the index of the calendar event to remove at.
+        - **id** - the index of the calendar event to remove at.
     - Return:
-        - CALENDAR_NOT_INITIALIZED - if the module has not been initialized
-        - CALENDAR_PARAMETER_ERROR - if the index goes beyond the end of the occupied list of events, or if the index is greater than the max number of events allowed
-        - CALENDAR_RUNNING - if the calendar is not paused
-        - CALENDAR_OKAY - if successful
-10. *CalendarStatus calendar_updateScheduler(void)* - Performs an update of the current event if an event has begun or ended.  Does not update if the calendar is paused.
+        - **CALENDAR_NOT_INITIALIZED** - if the module has not been initialized
+        - **CALENDAR_PARAMETER_ERROR** - if the index goes beyond the end of the occupied list of events, or if the index is greater than the max number of events allowed
+        - **CALENDAR_RUNNING** - if the calendar is not paused
+        - **CALENDAR_OKAY** - if successful
+10. **CalendarStatus calendar_updateScheduler(void)** - Performs an update of the current event if an event has begun or ended.  Does not update if the calendar is paused.
     - Return:
-        - CALENDAR_NOT_INITIALIZED - if the module has not been initialized
-        - CALENDAR_PAUSED - if the calendar is currently paused
-        - CALENDAR_OKAY - otherwise (does not distinguish if any events began/ended.
+        - **CALENDAR_NOT_INITIALIZED** - if the module has not been initialized
+        - **CALENDAR_PAUSED** - if the calendar is currently paused
+        - **CALENDAR_OKAY** - otherwise (does not distinguish if any events began/ended.
     - Note:
         - Updates to the calendar, and consequently the callback functions registered for
         - each event, only occur as often as this function is called.  A result of this is
         - that the execution of callback functions for starting or ending an event may be
         - delayed for some time after the event actually began/ended.  This is up to the
         - application to determine response time.
-11. *void calendar_AlarmA_ISR(void)* - Sets a flag to signal to the calendar_update() function that an event has either began or ended.
+11. **void calendar_AlarmA_ISR(void)** - Sets a flag to signal to the calendar_update() function that an event has either began or ended.
     - Note:
         - Call only within the RTC Alarm A ISR.  Otherwise the behavior is undefined.
 
