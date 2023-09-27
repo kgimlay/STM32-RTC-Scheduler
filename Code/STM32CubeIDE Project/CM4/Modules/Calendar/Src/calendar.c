@@ -61,7 +61,7 @@ CalendarStatus calendar_init(RTC_HandleTypeDef* hrtc)
 	// module already initialized
 	else
 	{
-		return CALENDAR_ERROR;
+		return CALENDAR_PARAMETER_ERROR;
 	}
 }
 
@@ -95,7 +95,7 @@ CalendarStatus calendar_resetEvents(void)
  * Executes start of event callback if starting within an event.  Ignores past
  * events.
  */
-CalendarStatus calendar_start(void)
+CalendarStatus calendar_startScheduler(void)
 {
 	// if the module has been initialized
 	if (_isInit)
@@ -132,7 +132,7 @@ CalendarStatus calendar_start(void)
  * so that if pausing within an event, the end of event callback will execute while
  * restarting the calendar.
  */
-CalendarStatus calendar_pause(void)
+CalendarStatus calendar_pauseScheduler(void)
 {
 	// if module has been initialized
 	if (_isInit)
@@ -169,11 +169,20 @@ CalendarStatus calendar_setDateTime(const DateTime dateTime)
 	// if the module has been initialized
 	if (_isInit)
 	{
-		// set the date and time in the RTC
-		rtcCalendarControl_setDateTime(dateTime.year, dateTime.month, dateTime.day,
-				dateTime.hour, dateTime.minute, dateTime.second);
+		// if the calendar is paused
+		if (!_isRunning)
+		{
+			// set the date and time in the RTC
+			rtcCalendarControl_setDateTime(dateTime.year, dateTime.month, dateTime.day,
+					dateTime.hour, dateTime.minute, dateTime.second);
 
-		return CALENDAR_OKAY;
+			return CALENDAR_OKAY;
+		}
+
+		else
+		{
+			return CALENDAR_RUNNING;
+		}
 	}
 
 	// if the module has not been initialized
@@ -212,23 +221,29 @@ CalendarStatus calendar_getDateTime(DateTime* const dateTime)
 /* calendar_addEvent
  *
  * Add an event to the calendar's event linked list.
- *
- * Note: does not sort events in monotonic order, nor does it check for
- * 	overlapping events.
  */
 CalendarStatus calendar_addEvent(const struct CalendarEvent event)
 {
 	// add only if the calendar has been initialized
 	if (_isInit)
 	{
-		// attempt to add event and report success/failure
-		if (eventSLL_insert(&_eventQueue, event))
+		// if the calendar is paused
+		if (!_isRunning)
 		{
-			return CALENDAR_OKAY;
+			// attempt to add event and report success/failure
+			if (eventSLL_insert(&_eventQueue, event))
+			{
+				return CALENDAR_OKAY;
+			}
+			else
+			{
+				return CALENDAR_FULL;
+			}
 		}
+
 		else
 		{
-			return CALENDAR_FULL;
+			return CALENDAR_RUNNING;
 		}
 	}
 
@@ -257,7 +272,7 @@ CalendarStatus calendar_peekEvent(unsigned int id, CalendarEvent* const event)
 
 		else
 		{
-			return CALENDAR_ERROR;
+			return CALENDAR_PARAMETER_ERROR;
 		}
 	}
 
@@ -279,14 +294,23 @@ CalendarStatus calendar_removeEvent(unsigned int id)
 	// if the calendar module has been initialized
 	if (_isInit)
 	{
-		if (eventSLL_remove(&_eventQueue, id))
+		// if the calendar is paused
+		if (!_isRunning)
 		{
-			return CALENDAR_OKAY;
+			if (eventSLL_remove(&_eventQueue, id))
+			{
+				return CALENDAR_OKAY;
+			}
+
+			else
+			{
+			return CALENDAR_PARAMETER_ERROR;
+			}
 		}
 
 		else
 		{
-		return CALENDAR_ERROR;
+			return CALENDAR_RUNNING;
 		}
 	}
 
@@ -308,7 +332,7 @@ CalendarStatus calendar_removeEvent(unsigned int id)
  * 	Will not run if the module has not been initialized and if the calendar
  * 	is not running.
  */
-CalendarStatus calendar_update(void)
+CalendarStatus calendar_updateScheduler(void)
 {
 	// if the calendar module has been initialized
 	if (_isInit)

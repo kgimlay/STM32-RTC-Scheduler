@@ -166,7 +166,7 @@ int main(void)
   while (1)
   {
 	  // handle a calendar alarm event
-	  calendar_update();
+	  calendar_updateScheduler();
 
 	  // try to open connection if not present
 	  desktopAppSession_start();
@@ -219,7 +219,7 @@ int main(void)
 					  break;
 
 				  case START_CALENDAR:
-					  calendar_start();
+					  calendar_startScheduler();
 					  break;
 
 				  default:

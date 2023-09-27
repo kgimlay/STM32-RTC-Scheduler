@@ -35,12 +35,12 @@
  * Structure to hold a date and time.
  */
 typedef struct {
-  uint8_t year;
-  uint8_t month;
-  uint8_t day;
-  uint8_t hour;
-  uint8_t minute;
-  uint8_t second;
+  uint8_t year;		// two digit 21st century year 		(0 - 99)
+  uint8_t month;	// two digit month 					(1 - 12)
+  uint8_t day;		// two digit day of month 			(1 - 28/29/30/31)
+  uint8_t hour;		// two digit hour in 24 hour format (0 - 23)
+  uint8_t minute;	// two digit minute 				(0 - 59)
+  uint8_t second;	// two digit second 				(0 - 59)
 } DateTime;
 
 /*

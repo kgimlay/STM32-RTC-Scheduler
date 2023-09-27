@@ -36,10 +36,9 @@
  */
 typedef enum {
 	CALENDAR_OKAY = 0,
-	CALENDAR_ERROR,
+	CALENDAR_PARAMETER_ERROR,
 	CALENDAR_NOT_INIT,
 	CALENDAR_FULL,
-	CALENDAR_EMPTY,
 	CALENDAR_PAUSED,
 	CALENDAR_RUNNING
 } CalendarStatus;
@@ -58,7 +57,7 @@ typedef enum {
  *	CalendarStatus
  *		CALENDAR_OKAY - if a pointer to an initialized HAL RTC handle was
  *				passed
- *		CALENDAR_ERROR - otherwise
+ *		CALENDAR_PARAMETER_ERROR - otherwise
  *
  * Note:
  * 	Will not reinitialize if the module is already initialized.
@@ -78,7 +77,7 @@ CalendarStatus calendar_init(RTC_HandleTypeDef* hrtc);
  */
 CalendarStatus calendar_resetEvents(void);
 
-/* calendar_start
+/* calendar_startScheduler
  *
  * Function:
  *	Starts execution of calendar events.  Will not start if the module has not
@@ -94,9 +93,9 @@ CalendarStatus calendar_resetEvents(void);
  * 	Starting the calendar is still successful if there are no events in the queue
  * 	or if all events ended prior to the current RTC date and time.
  */
-CalendarStatus calendar_start(void);
+CalendarStatus calendar_startScheduler(void);
 
-/* calendar_pause
+/* calendar_pauseScheduler
  *
  * Function:
  *	Pauses execution of calendar events.  Will not start if the module has not
@@ -115,7 +114,7 @@ CalendarStatus calendar_start(void);
  * 	with calendar_start().  Events that would have started and completed while
  * 	paused are skipped entirely.
  */
-CalendarStatus calendar_pause(void);
+CalendarStatus calendar_pauseScheduler(void);
 
 /* calendar_setDateTime
  *
@@ -128,13 +127,11 @@ CalendarStatus calendar_pause(void);
  * Return:
  * 	CalendarStatus
  *		CALENDAR_NOT_INIT - if the calendar module hasn't been initialized
+ *		CALENDAR_RUNNING - if the calendar is not paused
  *		CALENDAR_OKAY - if the calendar's date and time were set
  *
  * Note:
- * 	Only sets time and date if the module has been initialized.  Can set the time
- * 	and date regardless of if the calendar is running or paused, but changing the
- * 	date and time while running may cause undefined behavior.  It is recommended to
- * 	only change the time while the calendar is paused.
+ * 	Only sets time and date if the module has been initialized and has been paused.
  */
 CalendarStatus calendar_setDateTime(const DateTime dateTime);
 
@@ -169,12 +166,8 @@ CalendarStatus calendar_getDateTime(DateTime* const dateTime);
  *	CalendarStatus
  *		CALENDAR_NOT_INIT - if the calendar module hasn't been initialized
  *		CALENDAR_FULL - if the calendar's queue is full
+ *		CALENDAR_RUNNING - if the calendar is not paused
  *		CALENDAR_OKAY - if the event was successfully added
- *
- * Note:
- * 	Adding calendar events does not ensure that events remain in monotonic order
- * 	or that only events past the current time are added.  These can be points
- * 	of future development.
  */
 CalendarStatus calendar_addEvent(const struct CalendarEvent event);
 
@@ -189,7 +182,7 @@ CalendarStatus calendar_addEvent(const struct CalendarEvent event);
  *
  * Return:
  *	CALENDAR_NOT_INITIALIZED - if the module has not been initialized
- *	CALENDAR_ERROR - if the index goes beyond the end of the occupied list of
+ *	CALENDAR_PARAMETER_ERROR - if the index goes beyond the end of the occupied list of
  *		events, or if the index is greater than the max number of events allowed
  *	CALENDAR_OKAY - if successful
  *
@@ -208,12 +201,10 @@ CalendarStatus calendar_peekEvent(unsigned int id, CalendarEvent* const event);
  *
  * Return:
  *	CALENDAR_NOT_INITIALIZED - if the module has not been initialized
- *	CALENDAR_ERROR - if the index goes beyond the end of the occupied list of
+ *	CALENDAR_PARAMETER_ERROR - if the index goes beyond the end of the occupied list of
  *		events, or if the index is greater than the max number of events allowed
+ *	CALENDAR_RUNNING - if the calendar is not paused
  *	CALENDAR_OKAY - if successful
- *
- * Note:
- * 	Point for future development.
  */
 CalendarStatus calendar_removeEvent(unsigned int id);
 
@@ -235,7 +226,7 @@ CalendarStatus calendar_removeEvent(unsigned int id);
  * 	delayed for some time after the event actually began/ended.  This is up to the
  * 	application to determine response time.
  */
-CalendarStatus calendar_update(void);
+CalendarStatus calendar_updateScheduler(void);
 
 /* calendar_AlarmA_ISR
  *

@@ -131,6 +131,7 @@ if __name__ == '__main__':
                     Stm32Session._outMessageQueue.put(('SCAL', ''))
                     Stm32Session.update()
 
+            # flush the serial buffer before exiting
             sys.stdout.flush()
 
         # Handle when a keyboard interrupt occurs, to make things tidy.
