@@ -6,12 +6,11 @@
  */
 
 
-#include <desktop_app_session.h>
 #include <rtc_calendar_control.h>
-#include "calendar.h"
-#include "stdbool.h"
-#include "string.h"
-#include "stdio.h"
+#include <calendar.h>
+#include <stdbool.h>
+#include <string.h>
+#include <stdio.h>
 
 
 /*

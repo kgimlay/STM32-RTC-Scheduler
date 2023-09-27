@@ -26,8 +26,7 @@
 
 
 #include <stdint.h>
-#include <uart_packet_helpers.h>
-#include "stm32wlxx_hal.h"
+#include <stm32wlxx_hal.h>
 #include <stdbool.h>
 #include <event_sll.h>
 
