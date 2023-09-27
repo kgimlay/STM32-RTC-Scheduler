@@ -18,13 +18,13 @@ Finally, the scheduler brings the RTC and the software calendar together.  The s
 
 ### Return Codes
 
-1 . **CalendarStatus** - Status code returns from API function calls to signal if the call was successful or why the call was unsuccessful:
->     - **CALENDAR_OKAY**  - API function call was successfully completed.
->     - **CALENDAR_PARAMETER_ERROR** - API function call was given an invalid parameter.
->     - **CALENDAR_NOT_INIT** - The Calendar module has not been initialized before API call.
->     - **CALENDAR_FULL** - The calendar is full and cannot accept any more events.
->     - **CALENDAR_PAUSED** - The calendar is paused.
->     - **CALENDAR_RUNNING** - The calendar is running.
+1. **CalendarStatus** - Status code returns from API function calls to signal if the call was successful or why the call was unsuccessful:
+    - **CALENDAR_OKAY**  - API function call was successfully completed.
+    - **CALENDAR_PARAMETER_ERROR** - API function call was given an invalid parameter.
+    - **CALENDAR_NOT_INIT** - The Calendar module has not been initialized before API call.
+    - **CALENDAR_FULL** - The calendar is full and cannot accept any more events.
+    - **CALENDAR_PAUSED** - The calendar is paused.
+    - **CALENDAR_RUNNING** - The calendar is running.
 
 ### Structures
 
