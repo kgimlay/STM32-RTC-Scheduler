@@ -28,11 +28,11 @@ To use the Calendar module add the provided directory to your STM32CubeMX projec
 2. Enable the RTC's clock source and Alarm A.
 3. Make sure that the RTC is set to run in BCD mode under General and Calendar Time.
 
-![RTC Config 1](./assets/RTC_Config/config_1.png)
+![RTC Config 1](./Assets/RTC_Config/config_1.png)
 
 4. Go into the NVIC settings and enable Alarm A interrupts.
 
-![RTC Config 2](./assets/RTC_Config/config_2.png)
+![RTC Config 2](./Assets/RTC_Config/config_2.png)
 
 ### Adding to Your STM32CubeMX Project
 
