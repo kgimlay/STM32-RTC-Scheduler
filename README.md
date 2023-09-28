@@ -18,6 +18,104 @@ Finally, the scheduler brings the RTC and the software calendar together.  The s
 
 ___
 
+## Installation/Usage
+
+To use the Calendar module add the provided directory to your STM32CubeMX project and include calender.h.
+
+### STM32CubeMX Configuration
+
+
+
+### Adding to Your STM32CubeMX Project
+
+
+
+### Example Usage
+
+A very simple usage example STM32CubeMX project is provided.  For a more interesting experience I have included an additional module called LED Debug.  All it does is provide some basic functionality to turn on and off the LEDs on the STM32WL55JC development board.  The example turns on the blue LED when an event starts, and turns it off when the event ends.  This can be seen in the following callback functions.
+
+    /*
+     * Function to execute once an event is entered.
+     */
+    void startEventCallback(void)
+    {
+        activate_led(BLUE_LED);
+    }
+
+
+    /*
+     * Function to execute once an event is exited.
+     */
+    void endEventCallback(void)
+    {
+        deactivate_led(BLUE_LED);
+    }
+    
+It is also necessary to call the *calendar_AlarmA_ISR()* function within the *HAL_RTC_AlarmAEventCallback()* function.  This lets the calendar scheduler know that the alarm triggered and the next alarm can be set.
+    
+    /*
+     * Alarm A callback.
+     */
+    void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc)
+    {
+        // call ISR for handling calendar events
+        calendar_AlarmA_ISR();
+    }
+
+Within the *main()* function, initialize the calendar module after the HAL has initialized the RTC.  The current date and time can be set too.
+
+    // initialize the calendar module
+    calendar_init(&hrtc);
+    
+    // set the date and time
+    DateTime now = {23, 9, 29, 17, 0, 0};
+    calendar_setDateTime(now);
+    
+Then add a few events to the calendar.  Notice the callback function registrations for each event's start and end.
+    
+    // create a few events five seconds apart from each other lasting two
+    // seconds each
+    CalendarEvent someEvents[3] = {
+          [0] = {.start = {23, 9, 29, 17, 0, 5},
+                  .end = {23, 9, 29, 17, 0, 7},
+                  .start_callback = (void*)&startEventCallback,
+                  .end_callback = (void*)&endEventCallback},
+    
+          [1] = {.start = {23, 9, 29, 17, 0, 10},
+                  .end = {23, 9, 29, 17, 0, 12},
+                  .start_callback = (void*)&startEventCallback,
+                  .end_callback = (void*)&endEventCallback},
+    
+          [2] = {.start = {23, 9, 29, 17, 0, 15},
+                  .end = {23, 9, 29, 17, 0, 17},
+                  .start_callback = (void*)&startEventCallback,
+                  .end_callback = (void*)&endEventCallback}
+    };
+    
+    // add them to the calendar
+    for (int i = 0; i < 3; i++)
+      calendar_addEvent(someEvents[i]);
+    
+And finally start the calendar running.
+
+    calendar_startScheduler();
+
+Don't forget to update the calendar's scheduler in the main loop!
+
+    while (1)
+    {
+        // update the calendar
+        calendar_updateScheduler();
+    }
+
+___
+
+## Design Choices and Limitations
+
+
+
+___
+
 ## API
 
 ### Return Codes
@@ -133,100 +231,3 @@ ___
 11. **void calendar_AlarmA_ISR(void)** - Sets a flag to signal to the calendar_update() function that an event has either began or ended.
     - Note:
         - Call only within the RTC Alarm A ISR.  Otherwise the behavior is undefined.
-
-___
-
-## Installation/Usage
-
-To use the Calendar module add the provided directory to your STM32CubeMX project and include calender.h.
-
-### STM32CubeMX Configuration
-
-
-
-### Adding to Your STM32CubeMX Project
-
-
-
-### Example Usage
-
-A very simple usage example STM32CubeMX project is provided.  For a more interesting experience I have included an additional module called LED Debug.  All it does is provide some basic functionality to turn on and off the LEDs on the STM32WL55JC development board.  The example turns on the blue LED when an event starts, and turns it off when the event ends.  This can be seen in the following callback functions.
-
-    /*
-     * Function to execute once an event is entered.
-     */
-    void startEventCallback(void)
-    {
-        activate_led(BLUE_LED);
-    }
-
-
-    /*
-     * Function to execute once an event is exited.
-     */
-    void endEventCallback(void)
-    {
-        deactivate_led(BLUE_LED);
-    }
-    
-It is also necessary to call the *calendar_AlarmA_ISR()* function within the *HAL_RTC_AlarmAEventCallback()* function.  This lets the calendar scheduler know that the alarm triggered and the next alarm can be set.
-    
-    /*
-     * Alarm A callback.
-     */
-    void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc)
-    {
-        // call ISR for handling calendar events
-        calendar_AlarmA_ISR();
-    }
-
-Within the *main()* function, initialize the calendar module after the HAL has initialized the RTC.  The current date and time can be set too.
-
-    // initialize the calendar module
-    calendar_init(&hrtc);
-    
-    // set the date and time
-    DateTime now = {23, 9, 29, 17, 0, 0};
-    calendar_setDateTime(now);
-    
-Then add a few events to the calendar.  Notice the callback function registrations for each event's start and end.
-    
-    // create a few events five seconds apart from each other lasting two
-    // seconds each
-    CalendarEvent someEvents[3] = {
-          [0] = {.start = {23, 9, 29, 17, 0, 5},
-                  .end = {23, 9, 29, 17, 0, 7},
-                  .start_callback = (void*)&startEventCallback,
-                  .end_callback = (void*)&endEventCallback},
-    
-          [1] = {.start = {23, 9, 29, 17, 0, 10},
-                  .end = {23, 9, 29, 17, 0, 12},
-                  .start_callback = (void*)&startEventCallback,
-                  .end_callback = (void*)&endEventCallback},
-    
-          [2] = {.start = {23, 9, 29, 17, 0, 15},
-                  .end = {23, 9, 29, 17, 0, 17},
-                  .start_callback = (void*)&startEventCallback,
-                  .end_callback = (void*)&endEventCallback}
-    };
-    
-    // add them to the calendar
-    for (int i = 0; i < 3; i++)
-      calendar_addEvent(someEvents[i]);
-    
-And finally start the calendar running.
-
-    calendar_startScheduler();
-
-Don't forget to update the calendar's scheduler in the main loop!
-
-    while (1)
-    {
-        // update the calendar
-        calendar_updateScheduler();
-    }
-
-___
-
-## Design Choices and Limitations
-
